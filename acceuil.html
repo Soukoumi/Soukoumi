@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu Créatif</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #a8c0ff, #3f2b96);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+            color: white;
+            overflow: hidden;
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 60px;
+            box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px 50px;
+            box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        h1, h2 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            background-color: #ffffff;
+            color: #0099ff;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .button-container button:hover {
+            background-color: #8ad0ff;
+            transform: scale(1.1);
+            box-shadow: 3px 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #googleSignInButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            background-color: #ffffff;
+            color: #0099ff;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #googleSignInButton:hover {
+            background-color: #8ad0ff;
+            transform: scale(1.1);
+            box-shadow: 3px 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #discordButton {
+            background: #5865F2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+        }
+
+        #discordButton img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        #discordButton:hover {
+            transform: scale(1.1);
+            box-shadow: 3px 6px 15px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container" id="loginContainer" style="display: block;">
+        <h2>Se connecter</h2>
+        <button id="googleSignInButton">Se connecter avec Google</button>
+    </div>
+
+    <div class="content-box" id="contentBox" style="display: none;">
+        <h1>Jeu Créatif</h1>
+
+        <div class="button-container">
+            <button onclick="window.location.href='pieces.html'">Pièces</button>
+            <button onclick="window.location.href='invocation.html'">Invocation</button>
+            <button onclick="window.location.href='collection.html'">Collection</button>
+        </div>
+
+        <a id="discordButton" href="https://discord.gg/votre-lien-serveur" target="_blank">
+            <img src="https://cdn.iconscout.com/icon/free/png-256/discord-2474804-2056091.png" alt="Discord Icon">
+            Rejoindre le serveur Discord
+        </a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU8t-5pvpGIWNPM-uxP3ZzYxQ7mAY5NVY",
+            authDomain: "jeu-de-carte-dfa51.firebaseapp.com",
+            projectId: "jeu-de-carte-dfa51",
+            storageBucket: "jeu-de-carte-dfa51.firebasestorage.app",
+            messagingSenderId: "684513159935",
+            appId: "1:684513159935:web:17820c82672d6527ff7aca",
+            measurementId: "G-F3P0WW2R3H"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        function signInWithGoogle() {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('contentBox').style.display = 'block';
+                })
+                .catch((error) => {
+                    console.error("Erreur de connexion : ", error.message);
+                });
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('contentBox').style.display = 'block';
+            } else {
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('contentBox').style.display = 'none';
+            }
+        });
+
+        document.getElementById('googleSignInButton').addEventListener('click', signInWithGoogle);
+    </script>
+
+</body>
+</html>

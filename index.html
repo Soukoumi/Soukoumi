@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Écran de Chargement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #3498db; 
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            z-index: 9999;
+        }
+
+        .popup.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .popup p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .popup button {
+            background-color: #ff4d4d;
+            border: none;
+            padding: 12px 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup button:hover {
+            background-color: #ff1a1a;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Chargement en cours...</p>
+    </div>
+
+    <div class="popup" id="no-connection-popup">
+        <p>Pas de connexion internet. Le jeu ne peut pas se charger.</p>
+        <button onclick="window.location.reload();">Réessayer</button>
+    </div>
+
+    <script>
+        // Fonction pour vérifier la connexion
+        function checkConnection() {
+            if (navigator.onLine) {
+                // Si la connexion est active, rediriger vers le jeu
+                window.location.href = 'https://saucissonuwu.github.io/Caca/'; // Remplacez par le lien de votre jeu
+            } else {
+                // Si pas de connexion, afficher le pop-up après 10 secondes
+                setTimeout(function() {
+                    document.getElementById('no-connection-popup').classList.add('show');
+                }, 10000); // 10 secondes de délai
+            }
+        }
+
+        // Vérifier la connexion dès que la page est chargée
+        window.onload = checkConnection;
+    </script>
+
+</body>
+</html>
