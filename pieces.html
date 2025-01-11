@@ -1,211 +1,387 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette des koumis</title>
-    <style>
-        /* Styles inchangés (voir votre code original) */
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #ffebcd;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .coins-counter {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            font-weight: bold;
-            background-color: #fff;
-            padding: 10px;
-            border: 2px solid #333;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .roulette-container-wrapper {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            border: 3px solid #333;
-            border-radius: 15px;
-            background: linear-gradient(145deg, #e0e0e0, #ffffff);
-            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.5);
-        }
-        .roulette-container {
-            width: 400px;
-            padding: 10px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            background-color: #fff;
-        }
-        .info-button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 25px;
-            height: 25px;
-            border: none;
-            border-radius: 50%;
-            background-color: #3498db;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .info-popup {
-            position: absolute;
-            top: 40px;
-            right: 10px;
-            width: 200px;
-            padding: 10px;
-            border: 2px solid #333;
-            background-color: #fff;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: left;
-            display: none;
-            z-index: 10;
-        }
-        .segment-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .segment {
-            width: 90px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid #333;
-            font-size: 16px;
-            font-weight: bold;
-            background-color: #f0f0f0;
-            position: relative;
-        }
-        .center-slot {
-            width: 120px;
-            height: 120px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            background-color: #ddd;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3498db;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-    </style>
-</head>
-<body>
-    <div class="coins-counter" id="coins-counter">Pièces: 0</div>
-    <h1>Roulette des koumi</h1>
-    <div class="roulette-container-wrapper">
-        <div class="roulette-container">
-            <div class="segment-row">
-                <div class="segment" data-prize="50">50 koumi</div>
-                <div class="segment" data-prize="100">100 koumi</div>
-                <div class="segment" data-prize="200">200 koumi</div>
-            </div>
-            <div class="center-slot" id="center-slot">?</div>
-            <div class="segment-row">
-                <div class="segment" data-prize="300">300 koumi</div>
-                <div class="segment" data-prize="500">500 koumi</div>
-                <div class="segment" data-prize="1000">1000 koumi</div>
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Roulette des Pièces</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin: 0;
+                padding: 0;
+                background-color: #ffebcd; /* Fond beige clair */
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+
+            h1 {
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .coins-counter {
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 24px;
+                font-weight: bold;
+                background-color: #fff;
+                padding: 10px;
+                border: 2px solid #333;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .roulette-container-wrapper {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 30px;
+                border: 3px solid #333;
+                border-radius: 15px;
+                background: linear-gradient(145deg, #e0e0e0, #ffffff);
+                box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.5);
+            }
+
+            .roulette-container {
+                position: relative;
+                width: 400px;
+                height: 200px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                border: 2px solid #333;
+                border-radius: 10px;
+                background-color: #fff;
+                padding: 10px;
+            }
+
+            .info-button {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 25px;
+                height: 25px;
+                border: none;
+                border-radius: 50%;
+                background-color: #3498db;
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .info-popup {
+                position: absolute;
+                top: 40px;
+                right: 10px;
+                width: 200px;
+                padding: 10px;
+                border: 2px solid #333;
+                background-color: #fff;
+                border-radius: 5px;
+                font-size: 14px;
+                text-align: left;
+                display: none;
+                z-index: 10;
+            }
+
+            .segment-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .segment {
+                width: 90px;
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 2px solid #333;
+                font-size: 16px;
+                font-weight: bold;
+                background-color: #f0f0f0;
+                position: relative;
+            }
+
+            .center-slot {
+                width: 120px;
+                height: 120px;
+                border: 2px solid #333;
+                border-radius: 10px;
+                background-color: #ddd;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 22px;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+
+            button {
+                margin-top: 10px;
+                padding: 10px 20px;
+                font-size: 16px;
+                border: none;
+                border-radius: 5px;
+                background-color: #3498db;
+                color: white;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+            .back-button {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #3498db;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                text-decoration: none;
+                transition: background-color 0.3s;
+            }
+
+            .back-button:hover {
+                background-color: #2980b9;
+            }
+
+            #increment-selector {
+        margin-left: 10px;
+        padding: 5px;
+        font-size: 16px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #fff;
+        cursor: pointer;
+    }
+
+        </style>
+    </head>
+    <body>
+        <div class="coins-counter" id="coins-counter">Pièces: 0</div>
+
+        <h1>Roulette des Pièces</h1>
+        <a href="index.html" class="back-button">Retour</a>
+        <div class="roulette-container-wrapper">
+            <div class="roulette-container" id="roulette">
+                <button class="info-button" onclick="toggleInfo()">i</button>
+                <div class="info-popup" id="info-popup">
+                    <strong>Probabilités :</strong>
+                    <ul>
+                        <li>50 Pièces : 70%</li>
+                        <li>100 Pièces : 35%</li>
+                        <li>200 Pièces : 10%</li>
+                        <li>300 Pièces : 6%</li>
+                        <li>500 Pièces : 3.4%</li>
+                        <li>1000 Pièces : 0.8%</li>
+                    </ul>
+                </div>
+                <div class="segment-row">
+                    <div class="segment" data-prize="50">50 Pièces</div>
+                    <div class="segment" data-prize="100">100 Pièces</div>
+                    <div class="segment" data-prize="200">200 Pièces</div>
+                </div>
+                <div class="center-slot" id="center-slot">?</div>
+                <div class="segment-row">
+                    <div class="segment" data-prize="300">300 Pièces</div>
+                    <div class="segment" data-prize="500">500 Pièces</div>
+                    <div class="segment" data-prize="1000">1000 Pièces</div>
+                </div>
             </div>
         </div>
-    </div>
-    <button id="spin-button" onclick="spinRoulette()">Lancer la Roulette</button>
-    <div id="timer"></div>
 
-    <script>
-        let spinning = false;
-        let totalCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
-        let lastSpinTime = parseInt(localStorage.getItem('lastSpinTime')) || 0;
+        <div class="coins-control">
+            <!-- Boutons pour ajuster les pièces -->
+            <button class="coins-button" onclick="adjustCoins(-incrementValue)">-</button>
+            <button class="coins-button" onclick="adjustCoins(incrementValue)">+</button>
+            <select id="increment-selector" onchange="updateIncrementValue()">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
 
-        const updateCoinCounter = () => {
-            document.getElementById('coins-counter').textContent = `Pièces: ${totalCoins}`;
-            localStorage.setItem('totalCoins', totalCoins);
-        };
+        <button id="spin-button" onclick="spinRoulette()">Lancer la Roulette</button>
 
-        const checkSpinAvailability = () => {
-            const now = Date.now();
-            const cooldown = 12 * 60 * 60 * 1000; // 12 heures en ms
-            const timeLeft = cooldown - (now - lastSpinTime);
+        <div id="timer" class="timer"></div>
 
-            if (timeLeft > 0) {
-                const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                document.getElementById('timer').textContent = `Prochain spin dans : ${hours}h ${minutes}m ${seconds}s`;
-                document.getElementById('spin-button').disabled = true;
-            } else {
-                document.getElementById('timer').textContent = '';
-                document.getElementById('spin-button').disabled = false;
+        <script>
+            let spinning = false;
+            let totalCoins = 0; // Variable pour stocker le nombre total de pièces
+            let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
+            let incrementValue = 10; // Valeur par défaut de l'incrément
+
+
+            // Fonction pour mettre à jour l'affichage du compteur de pièces
+    function updateCoinCounter() {
+        document.getElementById('coins-counter').textContent = `Pièces: ${totalCoins}`;
+        localStorage.setItem('totalCoins', totalCoins); // Sauvegarde dans le stockage local
+    }
+
+            // Fonction pour ajuster les pièces (maintenant les pièces peuvent être négatives)
+    function adjustCoins(amount) {
+        totalCoins += amount;
+        updateCoinCounter();
+    }
+
+        // Mettre à jour la valeur de l'incrément selon la sélection
+    function updateIncrementValue() {
+        const selector = document.getElementById('increment-selector');
+        incrementValue = parseInt(selector.value, 10);
+    }
+
+    function checkSpinAvailability() {
+    const lastSpinTime = localStorage.getItem('lastSpinTime');
+    const now = new Date().getTime();
+
+    if (lastSpinTime) {
+        const timeDiff = now - lastSpinTime;  // Calcul de la différence de temps depuis le dernier spin
+        const timeLeft = 12 * 60 * 60 * 1000 - timeDiff;  // Temps restant jusqu'à 12 heures (en millisecondes)
+
+        if (timeLeft > 0) {
+            // Calcul du temps restant en heures, minutes et secondes
+            const hoursRemaining = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutesRemaining = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const secondsRemaining = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            // Mise à jour de l'affichage du décompte
+            document.getElementById('timer').textContent = `Prochain spin dans : ${hoursRemaining}h ${minutesRemaining}m ${secondsRemaining}s`;
+            document.getElementById('spin-button').disabled = true;  // Désactivation du bouton spin
+        } else {
+            // Le temps est écoulé, réinitialisation
+            document.getElementById('timer').textContent = '';
+            document.getElementById('spin-button').disabled = false;  // Activation du bouton spin
+        }
+    } else {
+        // Si aucun spin n'a eu lieu auparavant, on affiche le bouton comme disponible
+        document.getElementById('timer').textContent = '';
+        document.getElementById('spin-button').disabled = false;
+    }
+}
+
+
+            // Sauvegarder le temps du dernier spin
+            function updateLastSpinTime() {
+                const now = new Date().getTime();
+                localStorage.setItem('lastSpinTime', now);
             }
-        };
 
-        const spinRoulette = () => {
-            if (spinning) return;
-            spinning = true;
+            // Lancer la roulette
+            function spinRoulette() {
+                if (spinning) return;
+                spinning = true;
 
-            const prizes = [50, 100, 200, 300, 500, 1000];
-            const weights = [70, 35, 10, 6, 3.4, 0.8];
-            const weightedArray = prizes.flatMap((prize, i) => Array(weights[i] * 10).fill(prize));
-            const prize = weightedArray[Math.floor(Math.random() * weightedArray.length)];
+                const segments = document.querySelectorAll('.segment');
+                const centerSlot = document.getElementById('center-slot');
 
-            const centerSlot = document.getElementById('center-slot');
-            centerSlot.textContent = "En cours...";
+                // Probabilités personnalisées pour chaque segment
+                const prizes = [
+                    { prize: "50", weight: 70 },
+                    { prize: "100", weight: 35 },
+                    { prize: "200", weight: 10 },
+                    { prize: "300", weight: 6 },
+                    { prize: "500", weight: 3.4 },
+                    { prize: "1000", weight: 0.8 }
+                ];
 
-            setTimeout(() => {
-                centerSlot.textContent = `${prize} Pièces`;
-                totalCoins += prize;
+                const weightedArray = [];
+                prizes.forEach(item => {
+                    for (let i = 0; i < item.weight * 10; i++) {
+                        weightedArray.push(item.prize);
+                    }
+                });
+
+                const randomPrize = weightedArray[Math.floor(Math.random() * weightedArray.length)];
+
+                let finalIndex = Array.from(segments).findIndex(
+                    segment => segment.getAttribute('data-prize') === randomPrize
+                );
+
+                let currentIndex = 0;
+                let rotations = Math.floor(Math.random() * 10) + 20; // Nombre aléatoire de rotations
+
+                const interval = setInterval(() => {
+                    segments.forEach((segment, index) => {
+                        const light = segment.querySelector('.light');
+                        light.style.display = index === currentIndex ? 'block' : 'none';
+                    });
+
+                    if (rotations > 0) {
+                        currentIndex = (currentIndex + 1) % segments.length;
+                        rotations--;
+                    } else if (currentIndex === finalIndex) {
+                        clearInterval(interval);
+                        spinning = false;
+
+                        setTimeout(() => {
+                            segments.forEach(segment => {
+                                const light = segment.querySelector('.light');
+                                light.style.display = 'none';
+                            });
+
+                            centerSlot.textContent = `${randomPrize} Pièces`;
+
+                            // Ajouter les pièces gagnées
+                            totalCoins += parseInt(randomPrize);
+                            updateCoinCounter();
+
+                            // Incrémenter le compteur de roulettes
+                            rouletteCount++;
+                            localStorage.setItem('rouletteCount', rouletteCount);
+
+                            // Sauvegarder le temps du dernier spin
+                            updateLastSpinTime();
+                            checkSpinAvailability(); // Mettre à jour la disponibilité du spin
+                        }, 100);
+                    } else {
+                        currentIndex = (currentIndex + 1) % segments.length;
+                    }
+                }, 100);
+            }
+
+            // Fonction pour afficher/masquer les informations
+            function toggleInfo() {
+                const infoPopup = document.getElementById('info-popup');
+                infoPopup.style.display = infoPopup.style.display === 'none' || !infoPopup.style.display ? 'block' : 'none';
+            }
+
+            // Initialisation au chargement de la page
+            document.addEventListener('DOMContentLoaded', () => {
+                // Récupérer les pièces sauvegardées
+                const storedCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
+                totalCoins = storedCoins;
                 updateCoinCounter();
 
-                lastSpinTime = Date.now();
-                localStorage.setItem('lastSpinTime', lastSpinTime);
-                spinning = false;
-                checkSpinAvailability();
-            }, 3000);
-        };
+                // Récupérer le nombre de roulettes effectuées
+                rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateCoinCounter();
-            checkSpinAvailability();
-            setInterval(checkSpinAvailability, 1000);
-        });
-    </script>
-</body>
-</html>
+                // Vérifier la disponibilité du spin toutes les secondes
+                setInterval(checkSpinAvailability, 1000);
+
+                // Vérification initiale du temps restant pour spin
+                checkSpinAvailability();
+            });
+        </script>
+    </body>
+    </html>
