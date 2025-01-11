@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invocation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden; /* Pour éviter les barres de défilement */
+            position: relative;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Fond animé de colonnes qui défilent lentement */
+        .animated-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.1) 25%, rgba(102, 204, 0, 0.1) 50%, rgba(255, 102, 0, 0.1) 75%);
+            background-size: 50% 50%;
+            animation: moveBackground 30s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { background-position: 0 0; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .invocation-container {
+            position: relative;
+            width: 600px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .info-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .info-button:hover {
+            background-color: #2980b9;
+        }
+
+        .info-popup {
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            width: 220px;
+            padding: 15px;
+            border: 2px solid #333;
+            background-color: #fff;
+            border-radius: 10px;
+            font-size: 14px;
+            text-align: left;
+            display: none;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+
+        .info-popup ul {
+            padding-left: 20px;
+        }
+
+        .info-popup li {
+            margin-bottom: 8px;
+        }
+
+        .button-container {
+            margin-bottom: 20px;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .button-container button:hover {
+            background-color: #2980b9;
+        }
+
+        .rewards-container {
+            display: grid;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .reward {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #333;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative; /* Pour positionner le texte à l'intérieur de l'image */
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reward img {
+    max-width: 100%; /* Garantit que l'image ne dépasse pas la taille du conteneur */
+    max-height: 100%; /* Garantit que l'image ne dépasse pas la taille du conteneur */
+}
+
+.reward-text-top {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    width: 100%;
+    text-align: center;
+}
+
+.reward-text-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    width: 100%;
+    text-align: center;
+}
+
+        .single-reward {
+            margin: 0 auto;
+        }
+
+        .reward:hover {
+            transform: scale(1.1);
+        }
+
+       /* Effets néon et couleurs d'intérieur pour les différentes raretés */
+.commune {
+    background-color: #28a745;
+    box-shadow: 0 0 10px #00ff00, 0 0 10px #00ff00; /* Réduit la taille de l'ombre et l'intensité */
+}
+
+.rare {
+    background-color: #007bff;
+    box-shadow: 0 0 10px #0000ff, 0 0 10px #0000ff; /* Réduit la taille de l'ombre et l'intensité */
+}
+
+.epique {
+    background-color: #6f42c1;
+    box-shadow: 0 0 10px #800080, 0 0 10px #800080; /* Réduit la taille de l'ombre et l'intensité */
+}
+
+.légendaire {
+    background-color: #ffc107;
+    box-shadow: 0 0 10px #ffcc00, 0 0 10px #ffcc00; /* Réduit la taille de l'ombre et l'intensité */
+}
+
+.spécial {
+    background-color: #ff0000;
+    box-shadow: 0 0 10px #ff0000, 0 0 10px #ff0000fa; /* Réduit la taille de l'ombre et l'intensité */
+}
+
+.arc-en-ciel {
+    background-color: #ff00b7;
+    box-shadow: 0 0 10px #ff00b7, 0 0 10px #ff00b7; /* Réduit la taille de l'ombre et l'intensité */
+}
+
+.back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+.back-button:hover {
+            background-color: #2980b9;
+        }
+
+        
+    </style>
+</head>
+<body>
+    
+    <div class="animated-background"></div> <!-- Fond animé -->
+    <a href="index.html" class="back-button">Retour</a>
+    <h1>Invocation</h1>
+    <div id="coins-display" style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">
+        Pièces disponibles : 0
+    </div>
+
+    <div class="invocation-container">
+        <button class="info-button" onclick="toggleInfo()">i</button>
+        <div class="info-popup" id="info-popup">
+            <strong>Probabilités :</strong>
+            <ul>
+                <li><span style="color: green;">Commune</span>: 60%</li>
+                <li><span style="color: blue;">Rare</span>: 35%</li>
+                <li><span style="color: purple;">Epique</span>: 12%</li>
+                <li><span style="color: gold;">Légendaire</span>: 2%</li>
+                <li><span style="color: rgb(255, 0, 0);">Spécial</span>: 0.2%</li>
+                <li><span style="color: rgb(255, 0, 212);">Arc-en-ciel</span>: 0.05%</li>
+            </ul>
+        </div>
+
+        <div class="button-container">
+            <button onclick="singleSummon()">50 pieces x1</button>
+            <button onclick="multiSummon()">500 pieces x10</button>
+        </div>
+
+        <div id="rewards" class="rewards-container">
+            <div class="reward" id="placeholder">?</div>
+        </div>
+    </div>
+    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 100;">
+        <div style="position: relative; max-width: 90%; max-height: 90%;">
+            <img id="modal-image" src="" alt="Reward Image" style="width: auto; height: auto; max-width: 100%; max-height: 100%; border: 5px solid white; border-radius: 15px; object-fit: contain;">
+            <button onclick="closeModal()" style="position: absolute; top: -20px; right: -20px; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;">X</button>
+        </div>
+    </div>
+
+   <!-- Bouton pour afficher toutes les cartes disponibles -->
+<button class="info-button" onclick="toggleAvailableCards()"></button>
+
+<!-- Popup pour afficher toutes les cartes -->
+<div id="available-cards-popup" style="display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background-color: #fff; border: 2px solid #333; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); overflow-y: auto; z-index: 100;">
+    <div style="position: relative;">
+        <button onclick="toggleAvailableCards()" style="position: absolute; top: 10px; right: 10px; background: red; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 18px; cursor: pointer;">X</button>
+        <div id="available-cards-container" style="display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; justify-content: center; overflow-y: auto; height: calc(100% - 40px);">
+            <!-- Les cartes disponibles seront affichées ici -->
+        </div>
+    </div>
+</div>
+    
+    
+
+    <script>
+        let availableCoins = 0; // Stockage des pièces disponibles
+        let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
+        let invocationCount = parseInt(localStorage.getItem('invocationCount')) || 0;
+        const rewardsContainer = document.getElementById('rewards');
+        const placeholder = document.getElementById('placeholder');
+        
+
+        const rewardsPool = [
+            { name: "Radolf le magicien", rarity: "Epique", "type": "Prestige", weight: 12, image: "1.png" },
+            { name: "El verme musician", rarity: "Rare", "type": "animal", weight: 35, image: "2.png" },      
+            { name: "Eau mouillée", rarity: "Epique", "type": "objet", weight: 12, image: "3.png" },
+            { name: "Le dos fin", rarity: "Légendaire", "type": "animal", weight: 2, image: "4.png" },
+            { name: "Chococaca", rarity: "Rare", "type": "objet", weight: 35, image: "5.png" }, 
+            { name: "Père pète", rarity: "Epique", "type": "Prestige", weight: 12, image: "6.png" },
+            { name: "Cervoloant", rarity: "Commune", "type": "Objet", weight: 60, image: "7.png" },
+            { name: "Gilberto le camionneur", rarity: "Epique", "type": "Humain", weight: 12, image: "8.png" },
+            { name: "Enceinte à musique", rarity: "Rare", "type": "Humain", weight: 35, image: "9.png" }, 
+            { name: "Pierre la pierre", rarity: "Rare", "type": "Objet", weight: 35, image: "10.png" }, 
+            { name: "TireXhandicapé", rarity: "Epique", "type": "Animal", weight: 12, image: "11.png" },
+            { name: "Radolf le magicien", rarity: "Arc-en-ciel", "type": "Prestige", weight: 0.05, image: "12.png" },
+            { name: "Le manouche prend sa douche", rarity: "Commune", "type": "Animal", weight: 60, image: "13.png" },
+            { name: "Pedro au quais ", rarity: "Rare", "type": "Animal", weight: 35, image: "14.png" },      
+            { name: "Raoul ça roule", rarity: "Epique", "type": "Objet", weight: 12, image: "15.png" },
+            { name: "Gaston le ballon", rarity: "Rare", "type": "Objet", weight: 35, image: "16.png" },
+            { name: "Stéphane carry", rarity: "Légendaire", "type": "Objet", weight: 2, image: "17.png" },
+            { name: "Carotte qui rote", rarity: "Rare", "type": "Objet", weight: 35, image: "18.png" },     
+            { name: "Tron pète", rarity: "Commune", "type": "Objet", weight: 60, image: "19.png" },
+            { name: "Glaçons maçon", rarity: "Rare", "type": "Objet", weight: 35, image: "20.png" },
+            { name: "El verme musician", rarity: "Spécial", "type": "Animal", weight: 0.2, image: "21.png" },
+            { name: "La reine baleine", rarity: "Epique", "type": "Animal", weight: 12, image: "22.png" },
+            { name: "La reine baleine", rarity: "Spécial", "type": "Animal", weight: 0.2, image: "23.png" },
+            { name: "Marion le papillon", rarity: "Légendaire", "type": "Prestige", weight: 2, image: "24.png" },
+            { name: "Marion le papillon", rarity: "Spécial", "type": "Prestige", weight: 0.2, image: "25.png" },
+            { name: "Tristan volan", rarity: "Rare", "type": "Prestige", weight: 35, image: "26.png" },
+            { name: "Tristan volan", rarity: "Spécial", "type": "OPrestige", weight: 0.2, image: "27.png" },
+            { name: "Jimmy le bonhomme de neige", rarity: "Légendaire", "type": "Prestige", weight: 35, image: "28.png" },
+            { name: "Jimmy le bonhomme de neige", rarity: "Spécial", "type": "Prestige", weight: 0.2, image: "29.png" },
+        ];
+
+        // Tableau statique des cartes disponibles
+const availableCards = [
+            { name: "Radolf le magicien", rarity: "Arc-en-ciel", image: "12.png" },
+            { name: "El verme musician", rarity: "Spécial", image: "21.png" },  
+            { name: "La reine baleine", rarity: "Spécial", image: "23.png" },  
+            { name: "Marion le papillon", rarity: "Spécial", image: "25.png" },
+            { name: "Tristan volan", rarity: "Spécial", image: "27.png" },
+            { name: "Jimmy le bonhomme de neige", rarity: "Spécial", image: "29.png" },
+            { name: "Le dos fin", rarity: "Légendaire", image: "4.png" },
+            { name: "Stéphane carry", rarity: "Légendaire", image: "17.png" },
+            { name: "Marion le papillon", rarity: "Légendaire", image: "24.png" },
+            { name: "Jimmy le bonhomme de neige", rarity: "Légendaire", image: "28.png" },
+            { name: "Radolf le magicien", rarity: "Epique", image: "1.png" },
+            { name: "Eau mouillée", rarity: "Epique", image: "3.png" },
+            { name: "Père pète", rarity: "Epique", image: "6.png" },
+            { name: "Gilberto le camionneur", rarity: "Epique", image: "8.png" },     
+            { name: "TireXhandicapé", rarity: "Epique", image: "11.png" },
+            { name: "Raoul ça roule", rarity: "Epique", image: "15.png" },
+            { name: "La reine baleine", rarity: "Epique", image: "22.png" },
+            { name: "Chococaca", rarity: "Rare", image: "5.png" }, 
+            { name: "El verme musician", rarity: "Rare", image: "2.png" }, 
+            { name: "Enceinte à musique", rarity: "Rare", image: "9.png" }, 
+            { name: "Pierre la pierre", rarity: "Rare", image: "10.png" }, 
+            { name: "Pedro au quais ", rarity: "Rare", image: "14.png" },
+            { name: "Gaston le ballon", rarity: "Rare", image: "16.png" },
+            { name: "Carotte qui rote", rarity: "Rare", image: "18.png" },
+            { name: "Glaçons maçon", rarity: "Rare", image: "20.png" },      
+            { name: "Tristan volan", rarity: "Rare", image: "26.png" },
+            { name: "Le manouche prend sa douche", rarity: "Commune", image: "13.png" },
+            { name: "Cervoloant", rarity: "Commune",image: "7.png" },
+            { name: "Tron pète", rarity: "Commune", image: "19.png" },
+             ];
+        
+
+       // Fonction de récupération aléatoire de récompenses
+function getRandomReward() {
+    const weightedArray = [];
+    rewardsPool.forEach(item => {
+        for (let i = 0; i < item.weight; i++) {
+            weightedArray.push(item);
+        }
+    });
+    const randomReward = weightedArray[Math.floor(Math.random() * weightedArray.length)];
+    return randomReward;
+}
+
+
+        function clearRewards() {
+            rewardsContainer.innerHTML = '';
+        }
+
+        function updateAvailableCoins() {
+            const coinsDisplay = document.getElementById('coins-display');
+            coinsDisplay.textContent = `Pièces disponibles : ${availableCoins}`;
+
+        }
+
+        function loadCoins() {
+            availableCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
+            updateAvailableCoins();
+        }
+
+        // Sauvegarde de la récompense dans la collection
+function saveRewardToCollection(reward) {
+    const currentCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+    currentCollection.push(reward);
+    localStorage.setItem('rewardsCollection', JSON.stringify(currentCollection));
+}
+
+        function canSummon(cost) {
+            return availableCoins >= cost;
+        }
+
+        function singleSummon() {
+    const cost = 50; // Coût de 1 pièce
+    if (!canSummon(cost)) {
+        alert("Vous n'avez pas assez de pièces pour une invocation !");
+        return;
+    }
+
+    availableCoins -= cost;
+    localStorage.setItem('totalCoins', availableCoins);
+    updateAvailableCoins();
+    
+    clearRewards();
+    rewardsContainer.style.gridTemplateColumns = '1fr'; 
+    rewardsContainer.style.gridTemplateRows = '1fr'; 
+    
+    const reward = getRandomReward();
+    const rewardElement = document.createElement('div');
+    rewardElement.classList.add('reward', 'single-reward', reward.rarity.toLowerCase());
+    rewardElement.onclick = () => showModal(reward.image); // Ajout de l'événement onclick
+
+    const rewardImage = document.createElement('img');
+    rewardImage.src = reward.image;
+    rewardImage.alt = reward.name;
+    rewardImage.style.width = '100px';
+    rewardImage.style.height = '100px';
+    rewardElement.appendChild(rewardImage);
+
+    const rewardTextBottom = document.createElement('div');
+    rewardTextBottom.classList.add('reward-text-bottom');
+    rewardTextBottom.textContent = `${reward.name} (${reward.rarity})`;
+    rewardElement.appendChild(rewardTextBottom);
+
+    rewardsContainer.appendChild(rewardElement);
+    saveRewardToCollection(reward);
+}
+
+function multiSummon() {
+    const cost = 500; // Coût pour invocation x10
+    if (!canSummon(cost)) {
+        alert("Vous n'avez pas assez de pièces pour une invocation x10 !");
+        return;
+    }
+
+    availableCoins -= cost;
+    localStorage.setItem('totalCoins', availableCoins);
+    updateAvailableCoins();
+    
+    clearRewards();
+    rewardsContainer.style.gridTemplateColumns = 'repeat(5, 1fr)';
+    rewardsContainer.style.gridTemplateRows = 'repeat(2, 1fr)';
+    
+    for (let i = 0; i < 10; i++) {
+        const reward = getRandomReward();
+        const rewardElement = document.createElement('div');
+        rewardElement.classList.add('reward', reward.rarity.toLowerCase());
+        rewardElement.onclick = () => showModal(reward.image); // Ajout de l'événement onclick
+
+        const rewardImage = document.createElement('img');
+        rewardImage.src = reward.image;
+        rewardImage.alt = reward.name;
+        rewardImage.style.width = '50px';
+        rewardImage.style.height = '50px';
+        rewardElement.appendChild(rewardImage);
+
+        const rewardTextBottom = document.createElement('div');
+        rewardTextBottom.classList.add('reward-text-bottom');
+        rewardTextBottom.textContent = `${reward.name} (${reward.rarity})`;
+        rewardElement.appendChild(rewardTextBottom);
+
+        rewardsContainer.appendChild(rewardElement);
+        saveRewardToCollection(reward);
+    }
+    invocationCount += 10;
+    updateProfileDisplay();
+}
+
+
+function showModal(imageSrc) {
+    const modal = document.getElementById('modal');
+    const modalImage = document.getElementById('modal-image');
+    modalImage.src = imageSrc;
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    const modal = document.getElementById('modal');
+    modal.style.display = 'none';
+}
+
+
+        function toggleInfo() {
+            const infoPopup = document.getElementById('info-popup');
+            infoPopup.style.display = infoPopup.style.display === 'none' || !infoPopup.style.display ? 'block' : 'none';
+            infoPopup.style.opacity = infoPopup.style.display === 'none' ? '0' : '1';
+        }
+
+    // Fonction pour afficher ou cacher la liste des cartes disponibles
+function toggleAvailableCards() {
+    const cardsPopup = document.getElementById('available-cards-popup');
+    const cardsContainer = document.getElementById('available-cards-container');
+
+    if (cardsPopup.style.display === 'none' || !cardsPopup.style.display) {
+        // Afficher la popup
+        cardsPopup.style.display = 'block';
+        cardsContainer.innerHTML = ''; // Vider le contenu précédent
+
+        // Ajouter les cartes disponibles
+        availableCards.forEach(card => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('reward', card.rarity.toLowerCase());
+            
+            // Créer l'image de la carte
+            const cardImage = document.createElement('img');
+            cardImage.src = card.image;
+            cardImage.alt = card.name;
+            cardImage.style.width = '250px';  // Augmenter la taille de l'image
+            cardImage.style.height = '250px'; // Augmenter la taille de l'image
+            cardElement.appendChild(cardImage);
+
+            // Créer le texte de la carte
+            const cardText = document.createElement('div');
+            cardText.classList.add('reward-text-bottom');
+            cardText.textContent = `${card.name} (${card.rarity})`;  // Correction ici
+            cardElement.appendChild(cardText);
+
+            // Ajouter l'élément carte au conteneur
+            cardsContainer.appendChild(cardElement);
+        });
+    } else {
+        // Cacher la popup
+        cardsPopup.style.display = 'none';
+    }
+}
+
+
+
+        // Chargement des pièces disponibles au démarrage
+        document.addEventListener('DOMContentLoaded', loadCoins);
+
+        function updateProfileDisplay() {
+            // Mettez à jour l'affichage du profil pour les invocations et roulettes
+            localStorage.setItem('invocationCount', invocationCount);
+            localStorage.setItem('rouletteCount', rouletteCount);
+            document.getElementById('invocationCountDisplay').textContent = `Invocations : ${invocationCount}`;
+            document.getElementById('rouletteCountDisplay').textContent = `Roulettes : ${rouletteCount}`;
+
+        }
+    </script>
+
+</body>
+</html>
