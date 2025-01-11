@@ -29,16 +29,7 @@
             backdrop-filter: blur(10px);
         }
 
-        .login-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px 50px;
-            box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            margin-bottom: 30px;
-        }
-
-        h1, h2 {
+        h1 {
             color: #ffffff;
             margin-bottom: 30px;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
@@ -72,6 +63,9 @@
         }
 
         #discordButton {
+            position: fixed; /* Position fixe pour que le bouton reste toujours visible */
+            top: 20px;
+            left: 20px; /* Alignement en haut à gauche */
             background: #5865F2;
             color: white;
             border: none;
@@ -100,6 +94,11 @@
 </head>
 <body>
 
+    <a id="discordButton" href="https://discord.gg/c3b2MC5se4" target="_blank">
+        <img src="https://c.clc2l.com/t/d/i/discord-4OXyS2.png" alt="Discord Icon">
+        Rejoindre le serveur Discord
+    </a>
+
     <div class="content-box" id="contentBox">
         <h1>Soukoumi</h1>
 
@@ -108,11 +107,6 @@
             <button onclick="window.location.href='invocation.html'">Invocation</button>
             <button onclick="window.location.href='collection.html'">Collection</button>
         </div>
-
-        <a id="discordButton" href="https://discord.gg/c3b2MC5se4" target="_blank">
-            <img src="https://c.clc2l.com/t/d/i/discord-4OXyS2.png" alt="Discord Icon">
-            Rejoindre le serveur Discord
-        </a>
     </div>
 
 </body>
