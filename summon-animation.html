@@ -250,22 +250,139 @@
             left: 0;
             width: 100%;
             padding: 15px;
-            background: rgba(0, 0, 0, 0.8);
+            background: linear-gradient(to top, 
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.8) 70%,
+                rgba(0, 0, 0, 0) 100%);
             color: white;
             transform: translateY(100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .card.active .card-details {
+            transform: translateY(0);
+            animation: glowPulse 2s infinite;
+        }
+
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+            50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+            100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
         }
 
         .card-details h3 {
             margin: 0;
-            font-size: 1.2em;
+            font-size: 1.4em;
+            font-weight: bold;
             color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .card-details p {
             margin: 5px 0 0;
-            font-size: 0.9em;
+            font-size: 1em;
             color: #ccc;
+            font-style: italic;
+        }
+
+        .card.commune .card-details {
+            background: linear-gradient(to top, 
+                rgba(40, 167, 69, 0.95) 0%,
+                rgba(40, 167, 69, 0.8) 70%,
+                rgba(40, 167, 69, 0) 100%);
+        }
+
+        .card.rare .card-details {
+            background: linear-gradient(to top, 
+                rgba(0, 123, 255, 0.95) 0%,
+                rgba(0, 123, 255, 0.8) 70%,
+                rgba(0, 123, 255, 0) 100%);
+        }
+
+        .card.epique .card-details {
+            background: linear-gradient(to top, 
+                rgba(111, 66, 193, 0.95) 0%,
+                rgba(111, 66, 193, 0.8) 70%,
+                rgba(111, 66, 193, 0) 100%);
+        }
+
+        .card.légendaire .card-details {
+            background: linear-gradient(to top, 
+                rgba(255, 193, 7, 0.95) 0%,
+                rgba(255, 193, 7, 0.8) 70%,
+                rgba(255, 193, 7, 0) 100%);
+        }
+
+        .card.spécial .card-details {
+            background: linear-gradient(to top, 
+                rgba(255, 0, 0, 0.95) 0%,
+                rgba(255, 0, 0, 0.8) 70%,
+                rgba(255, 0, 0, 0) 100%);
+        }
+
+        .card.arc-en-ciel .card-details {
+            background: linear-gradient(to top, 
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.8) 70%,
+                rgba(0, 0, 0, 0) 100%);
+            animation: rainbowText 3s linear infinite;
+        }
+
+        @keyframes rainbowText {
+            0% { color: #ff0000; }
+            17% { color: #ff8800; }
+            33% { color: #ffff00; }
+            50% { color: #00ff00; }
+            67% { color: #0000ff; }
+            83% { color: #ff00ff; }
+            100% { color: #ff0000; }
+        }
+
+        .card.revealed {
+            transform: translateY(-100vh) rotateY(180deg) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1.1) translateZ(20px);
+            z-index: 10;
+            animation: cardAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes cardAppear {
+            0% {
+                transform: translateY(50vh) scale(0.8) translateZ(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1.1) translateZ(20px);
+                opacity: 1;
+            }
+        }
+
+        .card.in-grid {
+            position: relative;
+            transform: none !important;
+            opacity: 1;
+            scale: 0.9;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: gridAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes gridAppear {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .rarity-effect {
@@ -461,6 +578,30 @@
             0%, 100% { transform: translateX(-50%) translateY(0); }
             50% { transform: translateX(-50%) translateY(-10px); }
         }
+
+        .reveal-particle {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: white;
+            border-radius: 2px;
+            pointer-events: none;
+            animation: particleFly 1s ease-out forwards;
+        }
+
+        @keyframes particleFly {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(
+                    calc(cos(var(--angle)) * 100px),
+                    calc(sin(var(--angle)) * 100px)
+                ) rotate(360deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -492,12 +633,48 @@
     <script>
         const summonType = localStorage.getItem('currentSummonType');
         const rewardsPool = [
-            { name: "Carte Commune", rarity: "Common", weight: 60, class: "commune" },
-            { name: "Carte Rare", rarity: "Rare", weight: 35, class: "rare" },
-            { name: "Carte Épique", rarity: "Epic", weight: 12, class: "epique" },
-            { name: "Carte Légendaire", rarity: "Legendary", weight: 2, class: "légendaire" },
-            { name: "Carte Spéciale", rarity: "Special", weight: 0.2, class: "spécial" },
-            { name: "Carte Arc-en-ciel", rarity: "Rainbow", weight: 0.05, class: "arc-en-ciel" }
+            { 
+                name: "Soukoumi", 
+                rarity: "Common", 
+                weight: 60, 
+                class: "commune",
+                image: "/public/images/cards/soukoumi.png"
+            },
+            { 
+                name: "Soukoumi Rare", 
+                rarity: "Rare", 
+                weight: 35, 
+                class: "rare",
+                image: "/public/images/cards/soukoumi-rare.png"
+            },
+            { 
+                name: "Soukoumi Épique", 
+                rarity: "Epic", 
+                weight: 12, 
+                class: "epique",
+                image: "/public/images/cards/soukoumi-epique.png"
+            },
+            { 
+                name: "Soukoumi Légendaire", 
+                rarity: "Legendary", 
+                weight: 2, 
+                class: "légendaire",
+                image: "/public/images/cards/soukoumi-legendaire.png"
+            },
+            { 
+                name: "Soukoumi Spécial", 
+                rarity: "Special", 
+                weight: 0.2, 
+                class: "spécial",
+                image: "/public/images/cards/soukoumi-special.png"
+            },
+            { 
+                name: "Soukoumi Arc-en-ciel", 
+                rarity: "Rainbow", 
+                weight: 0.05, 
+                class: "arc-en-ciel",
+                image: "/public/images/cards/soukoumi-rainbow.png"
+            }
         ];
 
         let currentCardIndex = 0;
@@ -570,6 +747,9 @@
 
             // Révéler la carte actuelle avec animation de disparition vers le haut
             currentCard.classList.add('revealed');
+            
+            // Ajouter un effet de particules pour la transition
+            createRevealParticles(currentCard);
 
             // Préparer la prochaine carte avec un délai
             if (nextCard) {
@@ -588,6 +768,23 @@
             }
 
             currentCardIndex++;
+        }
+
+        function createRevealParticles(card) {
+            const rect = card.getBoundingClientRect();
+            const particles = document.querySelector('.particles');
+            
+            for(let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'reveal-particle';
+                particle.style.left = rect.left + rect.width/2 + 'px';
+                particle.style.top = rect.top + rect.height/2 + 'px';
+                const angle = (i / 20) * 360;
+                particle.style.setProperty('--angle', angle + 'deg');
+                particles.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1000);
+            }
         }
 
         function showFinalGrid() {
