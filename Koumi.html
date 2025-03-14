@@ -115,6 +115,18 @@
                 position: relative;
             }
 
+            .light {
+                position: absolute;
+                top: -5px;
+                left: -5px;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: #ffd700;
+                box-shadow: 0 0 10px #ffd700;
+                display: none;
+            }
+
             .center-slot {
                 width: 120px;
                 height: 120px;
@@ -196,15 +208,15 @@
                     </ul>
                 </div>
                 <div class="segment-row">
-                    <div class="segment" data-prize="50">50 Pièces</div>
-                    <div class="segment" data-prize="100">100 Pièces</div>
-                    <div class="segment" data-prize="200">200 Pièces</div>
+                    <div class="segment" data-prize="50">50 Pièces<div class="light"></div></div>
+                    <div class="segment" data-prize="100">100 Pièces<div class="light"></div></div>
+                    <div class="segment" data-prize="200">200 Pièces<div class="light"></div></div>
                 </div>
                 <div class="center-slot" id="center-slot">?</div>
                 <div class="segment-row">
-                    <div class="segment" data-prize="300">300 Pièces</div>
-                    <div class="segment" data-prize="500">500 Pièces</div>
-                    <div class="segment" data-prize="1000">1000 Pièces</div>
+                    <div class="segment" data-prize="300">300 Pièces<div class="light"></div></div>
+                    <div class="segment" data-prize="500">500 Pièces<div class="light"></div></div>
+                    <div class="segment" data-prize="1000">1000 Pièces<div class="light"></div></div>
                 </div>
             </div>
         </div>
