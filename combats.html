@@ -207,7 +207,12 @@
             right: 20px;
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, #ffd700, #ffa000);
+            background: conic-gradient(
+                #ffd700 0%,
+                #ffd700 var(--energy-percent, 0%),
+                #444 var(--energy-percent, 0%),
+                #444 100%
+            );
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -258,15 +263,15 @@
 
         @keyframes drawCardAnimation {
             0% {
-                transform: translate(calc(100vw - 150px), -50vh) rotate(0deg);
+                transform: translate(calc(100vw - 150px), calc(50vh - 400px)) rotate(0deg);
                 opacity: 0;
             }
             50% {
-                transform: translate(50vw, 0) rotate(180deg);
+                transform: translate(50vw, calc(100vh - 200px)) rotate(-180deg) scale(1.2);
                 opacity: 1;
             }
             100% {
-                transform: translate(0, 0) rotate(360deg);
+                transform: translate(0, 0) rotate(-360deg);
                 opacity: 1;
             }
         }
@@ -284,14 +289,50 @@
         .active-turn {
             filter: brightness(1.1);
         }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Recherche d'un adversaire...</p>
+        <p id="loadingMessage">Connexion au serveur...</p>
+    </div>
+
     <div id="playerInfo">
         Joueur: <span id="playerName">Connexion...</span>
     </div>
 
-    <div class="energy-counter" id="energyCounter">5</div>
+    <div class="energy-counter" id="energyCounter">0%</div>
     <button id="endTurnBtn" onclick="endTurn()">Fin du Tour</button>
 
     <div class="game-board" id="gameBoard">
@@ -333,40 +374,48 @@
 
     <script>
         let socket;
-        let searchInterval;
-        let searchTime = 0;
-        let energy = 5;
-        let isMyTurn = true;
+        let energy = 0;
+        let isMyTurn = false;
         let playerName = "Joueur" + Math.floor(Math.random() * 1000);
+        let isBotGame = false;
+        let initialDraw = true;
 
         const cards = [
-            { name: "Potion de Vie", type: "Objet", description: "Restaure 20 points de vie" },
-            { name: "Épée en Fer", type: "Équipement", description: "Augmente l'attaque de 10" },
-            { name: "Bouclier Magique", type: "Défense", description: "Réduit les dégâts de 5" },
-            { name: "Sort de Feu", type: "Attaque", description: "15 points de dégâts" },
-            { name: "Anneau d'Invisibilité", type: "Spécial", description: "Évite une attaque" }
+            { name: "Potion de Vie", type: "Objet", description: "Restaure 20 points de vie", zone: "objets" },
+            { name: "Épée en Fer", type: "Équipement", description: "Augmente l'attaque de 10", zone: "actifs" },
+            { name: "Bouclier Magique", type: "Équipement", description: "Réduit les dégâts de 5", zone: "changement" },
+            { name: "Sort de Feu", type: "Attaque", description: "15 points de dégâts", zone: "actifs" },
+            { name: "Anneau d'Invisibilité", type: "Équipement", description: "Évite une attaque", zone: "changement" }
         ];
 
-        // Initialisation du drag & drop
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeDragAndDrop();
-            updateTurnState();
-        });
+        function updateEnergyCounter(value) {
+            const counter = document.getElementById('energyCounter');
+            counter.style.setProperty('--energy-percent', `${value}%`);
+            counter.textContent = `${value}%`;
+            
+            if (value >= 100) {
+                counter.style.animation = 'pulse 1s ease-in-out infinite';
+            } else {
+                counter.style.animation = 'none';
+            }
+        }
 
         function initializeDragAndDrop() {
             const drawnCardsZone = document.getElementById('drawnCardsZone');
             const cardContainers = document.querySelectorAll('.cards-container');
 
-            // Événements pour la zone de cartes piochées
             drawnCardsZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
             });
 
-            // Configuration des zones de dépôt
             cardContainers.forEach(container => {
                 container.addEventListener('dragover', (e) => {
                     e.preventDefault();
-                    container.classList.add('droppable');
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    const card = document.getElementById(cardId);
+                    if (card && isValidDropZone(card, container)) {
+                        container.classList.add('droppable');
+                    }
                 });
 
                 container.addEventListener('dragleave', () => {
@@ -378,7 +427,7 @@
                     container.classList.remove('droppable');
                     const cardId = e.dataTransfer.getData('text/plain');
                     const card = document.getElementById(cardId);
-                    if (card && container.children.length < 2) {
+                    if (card && isValidDropZone(card, container) && container.children.length < 2) {
                         container.appendChild(card);
                         card.classList.remove('dragging');
                     }
@@ -386,11 +435,29 @@
             });
         }
 
-        function makeCardDraggable(card) {
+        function isValidDropZone(card, container) {
+            const cardType = card.getAttribute('data-type');
+            const zoneType = container.getAttribute('data-zone');
+            
+            switch(cardType) {
+                case 'Objet':
+                    return zoneType === 'objets';
+                case 'Équipement':
+                    return zoneType === 'actifs' || zoneType === 'changement';
+                case 'Attaque':
+                    return zoneType === 'actifs';
+                default:
+                    return false;
+            }
+        }
+
+        function makeCardDraggable(card, cardData) {
             card.setAttribute('draggable', true);
+            card.setAttribute('data-type', cardData.type);
             card.id = 'card-' + Date.now();
 
             card.addEventListener('dragstart', (e) => {
+                if (!isMyTurn) return;
                 card.classList.add('dragging');
                 e.dataTransfer.setData('text/plain', card.id);
             });
@@ -400,60 +467,77 @@
             });
         }
 
-        function drawCard() {
-            if (energy <= 0 || !isMyTurn) return;
+        function drawInitialHand() {
+            for (let i = 0; i < 5; i++) {
+                const randomIndex = Math.floor(Math.random() * cards.length);
+                const card = cards[randomIndex];
+                addCardToHand(card);
+            }
+        }
 
-            const randomIndex = Math.floor(Math.random() * cards.length);
-            const card = cards[randomIndex];
-            
+        function addCardToHand(card) {
             const cardElement = document.createElement("div");
-            cardElement.classList.add("card", "card-drawn");
+            cardElement.classList.add("card");
+            if (!initialDraw) {
+                cardElement.classList.add("card-drawn");
+            }
             cardElement.innerHTML = `
                 <strong>${card.name}</strong>
                 <em>${card.type}</em>
                 <p>${card.description}</p>
             `;
             
-            makeCardDraggable(cardElement);
+            makeCardDraggable(cardElement, card);
             document.getElementById("drawnCardsZone").appendChild(cardElement);
+        }
 
-            energy = Math.max(0, energy - 1);
-            document.getElementById("energyCounter").textContent = energy;
+        function startGame(withBot = false) {
+            isBotGame = withBot;
+            document.getElementById('loadingScreen').style.display = 'none';
+            drawInitialHand();
+            initialDraw = false;
             
-            if (energy === 0) {
-                document.getElementById("deck").style.opacity = "0.5";
-                document.getElementById("deck").style.cursor = "not-allowed";
+            if (withBot) {
+                startBotGame();
+            } else {
+                // Attendre le signal du serveur pour commencer
+                isMyTurn = false;
+                updateTurnState();
             }
+        }
 
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'cardDrawn',
-                    card: card.name,
-                    player: playerName
-                }));
-            }
+        function startBotGame() {
+            isMyTurn = true;
+            updateTurnState();
+            energy = 0;
+            updateEnergyCounter(0);
         }
 
         function endTurn() {
             isMyTurn = false;
-            energy = 5;
-            const energyCounter = document.getElementById('energyCounter');
-            
-            // Animation de recharge
-            energyCounter.classList.add('charging');
-            setTimeout(() => {
-                energyCounter.classList.remove('charging');
-                energyCounter.textContent = energy;
-            }, 1000);
-
-            // Changement visuel du plateau
+            energy = Math.min(energy + 25, 100);
+            updateEnergyCounter(energy);
             updateTurnState();
 
-            // Simuler le tour de l'adversaire (à remplacer par la vraie logique multijoueur)
+            if (isBotGame) {
+                // Simuler le tour du bot
+                setTimeout(() => {
+                    playBotTurn();
+                }, 2000);
+            }
+        }
+
+        function playBotTurn() {
+            // Simuler les actions du bot
             setTimeout(() => {
                 isMyTurn = true;
                 updateTurnState();
-            }, 5000);
+                // Piocher une carte au début du tour
+                if (!initialDraw) {
+                    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                    addCardToHand(randomCard);
+                }
+            }, 3000);
         }
 
         function updateTurnState() {
@@ -476,40 +560,36 @@
             }
         }
 
-        // Initialisation WebSocket
-        function initializeWebSocket() {
-            socket = new WebSocket('ws://' + window.location.hostname + ':8080');
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDragAndDrop();
             
-            socket.onopen = () => {
-                document.getElementById('playerName').textContent = playerName;
-            };
+            // Tenter de se connecter au serveur
+            try {
+                socket = new WebSocket('ws://' + window.location.hostname + ':8080');
+                
+                socket.onopen = () => {
+                    document.getElementById('loadingMessage').textContent = "Recherche d'un adversaire...";
+                };
 
-            socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                handleGameEvent(data);
-            };
+                socket.onclose = () => {
+                    // Si pas de connexion, démarrer une partie contre le bot
+                    document.getElementById('loadingMessage').textContent = "Connexion impossible, démarrage d'une partie contre l'IA...";
+                    setTimeout(() => startGame(true), 2000);
+                };
 
-            socket.onclose = () => {
-                setTimeout(initializeWebSocket, 5000);
-            };
-        }
-
-        function handleGameEvent(data) {
-            switch(data.type) {
-                case 'matched':
-                    clearInterval(searchInterval);
-                    break;
-                case 'cardPlayed':
-                    // Gérer une carte jouée par l'adversaire
-                    break;
-                case 'turnChange':
-                    isMyTurn = data.isYourTurn;
-                    updateTurnState();
-                    break;
+                // Attendre 5 secondes avant de lancer le mode bot si pas de réponse
+                setTimeout(() => {
+                    if (socket.readyState !== WebSocket.OPEN) {
+                        socket.close();
+                    }
+                }, 5000);
+            } catch (e) {
+                // En cas d'erreur, démarrer une partie contre le bot
+                document.getElementById('loadingMessage').textContent = "Connexion impossible, démarrage d'une partie contre l'IA...";
+                setTimeout(() => startGame(true), 2000);
             }
-        }
-
-        window.onload = initializeWebSocket;
+        });
     </script>
 </body>
 </html>
