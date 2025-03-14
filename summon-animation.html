@@ -46,8 +46,8 @@
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
-            transition: transform 1.5s ease-in-out;
-            cursor: pointer;
+            transition: none;
+            cursor: grab;
         }
 
         .booster.opening {
@@ -228,6 +228,40 @@
             border-radius: 50%;
             pointer-events: none;
         }
+
+        .tear-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            clip-path: polygon(0 0, 0 0, 0 0);
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+        }
+
+        .tear-guide {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tear-guide.visible {
+            opacity: 1;
+            animation: float 2s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
     </style>
 </head>
 <body>
@@ -257,6 +291,9 @@
 
         let isOpening = false;
         let cardsRevealed = 0;
+        let isDragging = false;
+        let startX, startY;
+        let tearProgress = 0;
 
         function getRandomReward() {
             const weightedArray = [];
@@ -282,16 +319,73 @@
             }
         }
 
+        function initializeTearEffect() {
+            const booster = document.querySelector('.booster');
+            const tearOverlay = document.createElement('div');
+            tearOverlay.className = 'tear-overlay';
+            booster.appendChild(tearOverlay);
+
+            const tearGuide = document.createElement('div');
+            tearGuide.className = 'tear-guide visible';
+            tearGuide.textContent = 'Glissez pour ouvrir';
+            document.querySelector('.scene').appendChild(tearGuide);
+
+            booster.addEventListener('mousedown', startTear);
+            document.addEventListener('mousemove', updateTear);
+            document.addEventListener('mouseup', endTear);
+        }
+
+        function startTear(e) {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            document.querySelector('.booster').style.cursor = 'grabbing';
+        }
+
+        function updateTear(e) {
+            if (!isDragging) return;
+
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            tearProgress = Math.min(100, Math.max(0, (deltaX / 300) * 100));
+
+            const tearOverlay = document.querySelector('.tear-overlay');
+            tearOverlay.style.clipPath = `polygon(
+                0 0,
+                ${tearProgress}% 0,
+                ${tearProgress - 10}% 100%,
+                0 100%
+            )`;
+
+            if (tearProgress >= 100) {
+                endTear();
+                startAnimation();
+            }
+        }
+
+        function endTear() {
+            isDragging = false;
+            document.querySelector('.booster').style.cursor = 'grab';
+            
+            if (tearProgress < 100) {
+                // Reset tear if not completed
+                const tearOverlay = document.querySelector('.tear-overlay');
+                tearOverlay.style.clipPath = 'polygon(0 0, 0 0, 0 0)';
+                tearProgress = 0;
+            }
+        }
+
         function startAnimation() {
             if(isOpening) return;
             isOpening = true;
 
             const booster = document.querySelector('.booster');
-            const clickGuide = document.querySelector('.click-guide');
+            const tearGuide = document.querySelector('.tear-guide');
             const cardsContainer = document.querySelector('.cards-container');
             
-            clickGuide.style.opacity = '0';
-            booster.classList.add('opening');
+            tearGuide.style.opacity = '0';
+            booster.style.transform = 'translateX(-100%) rotate(-30deg)';
+            booster.style.transition = 'transform 1s ease-out';
 
             setTimeout(() => {
                 booster.style.opacity = '0';
@@ -312,7 +406,7 @@
                 setTimeout(() => {
                     document.querySelector('.finish-button').classList.add('visible');
                 }, numCards * 200 + 500);
-            }, 1500);
+            }, 1000);
         }
 
         function createCard(reward) {
@@ -343,10 +437,7 @@
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
-            const clickGuide = document.querySelector('.click-guide');
-            clickGuide.classList.add('visible');
-            
-            document.querySelector('.booster').addEventListener('click', startAnimation);
+            initializeTearEffect();
         });
     </script>
 </body>
