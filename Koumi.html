@@ -3,38 +3,61 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Roulette des Pièces</title>
+        <title>Roulette des Koumi</title>
         <style>
             body {
-                font-family: Arial, sans-serif;
+                font-family: 'Poppins', sans-serif;
                 text-align: center;
                 margin: 0;
                 padding: 0;
-                background-color: #ffebcd; /* Fond beige clair */
+                background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+                background-size: 400% 400%;
+                animation: gradientBG 15s ease infinite;
                 height: 100vh;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 flex-direction: column;
+                position: relative;
+                color: white;
+                overflow: hidden;
+            }
+
+            @keyframes gradientBG {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
             }
 
             h1 {
-                color: #333;
-                margin-bottom: 10px;
+                color: white;
+                margin-bottom: 30px;
+                font-size: 48px;
+                font-weight: 700;
+                text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+                letter-spacing: 2px;
+                animation: titleFloat 3s ease-in-out infinite;
+            }
+
+            @keyframes titleFloat {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
             }
 
             .coins-counter {
                 position: absolute;
-                top: 10px;
+                top: 20px;
                 left: 50%;
                 transform: translateX(-50%);
                 font-size: 24px;
                 font-weight: bold;
-                background-color: #fff;
-                padding: 10px;
-                border: 2px solid #333;
-                border-radius: 5px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                padding: 15px 30px;
+                border-radius: 30px;
+                color: white;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
 
             .roulette-container-wrapper {
@@ -42,11 +65,17 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                padding: 30px;
-                border: 3px solid #333;
-                border-radius: 15px;
-                background: linear-gradient(145deg, #e0e0e0, #ffffff);
-                box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.5);
+                padding: 40px;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                transition: transform 0.3s ease;
+            }
+
+            .roulette-container-wrapper:hover {
+                transform: translateY(-5px);
             }
 
             .roulette-container {
@@ -57,21 +86,21 @@
                 flex-direction: column;
                 justify-content: space-between;
                 align-items: center;
-                border: 2px solid #333;
-                border-radius: 10px;
-                background-color: #fff;
-                padding: 10px;
+                border-radius: 15px;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }
 
             .info-button {
                 position: absolute;
-                top: 5px;
-                right: 5px;
-                width: 25px;
-                height: 25px;
+                top: 10px;
+                right: 10px;
+                width: 30px;
+                height: 30px;
                 border: none;
                 border-radius: 50%;
-                background-color: #3498db;
+                background: linear-gradient(45deg, #5865F2, #7289da);
                 color: white;
                 font-size: 18px;
                 font-weight: bold;
@@ -79,40 +108,55 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                transition: transform 0.3s ease;
+            }
+
+            .info-button:hover {
+                transform: scale(1.1);
             }
 
             .info-popup {
                 position: absolute;
-                top: 40px;
+                top: 50px;
                 right: 10px;
-                width: 200px;
-                padding: 10px;
-                border: 2px solid #333;
-                background-color: #fff;
-                border-radius: 5px;
+                width: 220px;
+                padding: 15px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
                 font-size: 14px;
                 text-align: left;
                 display: none;
                 z-index: 10;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
             }
 
             .segment-row {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                gap: 15px;
             }
 
             .segment {
-                width: 90px;
-                height: 40px;
+                width: 100px;
+                height: 45px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                border: 2px solid #333;
+                border-radius: 10px;
                 font-size: 16px;
                 font-weight: bold;
-                background-color: #f0f0f0;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
                 position: relative;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: transform 0.3s ease;
+            }
+
+            .segment:hover {
+                transform: scale(1.05);
             }
 
             .light {
@@ -121,72 +165,93 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                border-radius: 0;
-                background-color: rgba(255, 215, 0, 0.3);
-                box-shadow: 0 0 15px #ffd700;
+                border-radius: 10px;
+                background: linear-gradient(45deg, rgba(255, 215, 0, 0.3), rgba(255, 255, 255, 0.5));
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
                 display: none;
                 pointer-events: none;
             }
 
             .center-slot {
-                width: 120px;
-                height: 120px;
-                border: 2px solid #333;
-                border-radius: 10px;
-                background-color: #ddd;
+                width: 130px;
+                height: 130px;
+                border-radius: 15px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(5px);
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                font-size: 22px;
+                font-size: 28px;
                 font-weight: bold;
-                margin: 10px 0;
+                margin: 15px 0;
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             }
 
             button {
-                margin-top: 10px;
-                padding: 10px 20px;
+                padding: 12px 25px;
                 font-size: 16px;
                 border: none;
-                border-radius: 5px;
-                background-color: #3498db;
+                border-radius: 25px;
+                background: linear-gradient(45deg, #5865F2, #7289da);
                 color: white;
                 cursor: pointer;
-                transition: background-color 0.3s;
+                transition: all 0.3s ease;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
             }
 
             button:hover {
-                background-color: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
             }
 
             .back-button {
                 position: absolute;
-                top: 10px;
-                left: 10px;
-                padding: 10px 20px;
+                top: 20px;
+                left: 20px;
+                padding: 12px 25px;
                 font-size: 16px;
-                background-color: #3498db;
+                background: linear-gradient(45deg, #5865F2, #7289da);
                 color: white;
                 border: none;
-                border-radius: 5px;
+                border-radius: 25px;
                 cursor: pointer;
                 text-decoration: none;
-                transition: background-color 0.3s;
+                transition: all 0.3s ease;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
             }
 
             .back-button:hover {
-                background-color: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
+            }
+
+            .coins-control {
+                margin-top: 20px;
+                display: flex;
+                gap: 10px;
+                align-items: center;
             }
 
             #increment-selector {
-        margin-left: 10px;
-        padding: 5px;
-        font-size: 16px;
-        border: 1px solid #333;
-        border-radius: 5px;
-        background-color: #fff;
-        cursor: pointer;
-    }
+                padding: 10px;
+                font-size: 16px;
+                border: none;
+                border-radius: 25px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(5px);
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
 
+            #increment-selector option {
+                background: #1a2a6c;
+                color: white;
+            }
         </style>
     </head>
     <body>
