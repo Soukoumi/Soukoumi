@@ -44,12 +44,27 @@
         }
 
         .hidden-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    margin-top: 10px; /* Réduit la distance */
-}
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            margin-top: 10px;
+            position: absolute;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
 
+        .hidden-buttons.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .hidden-buttons.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(50px);
+        }
 
         .hidden-buttons button {
             padding: 10px 20px;
@@ -70,19 +85,19 @@
         }
 
         .diamond {
-    width: 50px;
-    height: 50px;
-    background: white;
-    position: absolute;
-    bottom: 100px; /* Position plus proche des autres boutons */
-    transform: rotate(45deg);
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
-    transition: transform 0.5s ease;
-}
+            width: 50px;
+            height: 50px;
+            background: white;
+            position: absolute;
+            bottom: 100px;
+            transform: rotate(45deg);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+        }
 
         .rotated {
             transform: rotate(405deg);
@@ -93,10 +108,11 @@
     <h1>Soukoumi</h1>
     <a id="discordButton" href="https://discord.gg/c3b2MC5se4" target="_blank">Discord</a>
     
-    <div id="hiddenButtons" class="hidden-buttons" style="display: none;">
+    <div id="hiddenButtons" class="hidden-buttons hidden">
         <button onclick="window.location.href='Koumi.html'">Koumi</button>
         <button onclick="window.location.href='invocation.html'">Invocation</button>
         <button onclick="window.location.href='collection.html'">Collection</button>
+        <button onclick="window.location.href='combats.html'">Combats</button>
     </div>
 
     <div class="diamond" id="diamondButton" onclick="toggleButtons()"></div>
@@ -105,12 +121,20 @@
         function toggleButtons() {
             const buttons = document.getElementById('hiddenButtons');
             const diamond = document.getElementById('diamondButton');
-            if (buttons.style.display === 'none') {
+            if (buttons.classList.contains('hidden')) {
                 buttons.style.display = 'flex';
+                setTimeout(() => {
+                    buttons.classList.remove('hidden');
+                    buttons.classList.add('visible');
+                }, 10);
                 diamond.classList.add('rotated');
             } else {
-                buttons.style.display = 'none';
+                buttons.classList.remove('visible');
+                buttons.classList.add('hidden');
                 diamond.classList.remove('rotated');
+                setTimeout(() => {
+                    buttons.style.display = 'none';
+                }, 500);
             }
         }
     </script>
