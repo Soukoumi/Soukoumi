@@ -9,70 +9,103 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(to bottom right, #34495e, #2c3e50);
+            background: linear-gradient(45deg, #1a1c2e, #2c3e50);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            perspective: 1000px;
         }
 
         .game-board {
-            width: 100%;
+            width: 95%;
             max-width: 1200px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
             position: relative;
-            margin-bottom: 150px; /* Espace pour la zone des cartes piochées */
+            margin-bottom: 180px;
+            transform-style: preserve-3d;
+            transform: rotateX(15deg);
+            transition: transform 0.5s ease;
+        }
+
+        .game-board:hover {
+            transform: rotateX(0deg);
         }
 
         .row {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            border: 2px solid #0277bd;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 2px solid rgba(2, 119, 189, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .row.active {
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         }
 
         .opponent-row {
-            transform: scale(0.8);
-            margin-top: -20px;
+            transform: scale(0.9);
+            margin-bottom: 40px;
         }
 
         .label {
             font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 16px;
+            margin-bottom: 15px;
+            font-size: 18px;
             color: #fff;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
         }
 
         .cards-container {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
+            min-height: 150px;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .cards-container.droppable {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px dashed rgba(255, 215, 0, 0.3);
         }
 
         .card {
-            width: 90px;
-            height: 130px;
+            width: 100px;
+            height: 140px;
             background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
             border: 2px solid #2196f3;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-            cursor: pointer;
+            padding: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: grab;
             position: relative;
             overflow: hidden;
+            user-select: none;
+        }
+
+        .card.dragging {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+            cursor: grabbing;
+            z-index: 1000;
         }
 
         .card::before {
@@ -81,24 +114,49 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 30%;
+            height: 35%;
             background: linear-gradient(45deg, #2196f3, #03a9f4);
-            border-radius: 8px 8px 0 0;
+            border-radius: 10px 10px 0 0;
             opacity: 0.8;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .card strong {
+            position: relative;
+            z-index: 1;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .card em {
+            position: relative;
+            z-index: 1;
+            font-style: normal;
+            color: #333;
+            font-size: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+
+        .card p {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            margin: 5px 0;
         }
 
         .deck {
-            width: 100px;
-            height: 150px;
+            width: 110px;
+            height: 160px;
             background: linear-gradient(45deg, #1565c0, #0d47a1);
             border: 3px solid gold;
-            border-radius: 10px;
+            border-radius: 15px;
             position: fixed;
-            right: 30px;
+            right: 40px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
@@ -107,8 +165,14 @@
             align-items: center;
             color: white;
             font-weight: bold;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
             z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .deck:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 0 40px rgba(21, 101, 192, 0.6);
         }
 
         .deck::after {
@@ -116,7 +180,7 @@
             position: absolute;
             inset: 5px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
+            border-radius: 12px;
         }
 
         #drawnCardsZone {
@@ -124,16 +188,72 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.8);
+            height: 170px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            gap: 15px;
+            padding: 15px;
             box-sizing: border-box;
             overflow-x: auto;
             z-index: 5;
+            backdrop-filter: blur(5px);
+        }
+
+        .energy-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ffd700, #ffa000);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            border: 3px solid white;
+            z-index: 100;
+            transition: all 0.5s ease;
+        }
+
+        .energy-counter.charging {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #endTurnBtn {
+            position: fixed;
+            right: 40px;
+            bottom: 200px;
+            padding: 15px 30px;
+            font-size: 18px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        #endTurnBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #endTurnBtn:active {
+            transform: translateY(1px);
         }
 
         @keyframes drawCardAnimation {
@@ -155,45 +275,14 @@
             animation: drawCardAnimation 1s ease-out forwards;
         }
 
-        #matchmaking {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 20px;
-            display: none;
-            z-index: 100;
+        /* Styles pour le tour actif/inactif */
+        .inactive-turn {
+            filter: grayscale(0.7) brightness(0.7);
+            pointer-events: none;
         }
 
-        #playerInfo {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 10px;
-            z-index: 100;
-        }
-
-        .energy-counter {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #ffd700, #ffa000);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-            border: 2px solid white;
-            z-index: 100;
+        .active-turn {
+            filter: brightness(1.1);
         }
     </style>
 </head>
@@ -202,13 +291,10 @@
         Joueur: <span id="playerName">Connexion...</span>
     </div>
 
-    <div id="matchmaking">
-        Recherche d'un adversaire... <span id="searchTime">0</span>s
-    </div>
-
     <div class="energy-counter" id="energyCounter">5</div>
+    <button id="endTurnBtn" onclick="endTurn()">Fin du Tour</button>
 
-    <div class="game-board">
+    <div class="game-board" id="gameBoard">
         <div class="row opponent-row">
             <span class="label">Adversaire</span>
             <div class="cards-container">
@@ -220,24 +306,24 @@
 
         <div class="row">
             <span class="label">Actifs</span>
-            <div class="cards-container">
-                <div class="card">Carte 1</div>
+            <div class="cards-container" data-zone="actifs">
+                <div class="card-slot"></div>
             </div>
         </div>
 
         <div class="row">
             <span class="label">Changement</span>
-            <div class="cards-container">
-                <div class="card">Carte 2</div>
-                <div class="card">Carte 3</div>
+            <div class="cards-container" data-zone="changement">
+                <div class="card-slot"></div>
+                <div class="card-slot"></div>
             </div>
         </div>
 
         <div class="row">
             <span class="label">Objets</span>
-            <div class="cards-container">
-                <div class="card">Carte 4</div>
-                <div class="card">Carte 5</div>
+            <div class="cards-container" data-zone="objets">
+                <div class="card-slot"></div>
+                <div class="card-slot"></div>
             </div>
         </div>
     </div>
@@ -250,6 +336,7 @@
         let searchInterval;
         let searchTime = 0;
         let energy = 5;
+        let isMyTurn = true;
         let playerName = "Joueur" + Math.floor(Math.random() * 1000);
 
         const cards = [
@@ -260,57 +347,61 @@
             { name: "Anneau d'Invisibilité", type: "Spécial", description: "Évite une attaque" }
         ];
 
-        // Initialisation de la connexion WebSocket
-        function initializeWebSocket() {
-            socket = new WebSocket('ws://' + window.location.hostname + ':8080');
-            
-            socket.onopen = () => {
-                console.log('Connecté au serveur');
-                document.getElementById('playerName').textContent = playerName;
-                startMatchmaking();
-            };
+        // Initialisation du drag & drop
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDragAndDrop();
+            updateTurnState();
+        });
 
-            socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                handleGameEvent(data);
-            };
+        function initializeDragAndDrop() {
+            const drawnCardsZone = document.getElementById('drawnCardsZone');
+            const cardContainers = document.querySelectorAll('.cards-container');
 
-            socket.onclose = () => {
-                console.log('Déconnecté du serveur');
-                setTimeout(initializeWebSocket, 5000);
-            };
+            // Événements pour la zone de cartes piochées
+            drawnCardsZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            // Configuration des zones de dépôt
+            cardContainers.forEach(container => {
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    container.classList.add('droppable');
+                });
+
+                container.addEventListener('dragleave', () => {
+                    container.classList.remove('droppable');
+                });
+
+                container.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    container.classList.remove('droppable');
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    const card = document.getElementById(cardId);
+                    if (card && container.children.length < 2) {
+                        container.appendChild(card);
+                        card.classList.remove('dragging');
+                    }
+                });
+            });
         }
 
-        function startMatchmaking() {
-            document.getElementById('matchmaking').style.display = 'block';
-            searchInterval = setInterval(() => {
-                searchTime++;
-                document.getElementById('searchTime').textContent = searchTime;
-                socket.send(JSON.stringify({
-                    type: 'search',
-                    player: playerName
-                }));
-            }, 1000);
-        }
+        function makeCardDraggable(card) {
+            card.setAttribute('draggable', true);
+            card.id = 'card-' + Date.now();
 
-        function handleGameEvent(data) {
-            switch(data.type) {
-                case 'matched':
-                    clearInterval(searchInterval);
-                    document.getElementById('matchmaking').style.display = 'none';
-                    // Initialiser la partie
-                    break;
-                case 'cardPlayed':
-                    // Gérer une carte jouée par l'adversaire
-                    break;
-                case 'gameEnd':
-                    // Gérer la fin de partie
-                    break;
-            }
+            card.addEventListener('dragstart', (e) => {
+                card.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', card.id);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
         }
 
         function drawCard() {
-            if (energy <= 0) return;
+            if (energy <= 0 || !isMyTurn) return;
 
             const randomIndex = Math.floor(Math.random() * cards.length);
             const card = cards[randomIndex];
@@ -323,9 +414,9 @@
                 <p>${card.description}</p>
             `;
             
+            makeCardDraggable(cardElement);
             document.getElementById("drawnCardsZone").appendChild(cardElement);
 
-            // Mise à jour de l'énergie
             energy = Math.max(0, energy - 1);
             document.getElementById("energyCounter").textContent = energy;
             
@@ -334,7 +425,6 @@
                 document.getElementById("deck").style.cursor = "not-allowed";
             }
 
-            // Envoyer l'information au serveur
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
                     type: 'cardDrawn',
@@ -344,7 +434,81 @@
             }
         }
 
-        // Initialiser la connexion au chargement de la page
+        function endTurn() {
+            isMyTurn = false;
+            energy = 5;
+            const energyCounter = document.getElementById('energyCounter');
+            
+            // Animation de recharge
+            energyCounter.classList.add('charging');
+            setTimeout(() => {
+                energyCounter.classList.remove('charging');
+                energyCounter.textContent = energy;
+            }, 1000);
+
+            // Changement visuel du plateau
+            updateTurnState();
+
+            // Simuler le tour de l'adversaire (à remplacer par la vraie logique multijoueur)
+            setTimeout(() => {
+                isMyTurn = true;
+                updateTurnState();
+            }, 5000);
+        }
+
+        function updateTurnState() {
+            const gameBoard = document.getElementById('gameBoard');
+            const deck = document.getElementById('deck');
+            const endTurnBtn = document.getElementById('endTurnBtn');
+
+            if (isMyTurn) {
+                gameBoard.classList.add('active-turn');
+                gameBoard.classList.remove('inactive-turn');
+                deck.style.opacity = '1';
+                deck.style.cursor = 'pointer';
+                endTurnBtn.style.display = 'block';
+            } else {
+                gameBoard.classList.add('inactive-turn');
+                gameBoard.classList.remove('active-turn');
+                deck.style.opacity = '0.5';
+                deck.style.cursor = 'not-allowed';
+                endTurnBtn.style.display = 'none';
+            }
+        }
+
+        // Initialisation WebSocket
+        function initializeWebSocket() {
+            socket = new WebSocket('ws://' + window.location.hostname + ':8080');
+            
+            socket.onopen = () => {
+                document.getElementById('playerName').textContent = playerName;
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleGameEvent(data);
+            };
+
+            socket.onclose = () => {
+                setTimeout(initializeWebSocket, 5000);
+            };
+        }
+
+        function handleGameEvent(data) {
+            switch(data.type) {
+                case 'matched':
+                    clearInterval(searchInterval);
+                    break;
+                case 'cardPlayed':
+                    // Gérer une carte jouée par l'adversaire
+                    break;
+                case 'turnChange':
+                    isMyTurn = data.isYourTurn;
+                    updateTurnState();
+                    break;
+            }
+        }
+
         window.onload = initializeWebSocket;
     </script>
 </body>
