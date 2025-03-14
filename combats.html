@@ -3,285 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plateau de Jeu</title>
+    <title>Plateau de Combat Pokémon</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(to bottom right, #34495e, #2c3e50); /* Dark neutral gradient */
+            background: linear-gradient(to bottom right, #1a237e, #311b92);
             height: 100vh;
             overflow: hidden;
         }
 
         .game-board {
-            width: 60%;
-            max-width: 900px;
-            background-color: #ffffff;
-            border: 2px solid #ddd;
+            width: 80%;
+            max-width: 1200px;
+            background: linear-gradient(145deg, #e0f7fa, #b2ebf2);
+            border: 3px solid #0277bd;
             padding: 20px;
-            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.3); /* Shadow for depth */
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 20px;
             position: relative;
-            z-index: 1;
-            transform: perspective(1500px) rotateX(30deg); /* Increased tilt towards the user */
-            transform-origin: center; /* Keep the tilt centered */
-            transition: transform 0.3s ease; /* Smooth transition for tilt */
         }
 
         .card {
-            width: 90px;
-            height: 130px;
-            background-color: white;
-            border: 2px solid #333;
+            width: 100px;
+            height: 140px;
+            background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
+            border: 2px solid #2196f3;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
             margin: 8px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* Shadow for cards */
-            border-radius: 8px;
-            transition: box-shadow 0.3s ease;
-            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
             padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(45deg, #2196f3, #03a9f4);
+            border-radius: 8px 8px 0 0;
+            opacity: 0.8;
         }
 
         .card:hover {
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3); /* Shadow on hover */
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(33, 150, 243, 0.3);
         }
 
-        .row {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 15px 0;
+        .player-zone {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid #0277bd;
         }
 
-        .label {
+        .zone-title {
+            grid-column: 1 / -1;
+            color: #0277bd;
+            font-size: 1.2em;
             font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 16px;
-            color: #444;
-        }
-
-        .progress-container {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .progress-circle {
-            width: 80px;
-            height: 80px;
-            border: 5px solid #ddd;
-            border-radius: 50%;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: #333;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .progress-inner {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background-color: white;
-            position: absolute;
-        }
-
-        .btn {
-            margin-top: 8px;
-            padding: 6px 12px;
-            font-size: 14px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .deck {
-            width: 100px;
-            height: 150px;
-            background-color: #e0e0e0;
-            border: 2px solid #555;
+            width: 110px;
+            height: 160px;
+            background: linear-gradient(45deg, #1565c0, #0d47a1);
+            border: 3px solid gold;
+            border-radius: 10px;
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3); /* Shadow for deck */
+            color: white;
             font-weight: bold;
-            font-size: 16px;
-            color: #333;
-            margin-top: 20px;
-            border-radius: 8px;
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: not-allowed; /* Pioche non cliquable */
         }
 
-        /* Fixed container for drawn cards */
-        #cardPile {
+        .deck::after {
+            content: '';
             position: absolute;
-            bottom: 20px;  /* Keeps the pile at the bottom */
-            width: 100%;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+        }
+
+        .energy-counter {
+            position: absolute;
+            top: 20px;
+            right: 160px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ffd700, #ffa000);
+            border-radius: 50%;
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            z-index: 1;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            border: 2px solid white;
         }
 
-        /* Animation for drawn card */
+        @keyframes cardDraw {
+            0% {
+                transform: translateX(100%) rotate(0deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
         .card-drawn {
-            animation: drawCardAnimation 1s ease-out forwards;
-            position: absolute;
-            opacity: 0.9; /* Slight transparency for overlap effect */
-        }
-
-        @keyframes drawCardAnimation {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: translateY(-20px) scale(1.1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* Glow effect for the progress circle when it's 100% */
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 8px #ffd700, 0 0 20px #ffd700;
-            }
-            50% {
-                box-shadow: 0 0 15px #ffd700, 0 0 25px #ffd700;
-            }
-            100% {
-                box-shadow: 0 0 8px #ffd700, 0 0 20px #ffd700;
-            }
+            animation: cardDraw 0.5s ease-out forwards;
         }
     </style>
 </head>
 <body>
     <div class="game-board">
-        <h1 style="font-size: 24px; color: #333; margin-bottom: 20px;">Plateau de Jeu</h1>
-
-        <!-- Progress Circle -->
-        <div class="progress-container">
-            <div class="progress-circle" id="progressCircle" data-progress="0">
-                <div class="progress-inner"></div>
-                <span id="progressText">0%</span>
-            </div>
-            <button class="btn" onclick="incrementProgress()">Fin de Tour</button>
+        <div class="energy-counter" id="energyCounter">5</div>
+        
+        <div class="player-zone opponent-zone">
+            <div class="zone-title">Zone Adversaire</div>
+            <div class="card">Pokémon Actif</div>
+            <div class="card">Banc 1</div>
+            <div class="card">Banc 2</div>
+            <div class="card">Banc 3</div>
+            <div class="card">Banc 4</div>
         </div>
 
-        <!-- Ligne Actifs -->
-        <div class="row">
-            <span class="label">Actifs</span>
-            <div class="card">Carte 1</div>
+        <div class="player-zone battle-zone">
+            <div class="zone-title">Zone de Combat</div>
+            <div class="card">Énergie</div>
+            <div class="card">Dresseur</div>
+            <div class="card">Objet</div>
+            <div class="card">Support</div>
+            <div class="card">Stade</div>
         </div>
 
-        <!-- Ligne Changement -->
-        <div class="row">
-            <span class="label">Changement</span>
-            <div style="display: flex; gap: 10px;">
-                <div class="card">Carte 2</div>
-                <div class="card">Carte 3</div>
-            </div>
+        <div class="player-zone player-zone">
+            <div class="zone-title">Votre Zone</div>
+            <div class="card">Pokémon Actif</div>
+            <div class="card">Banc 1</div>
+            <div class="card">Banc 2</div>
+            <div class="card">Banc 3</div>
+            <div class="card">Banc 4</div>
         </div>
 
-        <!-- Ligne Objets -->
-        <div class="row">
-            <span class="label">Objets</span>
-            <div style="display: flex; gap: 10px;">
-                <div class="card">Carte 4</div>
-                <div class="card">Carte 5</div>
-            </div>
-        </div>
-
-        <!-- Deck -->
-        <div class="deck" id="deck">Pioche</div>
-
-        <!-- Container for drawn cards (doesn't affect board size) -->
-        <div id="cardPile"></div>
+        <div class="deck" id="deck" onclick="drawCard()">Pioche</div>
     </div>
 
     <script>
         const cards = [
-            { name: "Potion de Vie", description: "Restaure 20 points de vie." },
-            { name: "Épée en Fer", description: "Augmente l'attaque de 10." },
-            { name: "Bouclier Magique", description: "Réduit les dégâts subis de 5." },
-            { name: "Sort de Feu", description: "Inflige 15 points de dégâts à l'ennemi." },
-            { name: "Anneau d'Invisibilité", description: "Permet d'éviter les attaques pendant un tour." }
+            { name: "Pikachu", type: "Électrique", description: "Attaque Éclair: 30 dégâts" },
+            { name: "Énergie Électrique", type: "Énergie", description: "+1 Énergie Électrique" },
+            { name: "Potion", type: "Objet", description: "Soigne 30 PV" },
+            { name: "Professeur Chen", type: "Support", description: "Piochez 3 cartes" },
+            { name: "Stade Combat", type: "Stade", description: "Bonus aux Pokémon Combat" }
         ];
 
-        let cardCount = 0;  // Counter for the number of cards drawn
+        let energy = 5;
 
         function drawCard() {
             const randomIndex = Math.floor(Math.random() * cards.length);
             const card = cards[randomIndex];
-
-            // Create the new card
+            
             const cardElement = document.createElement("div");
             cardElement.classList.add("card", "card-drawn");
-            cardElement.style.left = `${cardCount * 20}px`;  // Adjust for stacking cards
             cardElement.innerHTML = `
                 <strong>${card.name}</strong>
+                <em>${card.type}</em>
                 <p>${card.description}</p>
             `;
-            document.getElementById("cardPile").appendChild(cardElement);
+            
+            document.querySelector(".player-zone").appendChild(cardElement);
 
-            cardCount++;  // Increment card count for next card's position
-        }
-
-        function incrementProgress() {
-            const circle = document.getElementById('progressCircle');
-            const text = document.getElementById('progressText');
-            let progress = parseInt(circle.getAttribute('data-progress'));
-            progress = (progress + 25) % 125; // Reset to 0 after 100
-            circle.setAttribute('data-progress', progress);
-
-            const percentage = Math.min(progress, 100);
-            circle.style.background = `conic-gradient(
-                #ffd700 0%,
-                #ffd700 ${percentage}%,
-                #ddd ${percentage}%,
-                #ddd 100%
-            )`;
-            text.textContent = `${percentage}%`;
-
-            // Add glow effect when progress reaches 100%
-            if (percentage === 100) {
-                circle.style.animation = "glow 1s ease-in-out infinite";
-            } else {
-                circle.style.animation = "none"; // Remove glow when not 100%
+            // Update energy
+            energy = Math.max(0, energy - 1);
+            document.getElementById("energyCounter").textContent = energy;
+            
+            if (energy === 0) {
+                document.getElementById("deck").style.opacity = "0.5";
+                document.getElementById("deck").style.cursor = "not-allowed";
             }
-
-            // Draw a card when the button is clicked
-            drawCard();
         }
     </script>
 </body>
