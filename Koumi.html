@@ -117,14 +117,15 @@
 
             .light {
                 position: absolute;
-                top: -5px;
-                left: -5px;
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background-color: #ffd700;
-                box-shadow: 0 0 10px #ffd700;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                background-color: rgba(255, 215, 0, 0.3);
+                box-shadow: 0 0 15px #ffd700;
                 display: none;
+                pointer-events: none;
             }
 
             .center-slot {
@@ -189,9 +190,9 @@
         </style>
     </head>
     <body>
-        <div class="coins-counter" id="coins-counter">Pièces: 0</div>
+        <div class="coins-counter" id="coins-counter">Koumi: 0</div>
 
-        <h1>Roulette des Pièces</h1>
+        <h1>Roulette des Koumi</h1>
         <a href="index.html" class="back-button">Retour</a>
         <div class="roulette-container-wrapper">
             <div class="roulette-container" id="roulette">
@@ -199,24 +200,24 @@
                 <div class="info-popup" id="info-popup">
                     <strong>Probabilités :</strong>
                     <ul>
-                        <li>50 Pièces : 70%</li>
-                        <li>100 Pièces : 35%</li>
-                        <li>200 Pièces : 10%</li>
-                        <li>300 Pièces : 6%</li>
-                        <li>500 Pièces : 3.4%</li>
-                        <li>1000 Pièces : 0.8%</li>
+                        <li>50 Koumi : 70%</li>
+                        <li>100 Koumi : 35%</li>
+                        <li>200 Koumi : 10%</li>
+                        <li>300 Koumi : 6%</li>
+                        <li>500 Koumi : 3.4%</li>
+                        <li>1000 Koumi : 0.8%</li>
                     </ul>
                 </div>
                 <div class="segment-row">
-                    <div class="segment" data-prize="50">50 Pièces<div class="light"></div></div>
-                    <div class="segment" data-prize="100">100 Pièces<div class="light"></div></div>
-                    <div class="segment" data-prize="200">200 Pièces<div class="light"></div></div>
+                    <div class="segment" data-prize="50">50 Koumi<div class="light"></div></div>
+                    <div class="segment" data-prize="100">100 Koumi<div class="light"></div></div>
+                    <div class="segment" data-prize="200">200 Koumi<div class="light"></div></div>
                 </div>
                 <div class="center-slot" id="center-slot">?</div>
                 <div class="segment-row">
-                    <div class="segment" data-prize="300">300 Pièces<div class="light"></div></div>
-                    <div class="segment" data-prize="500">500 Pièces<div class="light"></div></div>
-                    <div class="segment" data-prize="1000">1000 Pièces<div class="light"></div></div>
+                    <div class="segment" data-prize="300">300 Koumi<div class="light"></div></div>
+                    <div class="segment" data-prize="500">500 Koumi<div class="light"></div></div>
+                    <div class="segment" data-prize="1000">1000 Koumi<div class="light"></div></div>
                 </div>
             </div>
         </div>
@@ -247,7 +248,7 @@
 
             // Fonction pour mettre à jour l'affichage du compteur de pièces
     function updateCoinCounter() {
-        document.getElementById('coins-counter').textContent = `Pièces: ${totalCoins}`;
+        document.getElementById('coins-counter').textContent = `Koumi: ${totalCoins}`;
         localStorage.setItem('totalCoins', totalCoins); // Sauvegarde dans le stockage local
     }
 
@@ -352,7 +353,7 @@
                                 light.style.display = 'none';
                             });
 
-                            centerSlot.textContent = `${randomPrize} Pièces`;
+                            centerSlot.textContent = `${randomPrize} Koumi`;
 
                             // Ajouter les pièces gagnées
                             totalCoins += parseInt(randomPrize);
