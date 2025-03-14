@@ -29,16 +29,51 @@
             width: 300px;
             height: 450px;
             transform-style: preserve-3d;
-            animation: floatIn 1.5s ease-out forwards;
+            animation: floatInOut 3s ease-out forwards;
         }
 
-        @keyframes floatIn {
+        @keyframes floatInOut {
             0% {
-                transform: translateY(100vh) rotateX(60deg);
+                transform: translateY(100vh) rotateX(60deg) scale(0.8);
+                opacity: 0;
+            }
+            40% {
+                transform: translateY(0) rotateX(0) scale(1);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(0) rotateX(0) scale(1);
+                opacity: 1;
             }
             100% {
-                transform: translateY(0) rotateX(0);
+                transform: translateY(-100vh) rotateX(-60deg) scale(0.8);
+                opacity: 0;
             }
+        }
+
+        .tear-points {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+
+        .tear-point {
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tear-point:hover {
+            background: white;
+            box-shadow: 0 0 10px white;
+            transform: scale(1.2);
         }
 
         .booster {
@@ -80,63 +115,75 @@
         }
 
         .cards-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
             pointer-events: none;
         }
 
-        .cards-container.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-
         .card {
-            width: 150px;
-            height: 200px;
-            position: relative;
+            position: absolute;
+            width: 200px;
+            height: 300px;
             transform-style: preserve-3d;
-            transition: transform 0.6s ease-in-out;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
 
-        .card.reveal {
+        .card.hidden {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card.revealed {
             transform: rotateY(180deg);
         }
 
-        .card-face {
+        .special-effect {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
-        .card-front {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
+        .special-effect.legendary {
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.5) 0%, transparent 70%);
+            animation: pulseGold 2s infinite;
         }
 
-        .card-back {
-            transform: rotateY(180deg);
-            overflow: hidden;
+        .special-effect.rainbow {
+            background: linear-gradient(45deg, 
+                rgba(255, 0, 0, 0.5),
+                rgba(255, 165, 0, 0.5),
+                rgba(255, 255, 0, 0.5),
+                rgba(0, 255, 0, 0.5),
+                rgba(0, 0, 255, 0.5),
+                rgba(238, 130, 238, 0.5));
+            animation: rainbow 3s linear infinite;
         }
 
-        .card-back img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        @keyframes pulseGold {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
         .card-shine {
@@ -267,6 +314,11 @@
 <body>
     <div class="scene">
         <div class="booster-container">
+            <div class="tear-points">
+                <div class="tear-point"></div>
+                <div class="tear-point"></div>
+                <div class="tear-point"></div>
+            </div>
             <div class="booster">
                 <div class="booster-face booster-front">
                     <div class="card-shine"></div>
@@ -286,37 +338,107 @@
     <script>
         const summonType = localStorage.getItem('currentSummonType');
         const rewardsPool = [
-            {
-                name: "Guerrier Légendaire",
-                image: "/public/images/cards/warrior.jpg",
-                rarity: "Legendary",
-                weight: 5
-            },
-            {
-                name: "Mage Mystique",
-                image: "/public/images/cards/mage.jpg",
-                rarity: "Epic",
-                weight: 15
-            },
-            {
-                name: "Archer Habile",
-                image: "/public/images/cards/archer.jpg",
-                rarity: "Rare",
-                weight: 30
-            },
-            {
-                name: "Soldat",
-                image: "/public/images/cards/soldier.jpg",
-                rarity: "Common",
-                weight: 50
-            }
+            { name: "Carte Commune", rarity: "Common", weight: 60, class: "commune" },
+            { name: "Carte Rare", rarity: "Rare", weight: 35, class: "rare" },
+            { name: "Carte Épique", rarity: "Epic", weight: 12, class: "epique" },
+            { name: "Carte Légendaire", rarity: "Legendary", weight: 2, class: "légendaire" },
+            { name: "Carte Spéciale", rarity: "Special", weight: 0.2, class: "spécial" },
+            { name: "Carte Arc-en-ciel", rarity: "Rainbow", weight: 0.05, class: "arc-en-ciel" }
         ];
 
-        let isOpening = false;
-        let cardsRevealed = 0;
-        let isDragging = false;
-        let startX, startY;
-        let tearProgress = 0;
+        let currentCardIndex = 0;
+        let cards = [];
+        let boosterAnimationComplete = false;
+
+        function initializeAnimation() {
+            const boosterContainer = document.querySelector('.booster-container');
+            
+            boosterContainer.addEventListener('animationend', () => {
+                if (!boosterAnimationComplete) {
+                    boosterAnimationComplete = true;
+                    showBoosterWithTearPoints();
+                }
+            });
+        }
+
+        function showBoosterWithTearPoints() {
+            const boosterContainer = document.querySelector('.booster-container');
+            boosterContainer.style.animation = 'none';
+            boosterContainer.style.transform = 'translateY(0) rotateX(0) scale(1)';
+            boosterContainer.style.opacity = '1';
+
+            const tearPoints = document.querySelectorAll('.tear-point');
+            tearPoints.forEach(point => {
+                point.addEventListener('mouseover', startTearEffect);
+            });
+        }
+
+        function startTearEffect() {
+            if (boosterAnimationComplete) {
+                const booster = document.querySelector('.booster');
+                booster.style.transform = 'translateX(-150%) rotate(-45deg) scale(0.8)';
+                booster.style.opacity = '0';
+                booster.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+
+                setTimeout(() => {
+                    document.querySelector('.booster-container').style.display = 'none';
+                    showCards();
+                }, 1000);
+            }
+        }
+
+        function showCards() {
+            const cardsContainer = document.querySelector('.cards-container');
+            cardsContainer.style.opacity = '1';
+            cardsContainer.style.pointerEvents = 'all';
+
+            const numCards = summonType === 'multi' ? 10 : 1;
+            cards = Array(numCards).fill().map(() => getRandomReward());
+
+            cards.forEach((card, index) => {
+                const cardElement = createCard(card);
+                cardElement.classList.add('hidden');
+                cardsContainer.appendChild(cardElement);
+            });
+
+            showNextCard();
+        }
+
+        function showNextCard() {
+            if (currentCardIndex < cards.length) {
+                const card = document.querySelectorAll('.card')[currentCardIndex];
+                card.classList.remove('hidden');
+                card.classList.add('visible');
+
+                if (cards[currentCardIndex].rarity === 'Legendary' || 
+                    cards[currentCardIndex].rarity === 'Special') {
+                    addSpecialEffect(card, 'legendary');
+                } else if (cards[currentCardIndex].rarity === 'Rainbow') {
+                    addSpecialEffect(card, 'rainbow');
+                }
+
+                card.addEventListener('click', () => {
+                    card.classList.add('revealed');
+                    setTimeout(() => {
+                        card.classList.add('hidden');
+                        currentCardIndex++;
+                        showNextCard();
+                    }, 1500);
+                });
+            } else {
+                document.querySelector('.finish-button').classList.add('visible');
+            }
+        }
+
+        function addSpecialEffect(card, effectType) {
+            const effect = document.createElement('div');
+            effect.className = `special-effect ${effectType}`;
+            card.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.style.opacity = '1';
+            }, 100);
+        }
 
         function getRandomReward() {
             const weightedArray = [];
@@ -342,124 +464,6 @@
             }
         }
 
-        function initializeTearEffect() {
-            const booster = document.querySelector('.booster');
-            const tearOverlay = document.createElement('div');
-            tearOverlay.className = 'tear-overlay';
-            booster.appendChild(tearOverlay);
-
-            const tearGuide = document.createElement('div');
-            tearGuide.className = 'tear-guide visible';
-            tearGuide.textContent = 'Glissez pour ouvrir';
-            document.querySelector('.scene').appendChild(tearGuide);
-
-            booster.addEventListener('mousedown', startTear);
-            document.addEventListener('mousemove', updateTear);
-            document.addEventListener('mouseup', endTear);
-        }
-
-        function startTear(e) {
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            document.querySelector('.booster').style.cursor = 'grabbing';
-        }
-
-        function updateTear(e) {
-            if (!isDragging) return;
-
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
-            tearProgress = Math.min(100, Math.max(0, (deltaX / 300) * 100));
-
-            const tearOverlay = document.querySelector('.tear-overlay');
-            const curve = Math.sin((tearProgress / 100) * Math.PI) * 20;
-            
-            tearOverlay.style.clipPath = `polygon(
-                0 0,
-                ${tearProgress}% 0,
-                ${tearProgress - 5}% ${50 + curve}%,
-                ${tearProgress - 10}% 100%,
-                0 100%
-            )`;
-
-            const booster = document.querySelector('.booster');
-            booster.style.transform = `rotateY(${tearProgress * 0.9}deg)`;
-
-            if (tearProgress >= 100) {
-                endTear();
-                startAnimation();
-            }
-        }
-
-        function endTear() {
-            isDragging = false;
-            document.querySelector('.booster').style.cursor = 'grab';
-            
-            if (tearProgress < 100) {
-                // Reset tear if not completed
-                const tearOverlay = document.querySelector('.tear-overlay');
-                tearOverlay.style.clipPath = 'polygon(0 0, 0 0, 0 0)';
-                tearProgress = 0;
-            }
-        }
-
-        function startAnimation() {
-            if(isOpening) return;
-            isOpening = true;
-
-            const booster = document.querySelector('.booster');
-            const tearGuide = document.querySelector('.tear-guide');
-            const cardsContainer = document.querySelector('.cards-container');
-            
-            tearGuide.style.opacity = '0';
-            
-            booster.style.transform = 'translateX(-150%) rotate(-45deg) scale(0.8)';
-            booster.style.transition = 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
-            booster.style.opacity = '0';
-
-            const flash = document.createElement('div');
-            flash.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: white;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.3s;
-            `;
-            document.body.appendChild(flash);
-
-            setTimeout(() => {
-                flash.style.opacity = '0.6';
-                setTimeout(() => {
-                    flash.style.opacity = '0';
-                    setTimeout(() => flash.remove(), 300);
-                }, 100);
-
-                cardsContainer.classList.add('visible');
-                
-                const numCards = summonType === 'multi' ? 10 : 1;
-                const rewards = Array(numCards).fill().map(() => getRandomReward());
-
-                rewards.forEach((reward, index) => {
-                    const card = createCard(reward);
-                    cardsContainer.appendChild(card);
-                    
-                    setTimeout(() => {
-                        card.classList.add('reveal');
-                        createCardParticles(card, reward.rarity);
-                    }, index * 300);
-                });
-
-                setTimeout(() => {
-                    document.querySelector('.finish-button').classList.add('visible');
-                }, numCards * 300 + 500);
-            }, 800);
-        }
-
         function createCard(reward) {
             const card = document.createElement('div');
             card.className = `card ${reward.rarity.toLowerCase()}`;
@@ -481,34 +485,13 @@
             return card;
         }
 
-        function createCardParticles(card, rarity) {
-            const colors = {
-                'Legendary': '#ffd700',
-                'Epic': '#9b59b6',
-                'Rare': '#3498db',
-                'Common': '#95a5a6'
-            };
-
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.backgroundColor = colors[rarity];
-                particle.style.left = `${card.offsetLeft + Math.random() * card.offsetWidth}px`;
-                particle.style.top = `${card.offsetTop + Math.random() * card.offsetHeight}px`;
-                document.querySelector('.particles').appendChild(particle);
-
-                setTimeout(() => particle.remove(), 2000);
-            }
-        }
-
         function finishSummon() {
             window.location.href = 'invocation.html';
         }
 
-        // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
-            initializeTearEffect();
+            initializeAnimation();
         });
     </script>
 </body>
