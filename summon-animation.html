@@ -156,25 +156,62 @@
             left: 50%;
             transform: translate(-50%, -50%);
             perspective: 1000px;
+            width: 220px;
+            height: 320px;
         }
 
         .card {
-            position: relative;
+            position: absolute;
             width: 200px;
             height: 300px;
             transform-style: preserve-3d;
-            transform: translateY(50vh);
-            opacity: 0;
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center 110%;
+            cursor: pointer;
         }
 
-        .card.visible {
-            transform: translateY(0);
+        .card.stacked {
             opacity: 1;
+            transform: translateY(0) scale(0.98) translateZ(-2px);
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1) translateZ(0);
+            z-index: 10;
         }
 
         .card.revealed {
-            transform: rotateY(180deg);
+            transform: translateY(0) rotateY(180deg) scale(1) translateZ(0);
+        }
+
+        .card.completed {
+            transition: all 0.5s ease-out;
+        }
+
+        .cards-grid {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .cards-grid.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .card.in-grid {
+            position: relative;
+            transform: none !important;
+            opacity: 1;
+            scale: 0.7;
         }
 
         .card-face {
@@ -469,18 +506,19 @@
             const numCards = summonType === 'multi' ? 10 : 1;
             cards = Array(numCards).fill().map(() => getRandomReward());
 
+            // Créer toutes les cartes et les empiler
             cards.forEach((card, index) => {
                 const cardElement = createCard(card);
+                cardElement.style.zIndex = cards.length - index;
                 cardContainer.appendChild(cardElement);
 
+                // Ajouter un petit délai pour l'effet d'empilement
                 setTimeout(() => {
-                    cardElement.classList.add('visible');
-                    if (card.rarity === 'Legendary' || card.rarity === 'Special') {
-                        addRarityEffect(cardElement, 'legendary');
-                    } else if (card.rarity === 'Rainbow') {
-                        addRarityEffect(cardElement, 'rainbow');
+                    cardElement.classList.add('stacked');
+                    if (index === 0) {
+                        cardElement.classList.add('active');
                     }
-                }, index * 200);
+                }, index * 50);
             });
 
             document.addEventListener('click', revealNextCard);
@@ -488,14 +526,58 @@
 
         function revealNextCard() {
             if (currentCardIndex >= cards.length) {
-                document.removeEventListener('click', revealNextCard);
-                document.querySelector('.finish-button').classList.add('visible');
+                showFinalGrid();
                 return;
             }
 
             const currentCard = document.querySelectorAll('.card')[currentCardIndex];
+            const nextCard = document.querySelectorAll('.card')[currentCardIndex + 1];
+
+            // Révéler la carte actuelle
             currentCard.classList.add('revealed');
+
+            // Préparer la prochaine carte
+            if (nextCard) {
+                setTimeout(() => {
+                    currentCard.classList.remove('active');
+                    nextCard.classList.add('active');
+                }, 400);
+            }
+
+            // Effets spéciaux selon la rareté
+            if (cards[currentCardIndex].rarity === 'Legendary' || 
+                cards[currentCardIndex].rarity === 'Special') {
+                addRarityEffect(currentCard, 'legendary');
+            } else if (cards[currentCardIndex].rarity === 'Rainbow') {
+                addRarityEffect(currentCard, 'rainbow');
+            }
+
             currentCardIndex++;
+        }
+
+        function showFinalGrid() {
+            document.removeEventListener('click', revealNextCard);
+            
+            // Créer la grille finale
+            const gridContainer = document.createElement('div');
+            gridContainer.className = 'cards-grid';
+            document.querySelector('.scene').appendChild(gridContainer);
+
+            // Déplacer toutes les cartes dans la grille
+            const allCards = document.querySelectorAll('.card');
+            allCards.forEach(card => {
+                card.classList.add('completed');
+                gridContainer.appendChild(card);
+                setTimeout(() => {
+                    card.classList.add('in-grid');
+                }, 100);
+            });
+
+            // Afficher la grille et le bouton
+            setTimeout(() => {
+                gridContainer.classList.add('visible');
+                document.querySelector('.finish-button').classList.add('visible');
+            }, 500);
         }
 
         function addRarityEffect(card, type) {
