@@ -118,7 +118,9 @@
         }
 
         .booster.opening {
-            transform: rotateX(-180deg);
+            transform: rotateX(-180deg) translateY(-50vh);
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .booster.opened {
@@ -166,7 +168,7 @@
             height: 300px;
             transform-style: preserve-3d;
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center 110%;
+            transform-origin: center;
             cursor: pointer;
         }
 
@@ -177,12 +179,14 @@
 
         .card.active {
             opacity: 1;
-            transform: translateY(0) scale(1) translateZ(0);
+            transform: translateY(0) scale(1.1) translateZ(20px);
             z-index: 10;
         }
 
         .card.revealed {
-            transform: translateY(0) rotateY(180deg) scale(1) translateZ(0);
+            transform: translateY(-100vh) rotateY(180deg) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
         }
 
         .card.completed {
@@ -196,7 +200,10 @@
             transform: translate(-50%, -50%);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease;
@@ -211,7 +218,11 @@
             position: relative;
             transform: none !important;
             opacity: 1;
-            scale: 0.7;
+            scale: 0.9;
+        }
+
+        .card.in-grid .card-details {
+            transform: translateY(0);
         }
 
         .card-face {
@@ -231,6 +242,30 @@
             transform: rotateY(180deg);
             background: white;
             overflow: hidden;
+        }
+
+        .card-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .card-details h3 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #fff;
+        }
+
+        .card-details p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: #ccc;
         }
 
         .rarity-effect {
@@ -533,15 +568,15 @@
             const currentCard = document.querySelectorAll('.card')[currentCardIndex];
             const nextCard = document.querySelectorAll('.card')[currentCardIndex + 1];
 
-            // Révéler la carte actuelle
+            // Révéler la carte actuelle avec animation de disparition vers le haut
             currentCard.classList.add('revealed');
 
-            // Préparer la prochaine carte
+            // Préparer la prochaine carte avec un délai
             if (nextCard) {
                 setTimeout(() => {
                     currentCard.classList.remove('active');
                     nextCard.classList.add('active');
-                }, 400);
+                }, 300);
             }
 
             // Effets spéciaux selon la rareté
@@ -558,26 +593,28 @@
         function showFinalGrid() {
             document.removeEventListener('click', revealNextCard);
             
-            // Créer la grille finale
             const gridContainer = document.createElement('div');
             gridContainer.className = 'cards-grid';
             document.querySelector('.scene').appendChild(gridContainer);
 
-            // Déplacer toutes les cartes dans la grille
+            // Réinitialiser toutes les cartes et les afficher dans la grille
             const allCards = document.querySelectorAll('.card');
-            allCards.forEach(card => {
+            allCards.forEach((card, index) => {
+                card.style.opacity = '1';
+                card.style.transform = 'none';
+                card.classList.remove('revealed', 'active');
                 card.classList.add('completed');
                 gridContainer.appendChild(card);
+                
                 setTimeout(() => {
                     card.classList.add('in-grid');
-                }, 100);
+                }, index * 100);
             });
 
-            // Afficher la grille et le bouton
             setTimeout(() => {
                 gridContainer.classList.add('visible');
                 document.querySelector('.finish-button').classList.add('visible');
-            }, 500);
+            }, cards.length * 100 + 500);
         }
 
         function addRarityEffect(card, type) {
@@ -628,6 +665,14 @@
             img.src = reward.image;
             img.alt = reward.name;
             back.appendChild(img);
+            
+            const details = document.createElement('div');
+            details.className = 'card-details';
+            details.innerHTML = `
+                <h3>${reward.name}</h3>
+                <p>Rareté: ${reward.rarity}</p>
+            `;
+            back.appendChild(details);
             
             card.appendChild(front);
             card.appendChild(back);
