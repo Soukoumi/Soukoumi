@@ -354,6 +354,97 @@
             color: #ffc371;
             margin-top: 5px;
         }
+
+        /* Ajout des styles pour les emplacements de cartes */
+        .card-slot {
+            width: 100px;
+            height: 140px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .card-slot.valid-target {
+            border-color: rgba(255, 215, 0, 0.6);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* Style pour le chat */
+        .chat-container {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            z-index: 100;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .chat-message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-message.player {
+            background: rgba(33, 150, 243, 0.3);
+            margin-left: 20px;
+        }
+
+        .chat-message.opponent {
+            background: rgba(255, 95, 109, 0.3);
+            margin-right: 20px;
+        }
+
+        .chat-message.system {
+            background: rgba(255, 255, 255, 0.2);
+            text-align: center;
+            font-style: italic;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .chat-input button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: #2196f3;
+            color: white;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background: #1976d2;
+        }
     </style>
 </head>
 <body>
@@ -370,36 +461,48 @@
     <div class="energy-counter" id="energyCounter">0%</div>
     <button id="endTurnBtn" onclick="endTurn()">Fin du Tour</button>
 
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message system">Bienvenue dans le chat de jeu !</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Écrivez votre message..." maxlength="100">
+            <button onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
     <div class="game-board" id="gameBoard">
         <div class="row opponent-row">
             <span class="label">Adversaire</span>
-            <div class="cards-container">
-                <div class="card">Actif</div>
-                <div class="card">Change 1</div>
-                <div class="card">Change 2</div>
+            <div class="cards-container" data-zone="opponent">
+                <div class="card-slot" data-type="actif"></div>
+                <div class="card-slot" data-type="changement"></div>
+                <div class="card-slot" data-type="changement"></div>
+                <div class="card-slot" data-type="objet"></div>
+                <div class="card-slot" data-type="objet"></div>
             </div>
         </div>
 
         <div class="row">
             <span class="label">Actifs</span>
             <div class="cards-container" data-zone="actifs">
-                <div class="card-slot"></div>
+                <div class="card-slot" data-type="actif"></div>
             </div>
         </div>
 
         <div class="row">
             <span class="label">Changement</span>
             <div class="cards-container" data-zone="changement">
-                <div class="card-slot"></div>
-                <div class="card-slot"></div>
+                <div class="card-slot" data-type="changement"></div>
+                <div class="card-slot" data-type="changement"></div>
             </div>
         </div>
 
         <div class="row">
             <span class="label">Objets</span>
             <div class="cards-container" data-zone="objets">
-                <div class="card-slot"></div>
-                <div class="card-slot"></div>
+                <div class="card-slot" data-type="objet"></div>
+                <div class="card-slot" data-type="objet"></div>
             </div>
         </div>
     </div>
@@ -473,14 +576,18 @@
         function isValidDropZone(card, container) {
             const cardType = card.getAttribute('data-type');
             const zoneType = container.getAttribute('data-zone');
+            const slot = container.querySelector('.card-slot:empty');
+            
+            if (!slot) return false;
             
             switch(cardType) {
                 case 'Objet':
-                    return zoneType === 'objets';
+                    return zoneType === 'objets' && slot.getAttribute('data-type') === 'objet';
                 case 'Équipement':
-                    return zoneType === 'actifs' || zoneType === 'changement';
+                    return (zoneType === 'actifs' && slot.getAttribute('data-type') === 'actif') ||
+                           (zoneType === 'changement' && slot.getAttribute('data-type') === 'changement');
                 case 'Attaque':
-                    return zoneType === 'actifs';
+                    return zoneType === 'actifs' && slot.getAttribute('data-type') === 'actif';
                 default:
                     return false;
             }
@@ -593,6 +700,41 @@
                 deck.style.cursor = 'not-allowed';
                 endTurnBtn.style.display = 'none';
             }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addChatMessage(message, 'player');
+                input.value = '';
+                
+                if (isBotGame) {
+                    setTimeout(() => {
+                        const botResponses = [
+                            "Intéressant comme coup !",
+                            "Je réfléchis à ma stratégie...",
+                            "Bien joué !",
+                            "Tu ne vas pas voir venir mon prochain coup !",
+                            "Cette partie est passionnante !"
+                        ];
+                        const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                        addChatMessage(randomResponse, 'opponent');
+                    }, 1000 + Math.random() * 2000);
+                }
+            }
+        }
+
+        function addChatMessage(message, type) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', type);
+            messageDiv.textContent = type === 'system' ? message : 
+                                   type === 'player' ? `Vous: ${message}` : 
+                                   `Adversaire: ${message}`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         // Initialisation
