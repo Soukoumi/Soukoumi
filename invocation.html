@@ -217,174 +217,13 @@
             color: white;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-
-        /* Styles pour l'animation du booster */
-        .booster-animation {
-            position: fixed;
-            bottom: -200px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 300px;
-            background: linear-gradient(45deg, #ffd700, #ffa500);
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-            cursor: pointer;
-            perspective: 1000px;
-        }
-
-        .booster-animation.active {
-            bottom: 50%;
-            transform: translateX(-50%) translateY(50%);
-        }
-
-        .booster-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 1s;
-        }
-
-        .booster-front, .booster-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .booster-back {
-            transform: rotateY(180deg);
-            background: linear-gradient(45deg, #3498db, #2980b9);
-        }
-
-        .hand-guide {
-            position: absolute;
-            right: -50px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            background: url('hand-icon.png') no-repeat center/contain;
-            animation: swipeGuide 1.5s infinite;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        @keyframes swipeGuide {
-            0% { transform: translateX(0) translateY(-50%); }
-            50% { transform: translateX(20px) translateY(-50%); }
-            100% { transform: translateX(0) translateY(-50%); }
-        }
-
-        .booster-animation.ready .hand-guide {
-            opacity: 1;
-        }
-
-        .booster-opening {
-            transform: rotateY(180deg);
-        }
-
-        .cards-reveal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
-        }
-
-        .cards-reveal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .card-slot {
-            position: relative;
-            width: 150px;
-            height: 200px;
-            margin: 0 10px;
-            perspective: 1000px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.5s, transform 0.5s;
-        }
-
-        .card-slot.reveal {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .continue-text {
-            position: fixed;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 24px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .continue-text.visible {
-            opacity: 1;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.1); }
-            100% { transform: translateX(-50%) scale(1); }
-        }
-
-        /* Animation de brillance pour les cartes */
-        .card-shine {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            transform: skewX(-20deg);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% { left: -100%; }
-            20% { left: 200%; }
-            100% { left: 200%; }
-        }
     </style>
 </head>
 <body>
-    
-    <div class="animated-background"></div> <!-- Fond animé -->
+    <div class="animated-background"></div>
     <a href="index.html" class="back-button">Retour</a>
     <h1>Invocation</h1>
-    <div id="coins-display" style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">
-        Koumi disponibles : 0
-    </div>
+    <div id="coins-display">Koumi disponibles : 0</div>
 
     <div class="invocation-container">
         <button class="info-button" onclick="toggleInfo()">i</button>
@@ -409,6 +248,7 @@
             <div class="reward" id="placeholder">?</div>
         </div>
     </div>
+
     <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 100;">
         <div style="position: relative; max-width: 90%; max-height: 90%;">
             <img id="modal-image" src="" alt="Reward Image" style="width: auto; height: auto; max-width: 100%; max-height: 100%; border: 5px solid white; border-radius: 15px; object-fit: contain;">
@@ -416,47 +256,12 @@
         </div>
     </div>
 
-   <!-- Bouton pour afficher toutes les cartes disponibles -->
-<button class="info-button" onclick="toggleAvailableCards()"></button>
-
-<!-- Popup pour afficher toutes les cartes -->
-<div id="available-cards-popup" style="display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background-color: #fff; border: 2px solid #333; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); overflow-y: auto; z-index: 100;">
-    <div style="position: relative;">
-        <button onclick="toggleAvailableCards()" style="position: absolute; top: 10px; right: 10px; background: red; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 18px; cursor: pointer;">X</button>
-        <div id="available-cards-container" style="display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; justify-content: center; overflow-y: auto; height: calc(100% - 40px);">
-            <!-- Les cartes disponibles seront affichées ici -->
-        </div>
-    </div>
-</div>
-    
-    
-
-    <!-- Ajout des nouveaux éléments pour l'animation -->
-    <div class="booster-animation">
-        <div class="booster-content">
-            <div class="booster-front">
-                <div class="card-shine"></div>
-                <img src="booster-front.png" alt="Booster">
-            </div>
-            <div class="booster-back">
-                <img src="booster-back.png" alt="Booster Back">
-            </div>
-        </div>
-        <div class="hand-guide"></div>
-    </div>
-
-    <div class="cards-reveal"></div>
-    <div class="continue-text">Appuyez pour continuer</div>
-    
-    
-
     <script>
-        let availableCoins = 0; // Stockage des pièces disponibles
+        let availableCoins = 0;
         let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
         let invocationCount = parseInt(localStorage.getItem('invocationCount')) || 0;
         const rewardsContainer = document.getElementById('rewards');
         const placeholder = document.getElementById('placeholder');
-        
 
         const rewardsPool = [
             { name: "Radolf le magicien", rarity: "Epique", "type": "Prestige", weight: 12, image: "1.png" },
@@ -490,157 +295,29 @@
             { name: "Jimmy le bonhomme de neige", rarity: "Spécial", "type": "Prestige", weight: 0.2, image: "29.png" },
         ];
 
-        // Tableau statique des cartes disponibles
-const availableCards = [
-            { name: "Radolf le magicien", rarity: "Arc-en-ciel", image: "12.png" },
-            { name: "El verme musician", rarity: "Spécial", image: "21.png" },  
-            { name: "La reine baleine", rarity: "Spécial", image: "23.png" },  
-            { name: "Marion le papillon", rarity: "Spécial", image: "25.png" },
-            { name: "Tristan volan", rarity: "Spécial", image: "27.png" },
-            { name: "Jimmy le bonhomme de neige", rarity: "Spécial", image: "29.png" },
-            { name: "Le dos fin", rarity: "Légendaire", image: "4.png" },
-            { name: "Stéphane carry", rarity: "Légendaire", image: "17.png" },
-            { name: "Marion le papillon", rarity: "Légendaire", image: "24.png" },
-            { name: "Jimmy le bonhomme de neige", rarity: "Légendaire", image: "28.png" },
-            { name: "Radolf le magicien", rarity: "Epique", image: "1.png" },
-            { name: "Eau mouillée", rarity: "Epique", image: "3.png" },
-            { name: "Père pète", rarity: "Epique", image: "6.png" },
-            { name: "Gilberto le camionneur", rarity: "Epique", image: "8.png" },     
-            { name: "TireXhandicapé", rarity: "Epique", image: "11.png" },
-            { name: "Raoul ça roule", rarity: "Epique", image: "15.png" },
-            { name: "La reine baleine", rarity: "Epique", image: "22.png" },
-            { name: "Chococaca", rarity: "Rare", image: "5.png" }, 
-            { name: "El verme musician", rarity: "Rare", image: "2.png" }, 
-            { name: "Enceinte à musique", rarity: "Rare", image: "9.png" }, 
-            { name: "Pierre la pierre", rarity: "Rare", image: "10.png" }, 
-            { name: "Pedro au quais ", rarity: "Rare", image: "14.png" },
-            { name: "Gaston le ballon", rarity: "Rare", image: "16.png" },
-            { name: "Carotte qui rote", rarity: "Rare", image: "18.png" },
-            { name: "Glaçons maçon", rarity: "Rare", image: "20.png" },      
-            { name: "Tristan volan", rarity: "Rare", image: "26.png" },
-            { name: "Le manouche prend sa douche", rarity: "Commune", image: "13.png" },
-            { name: "Cervoloant", rarity: "Commune",image: "7.png" },
-            { name: "Tron pète", rarity: "Commune", image: "19.png" },
-             ];
-        
-
-       // Fonction de récupération aléatoire de récompenses
-function getRandomReward() {
-    const weightedArray = [];
-    rewardsPool.forEach(item => {
-        for (let i = 0; i < item.weight; i++) {
-            weightedArray.push(item);
-        }
-    });
-    const randomReward = weightedArray[Math.floor(Math.random() * weightedArray.length)];
-    return randomReward;
-}
-
-
-        function clearRewards() {
-            rewardsContainer.innerHTML = '';
-        }
-
-        function updateAvailableCoins() {
-            const coinsDisplay = document.getElementById('coins-display');
-            coinsDisplay.textContent = `Pièces disponibles : ${availableCoins}`;
-
-        }
-
         function loadCoins() {
             availableCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
             updateAvailableCoins();
         }
 
-        // Sauvegarde de la récompense dans la collection
-function saveRewardToCollection(reward) {
-    const currentCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
-    currentCollection.push(reward);
-    localStorage.setItem('rewardsCollection', JSON.stringify(currentCollection));
-}
+        function updateAvailableCoins() {
+            const coinsDisplay = document.getElementById('coins-display');
+            coinsDisplay.textContent = `Koumi disponibles : ${availableCoins}`;
+        }
 
         function canSummon(cost) {
             return availableCoins >= cost;
         }
-
-        function startBoosterAnimation(isMulti) {
-            const booster = document.querySelector('.booster-animation');
-            const cardsReveal = document.querySelector('.cards-reveal');
-            const continueText = document.querySelector('.continue-text');
-            
-            // Animation initiale du booster
-            booster.classList.add('active');
-            
-            setTimeout(() => {
-                booster.classList.add('ready');
-                
-                // Attente du swipe
-                booster.addEventListener('click', function openBooster() {
-                    booster.classList.add('booster-opening');
-                    booster.classList.remove('ready');
-                    
-                    setTimeout(() => {
-                        booster.style.opacity = '0';
-                        cardsReveal.classList.add('active');
-                        
-                        // Révélation des cartes une par une
-                        const numCards = isMulti ? 10 : 1;
-                        for(let i = 0; i < numCards; i++) {
-                            const card = document.createElement('div');
-                            card.className = 'card-slot';
-                            cardsReveal.appendChild(card);
-                            
-                            setTimeout(() => {
-                                card.classList.add('reveal');
-                            }, i * 200);
-                        }
-                        
-                        // Affichage du texte "continuer"
-                        setTimeout(() => {
-                            continueText.classList.add('visible');
-                            document.addEventListener('click', finishAnimation);
-                        }, numCards * 200 + 500);
-                    }, 1000);
-                    
-                    booster.removeEventListener('click', openBooster);
-                });
-            }, 1000);
-        }
-
-        function finishAnimation() {
-            const cardsReveal = document.querySelector('.cards-reveal');
-            const continueText = document.querySelector('.continue-text');
-            const booster = document.querySelector('.booster-animation');
-            
-            cardsReveal.classList.remove('active');
-            continueText.classList.remove('visible');
-            booster.classList.remove('active', 'booster-opening');
-            booster.style.opacity = '1';
-            
-            // Nettoyage
-            cardsReveal.innerHTML = '';
-            document.removeEventListener('click', finishAnimation);
-            
-            // Affichage des récompenses dans le conteneur original
-            if(currentRewards) {
-                displayRewards(currentRewards);
-            }
-        }
-
-        let currentRewards = null;
 
         function singleSummon() {
             if(!canSummon(50)) {
                 alert("Vous n'avez pas assez de koumi pour une invocation !");
                 return;
             }
-            
             availableCoins -= 50;
             localStorage.setItem('totalCoins', availableCoins);
-            updateAvailableCoins();
-            
-            currentRewards = [getRandomReward()];
-            startBoosterAnimation(false);
+            localStorage.setItem('currentSummonType', 'single');
+            window.location.href = 'summon-animation.html';
         }
 
         function multiSummon() {
@@ -648,15 +325,11 @@ function saveRewardToCollection(reward) {
                 alert("Vous n'avez pas assez de koumi pour une invocation x10 !");
                 return;
             }
-            
             availableCoins -= 500;
             localStorage.setItem('totalCoins', availableCoins);
-            updateAvailableCoins();
-            
-            currentRewards = Array(10).fill().map(() => getRandomReward());
-            startBoosterAnimation(true);
+            localStorage.setItem('currentSummonType', 'multi');
+            window.location.href = 'summon-animation.html';
         }
-
 
         function showModal(imageSrc) {
             const modal = document.getElementById('modal');
@@ -670,65 +343,14 @@ function saveRewardToCollection(reward) {
             modal.style.display = 'none';
         }
 
-
         function toggleInfo() {
             const infoPopup = document.getElementById('info-popup');
             infoPopup.style.display = infoPopup.style.display === 'none' || !infoPopup.style.display ? 'block' : 'none';
             infoPopup.style.opacity = infoPopup.style.display === 'none' ? '0' : '1';
         }
 
-    // Fonction pour afficher ou cacher la liste des cartes disponibles
-function toggleAvailableCards() {
-    const cardsPopup = document.getElementById('available-cards-popup');
-    const cardsContainer = document.getElementById('available-cards-container');
-
-    if (cardsPopup.style.display === 'none' || !cardsPopup.style.display) {
-        // Afficher la popup
-        cardsPopup.style.display = 'block';
-        cardsContainer.innerHTML = ''; // Vider le contenu précédent
-
-        // Ajouter les cartes disponibles
-        availableCards.forEach(card => {
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('reward', card.rarity.toLowerCase());
-            
-            // Créer l'image de la carte
-            const cardImage = document.createElement('img');
-            cardImage.src = card.image;
-            cardImage.alt = card.name;
-            cardImage.style.width = '250px';  // Augmenter la taille de l'image
-            cardImage.style.height = '250px'; // Augmenter la taille de l'image
-            cardElement.appendChild(cardImage);
-
-            // Créer le texte de la carte
-            const cardText = document.createElement('div');
-            cardText.classList.add('reward-text-bottom');
-            cardText.textContent = `${card.name} (${card.rarity})`;  // Correction ici
-            cardElement.appendChild(cardText);
-
-            // Ajouter l'élément carte au conteneur
-            cardsContainer.appendChild(cardElement);
-        });
-    } else {
-        // Cacher la popup
-        cardsPopup.style.display = 'none';
-    }
-}
-
-
-
-        // Chargement des pièces disponibles au démarrage
+        // Initialisation
         document.addEventListener('DOMContentLoaded', loadCoins);
-
-        function updateProfileDisplay() {
-            // Mettez à jour l'affichage du profil pour les invocations et roulettes
-            localStorage.setItem('invocationCount', invocationCount);
-            localStorage.setItem('rouletteCount', rouletteCount);
-            document.getElementById('invocationCountDisplay').textContent = `Invocations : ${invocationCount}`;
-            document.getElementById('rouletteCountDisplay').textContent = `Roulettes : ${rouletteCount}`;
-
-        }
     </script>
-
 </body>
 </html>
