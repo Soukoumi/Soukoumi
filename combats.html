@@ -445,6 +445,84 @@
         .chat-input button:hover {
             background: #1976d2;
         }
+
+        .attack-btn {
+            background: linear-gradient(45deg, #ff5f6d, #ffc371);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            padding: 5px 10px;
+            margin-top: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .attack-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(255, 95, 109, 0.4);
+        }
+        
+        .bot-deck {
+            position: fixed;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 110px;
+            height: 160px;
+            background: linear-gradient(45deg, #ff5f6d, #ffc371);
+            border: 3px solid gold;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .zone-labels {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .zone-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            text-align: center;
+            padding: 4px 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+
+        .card-slot {
+            position: relative;
+        }
+
+        .card-slot::before {
+            content: attr(data-type);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: capitalize;
+        }
+
+        .card-slot:empty::after {
+            content: '+';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -474,6 +552,11 @@
     <div class="game-board" id="gameBoard">
         <div class="row opponent-row">
             <span class="label">Adversaire</span>
+            <div class="zone-labels">
+                <span class="zone-label">Carte Active</span>
+                <span class="zone-label">Cartes de Changement</span>
+                <span class="zone-label">Objets</span>
+            </div>
             <div class="cards-container" data-zone="opponent">
                 <div class="card-slot" data-type="actif"></div>
                 <div class="card-slot" data-type="changement"></div>
@@ -484,14 +567,21 @@
         </div>
 
         <div class="row">
-            <span class="label">Actifs</span>
+            <span class="label">Votre Zone Active</span>
+            <div class="zone-labels">
+                <span class="zone-label">Carte Active</span>
+            </div>
             <div class="cards-container" data-zone="actifs">
                 <div class="card-slot" data-type="actif"></div>
             </div>
         </div>
 
         <div class="row">
-            <span class="label">Changement</span>
+            <span class="label">Vos Cartes de Changement</span>
+            <div class="zone-labels">
+                <span class="zone-label">Changement 1</span>
+                <span class="zone-label">Changement 2</span>
+            </div>
             <div class="cards-container" data-zone="changement">
                 <div class="card-slot" data-type="changement"></div>
                 <div class="card-slot" data-type="changement"></div>
@@ -499,7 +589,11 @@
         </div>
 
         <div class="row">
-            <span class="label">Objets</span>
+            <span class="label">Vos Objets</span>
+            <div class="zone-labels">
+                <span class="zone-label">Objet 1</span>
+                <span class="zone-label">Objet 2</span>
+            </div>
             <div class="cards-container" data-zone="objets">
                 <div class="card-slot" data-type="objet"></div>
                 <div class="card-slot" data-type="objet"></div>
@@ -519,11 +613,11 @@
         let initialDraw = true;
 
         const cards = [
-            { name: "Potion de Vie", type: "Objet", description: "Restaure 20 points de vie", zone: "objets" },
-            { name: "Épée en Fer", type: "Équipement", description: "Augmente l'attaque de 10", zone: "actifs" },
-            { name: "Bouclier Magique", type: "Équipement", description: "Réduit les dégâts de 5", zone: "changement" },
-            { name: "Sort de Feu", type: "Attaque", description: "15 points de dégâts", zone: "actifs" },
-            { name: "Anneau d'Invisibilité", type: "Équipement", description: "Évite une attaque", zone: "changement" }
+            { name: "Potion de Vie", type: "Objet", description: "Restaure 20 points de vie", zone: "objets", effect: { type: "heal", value: 20 } },
+            { name: "Épée en Fer", type: "Équipement", description: "Augmente l'attaque de 10", zone: "actifs", attack: 10, hp: 20 },
+            { name: "Bouclier Magique", type: "Équipement", description: "Réduit les dégâts de 5", zone: "changement", defense: 5, hp: 15 },
+            { name: "Sort de Feu", type: "Attaque", description: "15 points de dégâts", zone: "actifs", attack: 15, hp: 10 },
+            { name: "Anneau d'Invisibilité", type: "Équipement", description: "Évite une attaque", zone: "changement", defense: 3, hp: 8 }
         ];
 
         function updateEnergyCounter(value) {
@@ -623,10 +717,24 @@
             if (!initialDraw) {
                 cardElement.classList.add("card-drawn");
             }
+            
+            let statsHtml = '';
+            if (card.hp) {
+                statsHtml += `<div class="hp-bar">PV: ${card.hp}</div>`;
+            }
+            if (card.attack) {
+                statsHtml += `<div class="power-indicator">ATT: ${card.attack}</div>`;
+            }
+            if (card.defense) {
+                statsHtml += `<div class="power-indicator">DEF: ${card.defense}</div>`;
+            }
+
             cardElement.innerHTML = `
                 <strong>${card.name}</strong>
                 <em>${card.type}</em>
                 <p>${card.description}</p>
+                ${statsHtml}
+                ${card.type === "Attaque" ? '<button class="attack-btn" onclick="attackOpponent(this)">Attaquer</button>' : ''}
             `;
             
             makeCardDraggable(cardElement, card);
@@ -671,15 +779,87 @@
 
         function playBotTurn() {
             // Simuler les actions du bot
+            const botContainer = document.querySelector('[data-zone="opponent"]');
+            const randomCard = cards[Math.floor(Math.random() * cards.length)];
+            
+            const cardElement = document.createElement("div");
+            cardElement.classList.add("card", "bot-card");
+            cardElement.setAttribute('data-type', randomCard.type);
+            
+            let statsHtml = '';
+            if (randomCard.hp) {
+                statsHtml += `<div class="hp-bar">PV: ${randomCard.hp}</div>`;
+            }
+            if (randomCard.attack) {
+                statsHtml += `<div class="power-indicator">ATT: ${randomCard.attack}</div>`;
+            }
+            if (randomCard.defense) {
+                statsHtml += `<div class="power-indicator">DEF: ${randomCard.defense}</div>`;
+            }
+
+            cardElement.innerHTML = `
+                <strong>${randomCard.name}</strong>
+                <em>${randomCard.type}</em>
+                <p>${randomCard.description}</p>
+                ${statsHtml}
+            `;
+
+            // Trouver un emplacement vide approprié
+            const emptySlot = botContainer.querySelector(`.card-slot[data-type="${randomCard.type.toLowerCase()}"]:empty`);
+            if (emptySlot) {
+                emptySlot.appendChild(cardElement);
+            }
+
+            // Simuler une attaque si le bot a une carte d'attaque
+            const botActiveCard = botContainer.querySelector('.card-slot[data-type="actif"] .card');
+            const playerActiveCard = document.querySelector('[data-zone="actifs"] .card-slot[data-type="actif"] .card');
+            
+            if (botActiveCard && playerActiveCard) {
+                setTimeout(() => {
+                    const botAttack = parseInt(botActiveCard.querySelector('.power-indicator')?.textContent.split(': ')[1]) || 0;
+                    const playerHp = parseInt(playerActiveCard.querySelector('.hp-bar')?.textContent.split(': ')[1]) || 0;
+                    
+                    if (botAttack > 0) {
+                        const newHp = Math.max(0, playerHp - botAttack);
+                        playerActiveCard.querySelector('.hp-bar').textContent = `PV: ${newHp}`;
+                        
+                        if (newHp === 0) {
+                            playerActiveCard.remove();
+                            addChatMessage("Le bot a détruit votre carte !", "system");
+                        }
+                    }
+                }, 1500);
+            }
+
             setTimeout(() => {
                 isMyTurn = true;
                 updateTurnState();
-                // Piocher une carte au début du tour
                 if (!initialDraw) {
-                    const randomCard = cards[Math.floor(Math.random() * cards.length)];
-                    addCardToHand(randomCard);
+                    const newCard = cards[Math.floor(Math.random() * cards.length)];
+                    addCardToHand(newCard);
                 }
             }, 3000);
+        }
+
+        function attackOpponent(button) {
+            if (!isMyTurn) return;
+            
+            const playerCard = button.closest('.card');
+            const playerAttack = parseInt(playerCard.querySelector('.power-indicator')?.textContent.split(': ')[1]) || 0;
+            
+            const botContainer = document.querySelector('[data-zone="opponent"]');
+            const botCard = botContainer.querySelector('.card-slot[data-type="actif"] .card');
+            
+            if (botCard) {
+                const botHp = parseInt(botCard.querySelector('.hp-bar')?.textContent.split(': ')[1]) || 0;
+                const newHp = Math.max(0, botHp - playerAttack);
+                botCard.querySelector('.hp-bar').textContent = `PV: ${newHp}`;
+                
+                if (newHp === 0) {
+                    botCard.remove();
+                    addChatMessage("Vous avez détruit la carte du bot !", "system");
+                }
+            }
         }
 
         function updateTurnState() {
