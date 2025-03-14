@@ -29,25 +29,23 @@
             width: 300px;
             height: 450px;
             transform-style: preserve-3d;
-            animation: floatInOut 3s ease-out forwards;
+            animation: boosterEntrance 2s ease-out forwards;
         }
 
-        @keyframes floatInOut {
+        @keyframes boosterEntrance {
             0% {
                 transform: translateY(100vh) rotateX(60deg) scale(0.8);
                 opacity: 0;
             }
-            40% {
-                transform: translateY(0) rotateX(0) scale(1);
+            60% {
+                transform: translateY(0) rotateX(0) scale(1.1);
                 opacity: 1;
             }
-            60% {
-                transform: translateY(0) rotateX(0) scale(1);
-                opacity: 1;
+            80% {
+                transform: translateY(0) rotateX(0) scale(0.95);
             }
             100% {
-                transform: translateY(-100vh) rotateX(-60deg) scale(0.8);
-                opacity: 0;
+                transform: translateY(0) rotateX(0) scale(1);
             }
         }
 
@@ -81,12 +79,50 @@
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
-            transition: none;
-            cursor: grab;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .tear-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.5) 48%,
+                rgba(255,255,255,0.8) 50%,
+                rgba(255,255,255,0.5) 52%,
+                rgba(255,255,255,0) 100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .tear-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: white;
+            box-shadow: 0 0 10px white;
+            transform-origin: center;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .booster.ready-to-open .tear-line {
+            transform: scaleX(1);
         }
 
         .booster.opening {
-            transform: rotateY(180deg);
+            transform: rotateX(-180deg);
+        }
+
+        .booster.opened {
+            transform: translateY(-100vh) rotateX(-180deg);
         }
 
         .booster-face {
@@ -114,39 +150,83 @@
             transform: rotateY(180deg) translateZ(2px);
         }
 
-        .cards-container {
+        .card-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
+            perspective: 1000px;
         }
 
         .card {
-            position: absolute;
+            position: relative;
             width: 200px;
             height: 300px;
             transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .card.hidden {
+            transform: translateY(50vh);
             opacity: 0;
-            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card.visible {
-            opacity: 1;
             transform: translateY(0);
+            opacity: 1;
         }
 
         .card.revealed {
             transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: white;
+            overflow: hidden;
+        }
+
+        .rarity-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .rarity-effect.legendary {
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.5) 0%, transparent 70%);
+            animation: pulseLegendary 2s infinite;
+        }
+
+        .rarity-effect.rainbow {
+            background: linear-gradient(45deg, 
+                rgba(255,0,0,0.5),
+                rgba(255,165,0,0.5),
+                rgba(255,255,0,0.5),
+                rgba(0,255,0,0.5),
+                rgba(0,0,255,0.5),
+                rgba(238,130,238,0.5));
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes pulseLegendary {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
         }
 
         .special-effect {
@@ -320,6 +400,8 @@
                 <div class="tear-point"></div>
             </div>
             <div class="booster">
+                <div class="tear-line"></div>
+                <div class="tear-effect"></div>
                 <div class="booster-face booster-front">
                     <div class="card-shine"></div>
                     <img src="/public/images/booster-front.svg" alt="Booster Front">
@@ -329,7 +411,7 @@
                 </div>
             </div>
         </div>
-        <div class="cards-container"></div>
+        <div class="card-container"></div>
     </div>
     <div class="click-guide">Cliquez pour ouvrir</div>
     <button class="finish-button" onclick="finishSummon()">Terminer</button>
@@ -348,91 +430,77 @@
 
         let currentCardIndex = 0;
         let cards = [];
-        let boosterAnimationComplete = false;
+        let canOpen = false;
 
         function initializeAnimation() {
+            const booster = document.querySelector('.booster');
             const boosterContainer = document.querySelector('.booster-container');
-            
+
             boosterContainer.addEventListener('animationend', () => {
-                if (!boosterAnimationComplete) {
-                    boosterAnimationComplete = true;
-                    showBoosterWithTearPoints();
-                }
+                canOpen = true;
+                booster.classList.add('ready-to-open');
+                booster.addEventListener('click', openBooster);
             });
         }
 
-        function showBoosterWithTearPoints() {
-            const boosterContainer = document.querySelector('.booster-container');
-            boosterContainer.style.animation = 'none';
-            boosterContainer.style.transform = 'translateY(0) rotateX(0) scale(1)';
-            boosterContainer.style.opacity = '1';
+        function openBooster() {
+            if (!canOpen) return;
+            canOpen = false;
 
-            const tearPoints = document.querySelectorAll('.tear-point');
-            tearPoints.forEach(point => {
-                point.addEventListener('mouseover', startTearEffect);
-            });
-        }
+            const booster = document.querySelector('.booster');
+            const tearEffect = document.querySelector('.tear-effect');
 
-        function startTearEffect() {
-            if (boosterAnimationComplete) {
-                const booster = document.querySelector('.booster');
-                booster.style.transform = 'translateX(-150%) rotate(-45deg) scale(0.8)';
-                booster.style.opacity = '0';
-                booster.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+            // Animation de déchirure
+            tearEffect.style.opacity = '1';
+            tearEffect.style.transform = 'translateY(100%)';
 
+            setTimeout(() => {
+                booster.classList.add('opening');
+                
                 setTimeout(() => {
-                    document.querySelector('.booster-container').style.display = 'none';
+                    booster.classList.add('opened');
                     showCards();
-                }, 1000);
-            }
+                }, 800);
+            }, 300);
         }
 
         function showCards() {
-            const cardsContainer = document.querySelector('.cards-container');
-            cardsContainer.style.opacity = '1';
-            cardsContainer.style.pointerEvents = 'all';
-
+            const cardContainer = document.querySelector('.card-container');
             const numCards = summonType === 'multi' ? 10 : 1;
             cards = Array(numCards).fill().map(() => getRandomReward());
 
             cards.forEach((card, index) => {
                 const cardElement = createCard(card);
-                cardElement.classList.add('hidden');
-                cardsContainer.appendChild(cardElement);
+                cardContainer.appendChild(cardElement);
+
+                setTimeout(() => {
+                    cardElement.classList.add('visible');
+                    if (card.rarity === 'Legendary' || card.rarity === 'Special') {
+                        addRarityEffect(cardElement, 'legendary');
+                    } else if (card.rarity === 'Rainbow') {
+                        addRarityEffect(cardElement, 'rainbow');
+                    }
+                }, index * 200);
             });
 
-            showNextCard();
+            document.addEventListener('click', revealNextCard);
         }
 
-        function showNextCard() {
-            if (currentCardIndex < cards.length) {
-                const card = document.querySelectorAll('.card')[currentCardIndex];
-                card.classList.remove('hidden');
-                card.classList.add('visible');
-
-                if (cards[currentCardIndex].rarity === 'Legendary' || 
-                    cards[currentCardIndex].rarity === 'Special') {
-                    addSpecialEffect(card, 'legendary');
-                } else if (cards[currentCardIndex].rarity === 'Rainbow') {
-                    addSpecialEffect(card, 'rainbow');
-                }
-
-                card.addEventListener('click', () => {
-                    card.classList.add('revealed');
-                    setTimeout(() => {
-                        card.classList.add('hidden');
-                        currentCardIndex++;
-                        showNextCard();
-                    }, 1500);
-                });
-            } else {
+        function revealNextCard() {
+            if (currentCardIndex >= cards.length) {
+                document.removeEventListener('click', revealNextCard);
                 document.querySelector('.finish-button').classList.add('visible');
+                return;
             }
+
+            const currentCard = document.querySelectorAll('.card')[currentCardIndex];
+            currentCard.classList.add('revealed');
+            currentCardIndex++;
         }
 
-        function addSpecialEffect(card, effectType) {
+        function addRarityEffect(card, type) {
             const effect = document.createElement('div');
-            effect.className = `special-effect ${effectType}`;
+            effect.className = `rarity-effect ${type}`;
             card.appendChild(effect);
             
             setTimeout(() => {
