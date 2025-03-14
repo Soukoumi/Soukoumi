@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation d'Invocation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1c20 0%, #2d3436 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .scene {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+        }
+
+        .booster-container {
+            position: relative;
+            width: 300px;
+            height: 450px;
+            transform-style: preserve-3d;
+            animation: floatIn 1.5s ease-out forwards;
+        }
+
+        @keyframes floatIn {
+            0% {
+                transform: translateY(100vh) rotateX(60deg);
+            }
+            100% {
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        .booster {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1.5s ease-in-out;
+            cursor: pointer;
+        }
+
+        .booster.opening {
+            transform: rotateY(180deg);
+        }
+
+        .booster-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .booster-front {
+            background: linear-gradient(45deg, #ffd700, #ffa500);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            transform: translateZ(2px);
+        }
+
+        .booster-back {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            transform: rotateY(180deg) translateZ(2px);
+        }
+
+        .cards-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+
+        .cards-container.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .card {
+            width: 150px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease-in-out;
+            cursor: pointer;
+        }
+
+        .card.reveal {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .card-front {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            overflow: hidden;
+        }
+
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transform: skewX(-20deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .click-guide {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.5em;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        .click-guide.visible {
+            opacity: 1;
+        }
+
+        .finish-button {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .finish-button:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 7px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        .finish-button.visible {
+            opacity: 1;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="booster-container">
+            <div class="booster">
+                <div class="booster-face booster-front">
+                    <div class="card-shine"></div>
+                    <img src="booster-front.png" alt="Booster Front">
+                </div>
+                <div class="booster-face booster-back">
+                    <img src="booster-back.png" alt="Booster Back">
+                </div>
+            </div>
+        </div>
+        <div class="cards-container"></div>
+    </div>
+    <div class="click-guide">Cliquez pour ouvrir</div>
+    <button class="finish-button" onclick="finishSummon()">Terminer</button>
+    <div class="particles"></div>
+
+    <script>
+        const summonType = localStorage.getItem('currentSummonType');
+        const rewardsPool = [
+            // ... Copier le même rewardsPool que dans invocation.html ...
+        ];
+
+        let isOpening = false;
+        let cardsRevealed = 0;
+
+        function getRandomReward() {
+            const weightedArray = [];
+            rewardsPool.forEach(item => {
+                for (let i = 0; i < item.weight; i++) {
+                    weightedArray.push(item);
+                }
+            });
+            return weightedArray[Math.floor(Math.random() * weightedArray.length)];
+        }
+
+        function createParticles() {
+            const particles = document.querySelector('.particles');
+            for(let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.transform = `scale(${Math.random()})`;
+                particle.style.opacity = Math.random();
+                particle.style.animation = `float ${5 + Math.random() * 10}s linear infinite`;
+                particles.appendChild(particle);
+            }
+        }
+
+        function startAnimation() {
+            if(isOpening) return;
+            isOpening = true;
+
+            const booster = document.querySelector('.booster');
+            const clickGuide = document.querySelector('.click-guide');
+            const cardsContainer = document.querySelector('.cards-container');
+            
+            clickGuide.style.opacity = '0';
+            booster.classList.add('opening');
+
+            setTimeout(() => {
+                booster.style.opacity = '0';
+                cardsContainer.classList.add('visible');
+                
+                const numCards = summonType === 'multi' ? 10 : 1;
+                const rewards = Array(numCards).fill().map(() => getRandomReward());
+
+                rewards.forEach((reward, index) => {
+                    const card = createCard(reward);
+                    cardsContainer.appendChild(card);
+                    
+                    setTimeout(() => {
+                        card.classList.add('reveal');
+                    }, index * 200);
+                });
+
+                setTimeout(() => {
+                    document.querySelector('.finish-button').classList.add('visible');
+                }, numCards * 200 + 500);
+            }, 1500);
+        }
+
+        function createCard(reward) {
+            const card = document.createElement('div');
+            card.className = `card ${reward.rarity.toLowerCase()}`;
+            
+            const front = document.createElement('div');
+            front.className = 'card-face card-front';
+            front.innerHTML = '<div class="card-shine"></div>';
+            
+            const back = document.createElement('div');
+            back.className = 'card-face card-back';
+            const img = document.createElement('img');
+            img.src = reward.image;
+            img.alt = reward.name;
+            back.appendChild(img);
+            
+            card.appendChild(front);
+            card.appendChild(back);
+            
+            return card;
+        }
+
+        function finishSummon() {
+            window.location.href = 'invocation.html';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            const clickGuide = document.querySelector('.click-guide');
+            clickGuide.classList.add('visible');
+            
+            document.querySelector('.booster').addEventListener('click', startAnimation);
+        });
+    </script>
+</body>
+</html> 
