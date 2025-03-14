@@ -3,49 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plateau de Combat Pokémon</title>
+    <title>Combat en Ligne</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(to bottom right, #1a237e, #311b92);
-            height: 100vh;
-            overflow: hidden;
+            background: linear-gradient(to bottom right, #34495e, #2c3e50);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .game-board {
-            width: 80%;
+            width: 100%;
             max-width: 1200px;
-            background: linear-gradient(145deg, #e0f7fa, #b2ebf2);
-            border: 3px solid #0277bd;
-            padding: 20px;
-            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.4);
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
-            display: grid;
-            grid-template-rows: auto auto auto;
-            gap: 20px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
             position: relative;
+            margin-bottom: 150px; /* Espace pour la zone des cartes piochées */
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid #0277bd;
+        }
+
+        .opponent-row {
+            transform: scale(0.8);
+            margin-top: -20px;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .card {
-            width: 100px;
-            height: 140px;
+            width: 90px;
+            height: 130px;
             background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
             border: 2px solid #2196f3;
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            align-items: center;
-            margin: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            cursor: pointer;
             padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
@@ -64,64 +89,98 @@
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(33, 150, 243, 0.3);
-        }
-
-        .player-zone {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            border: 2px solid #0277bd;
-        }
-
-        .zone-title {
-            grid-column: 1 / -1;
-            color: #0277bd;
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: center;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .deck {
-            width: 110px;
-            height: 160px;
+            width: 100px;
+            height: 150px;
             background: linear-gradient(45deg, #1565c0, #0d47a1);
             border: 3px solid gold;
             border-radius: 10px;
-            position: absolute;
+            position: fixed;
             right: 30px;
             top: 50%;
             transform: translateY(-50%);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 10;
         }
 
         .deck::after {
             content: '';
             position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
+            inset: 5px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
         }
 
-        .energy-counter {
-            position: absolute;
+        #drawnCardsZone {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-x: auto;
+            z-index: 5;
+        }
+
+        @keyframes drawCardAnimation {
+            0% {
+                transform: translate(calc(100vw - 150px), -50vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(50vw, 0) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .card-drawn {
+            animation: drawCardAnimation 1s ease-out forwards;
+        }
+
+        #matchmaking {
+            position: fixed;
             top: 20px;
-            right: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: none;
+            z-index: 100;
+        }
+
+        #playerInfo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 100;
+        }
+
+        .energy-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             width: 60px;
             height: 60px;
             background: linear-gradient(135deg, #ffd700, #ffa000);
@@ -134,70 +193,125 @@
             color: white;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
             border: 2px solid white;
-        }
-
-        @keyframes cardDraw {
-            0% {
-                transform: translateX(100%) rotate(0deg);
-                opacity: 0;
-            }
-            100% {
-                transform: translateX(0) rotate(360deg);
-                opacity: 1;
-            }
-        }
-
-        .card-drawn {
-            animation: cardDraw 0.5s ease-out forwards;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
-    <div class="game-board">
-        <div class="energy-counter" id="energyCounter">5</div>
-        
-        <div class="player-zone opponent-zone">
-            <div class="zone-title">Zone Adversaire</div>
-            <div class="card">Pokémon Actif</div>
-            <div class="card">Banc 1</div>
-            <div class="card">Banc 2</div>
-            <div class="card">Banc 3</div>
-            <div class="card">Banc 4</div>
-        </div>
-
-        <div class="player-zone battle-zone">
-            <div class="zone-title">Zone de Combat</div>
-            <div class="card">Énergie</div>
-            <div class="card">Dresseur</div>
-            <div class="card">Objet</div>
-            <div class="card">Support</div>
-            <div class="card">Stade</div>
-        </div>
-
-        <div class="player-zone player-zone">
-            <div class="zone-title">Votre Zone</div>
-            <div class="card">Pokémon Actif</div>
-            <div class="card">Banc 1</div>
-            <div class="card">Banc 2</div>
-            <div class="card">Banc 3</div>
-            <div class="card">Banc 4</div>
-        </div>
-
-        <div class="deck" id="deck" onclick="drawCard()">Pioche</div>
+    <div id="playerInfo">
+        Joueur: <span id="playerName">Connexion...</span>
     </div>
 
+    <div id="matchmaking">
+        Recherche d'un adversaire... <span id="searchTime">0</span>s
+    </div>
+
+    <div class="energy-counter" id="energyCounter">5</div>
+
+    <div class="game-board">
+        <div class="row opponent-row">
+            <span class="label">Adversaire</span>
+            <div class="cards-container">
+                <div class="card">Actif</div>
+                <div class="card">Change 1</div>
+                <div class="card">Change 2</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="label">Actifs</span>
+            <div class="cards-container">
+                <div class="card">Carte 1</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="label">Changement</span>
+            <div class="cards-container">
+                <div class="card">Carte 2</div>
+                <div class="card">Carte 3</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="label">Objets</span>
+            <div class="cards-container">
+                <div class="card">Carte 4</div>
+                <div class="card">Carte 5</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="deck" id="deck" onclick="drawCard()">Pioche</div>
+    <div id="drawnCardsZone"></div>
+
     <script>
+        let socket;
+        let searchInterval;
+        let searchTime = 0;
+        let energy = 5;
+        let playerName = "Joueur" + Math.floor(Math.random() * 1000);
+
         const cards = [
-            { name: "Pikachu", type: "Électrique", description: "Attaque Éclair: 30 dégâts" },
-            { name: "Énergie Électrique", type: "Énergie", description: "+1 Énergie Électrique" },
-            { name: "Potion", type: "Objet", description: "Soigne 30 PV" },
-            { name: "Professeur Chen", type: "Support", description: "Piochez 3 cartes" },
-            { name: "Stade Combat", type: "Stade", description: "Bonus aux Pokémon Combat" }
+            { name: "Potion de Vie", type: "Objet", description: "Restaure 20 points de vie" },
+            { name: "Épée en Fer", type: "Équipement", description: "Augmente l'attaque de 10" },
+            { name: "Bouclier Magique", type: "Défense", description: "Réduit les dégâts de 5" },
+            { name: "Sort de Feu", type: "Attaque", description: "15 points de dégâts" },
+            { name: "Anneau d'Invisibilité", type: "Spécial", description: "Évite une attaque" }
         ];
 
-        let energy = 5;
+        // Initialisation de la connexion WebSocket
+        function initializeWebSocket() {
+            socket = new WebSocket('ws://' + window.location.hostname + ':8080');
+            
+            socket.onopen = () => {
+                console.log('Connecté au serveur');
+                document.getElementById('playerName').textContent = playerName;
+                startMatchmaking();
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleGameEvent(data);
+            };
+
+            socket.onclose = () => {
+                console.log('Déconnecté du serveur');
+                setTimeout(initializeWebSocket, 5000);
+            };
+        }
+
+        function startMatchmaking() {
+            document.getElementById('matchmaking').style.display = 'block';
+            searchInterval = setInterval(() => {
+                searchTime++;
+                document.getElementById('searchTime').textContent = searchTime;
+                socket.send(JSON.stringify({
+                    type: 'search',
+                    player: playerName
+                }));
+            }, 1000);
+        }
+
+        function handleGameEvent(data) {
+            switch(data.type) {
+                case 'matched':
+                    clearInterval(searchInterval);
+                    document.getElementById('matchmaking').style.display = 'none';
+                    // Initialiser la partie
+                    break;
+                case 'cardPlayed':
+                    // Gérer une carte jouée par l'adversaire
+                    break;
+                case 'gameEnd':
+                    // Gérer la fin de partie
+                    break;
+            }
+        }
 
         function drawCard() {
+            if (energy <= 0) return;
+
             const randomIndex = Math.floor(Math.random() * cards.length);
             const card = cards[randomIndex];
             
@@ -209,9 +323,9 @@
                 <p>${card.description}</p>
             `;
             
-            document.querySelector(".player-zone").appendChild(cardElement);
+            document.getElementById("drawnCardsZone").appendChild(cardElement);
 
-            // Update energy
+            // Mise à jour de l'énergie
             energy = Math.max(0, energy - 1);
             document.getElementById("energyCounter").textContent = energy;
             
@@ -219,7 +333,19 @@
                 document.getElementById("deck").style.opacity = "0.5";
                 document.getElementById("deck").style.cursor = "not-allowed";
             }
+
+            // Envoyer l'information au serveur
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'cardDrawn',
+                    card: card.name,
+                    player: playerName
+                }));
+            }
         }
+
+        // Initialiser la connexion au chargement de la page
+        window.onload = initializeWebSocket;
     </script>
 </body>
 </html>
