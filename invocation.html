@@ -217,6 +217,164 @@
             color: white;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
+
+        /* Styles pour l'animation du booster */
+        .booster-animation {
+            position: fixed;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 300px;
+            background: linear-gradient(45deg, #ffd700, #ffa500);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .booster-animation.active {
+            bottom: 50%;
+            transform: translateX(-50%) translateY(50%);
+        }
+
+        .booster-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+        }
+
+        .booster-front, .booster-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .booster-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+
+        .hand-guide {
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: url('hand-icon.png') no-repeat center/contain;
+            animation: swipeGuide 1.5s infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        @keyframes swipeGuide {
+            0% { transform: translateX(0) translateY(-50%); }
+            50% { transform: translateX(20px) translateY(-50%); }
+            100% { transform: translateX(0) translateY(-50%); }
+        }
+
+        .booster-animation.ready .hand-guide {
+            opacity: 1;
+        }
+
+        .booster-opening {
+            transform: rotateY(180deg);
+        }
+
+        .cards-reveal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .cards-reveal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .card-slot {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            margin: 0 10px;
+            perspective: 1000px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .card-slot.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .continue-text {
+            position: fixed;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .continue-text.visible {
+            opacity: 1;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        /* Animation de brillance pour les cartes */
+        .card-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transform: skewX(-20deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
     </style>
 </head>
 <body>
@@ -270,6 +428,25 @@
         </div>
     </div>
 </div>
+    
+    
+
+    <!-- Ajout des nouveaux éléments pour l'animation -->
+    <div class="booster-animation">
+        <div class="booster-content">
+            <div class="booster-front">
+                <div class="card-shine"></div>
+                <img src="booster-front.png" alt="Booster">
+            </div>
+            <div class="booster-back">
+                <img src="booster-back.png" alt="Booster Back">
+            </div>
+        </div>
+        <div class="hand-guide"></div>
+    </div>
+
+    <div class="cards-reveal"></div>
+    <div class="continue-text">Appuyez pour continuer</div>
     
     
 
@@ -386,94 +563,112 @@ function saveRewardToCollection(reward) {
             return availableCoins >= cost;
         }
 
+        function startBoosterAnimation(isMulti) {
+            const booster = document.querySelector('.booster-animation');
+            const cardsReveal = document.querySelector('.cards-reveal');
+            const continueText = document.querySelector('.continue-text');
+            
+            // Animation initiale du booster
+            booster.classList.add('active');
+            
+            setTimeout(() => {
+                booster.classList.add('ready');
+                
+                // Attente du swipe
+                booster.addEventListener('click', function openBooster() {
+                    booster.classList.add('booster-opening');
+                    booster.classList.remove('ready');
+                    
+                    setTimeout(() => {
+                        booster.style.opacity = '0';
+                        cardsReveal.classList.add('active');
+                        
+                        // Révélation des cartes une par une
+                        const numCards = isMulti ? 10 : 1;
+                        for(let i = 0; i < numCards; i++) {
+                            const card = document.createElement('div');
+                            card.className = 'card-slot';
+                            cardsReveal.appendChild(card);
+                            
+                            setTimeout(() => {
+                                card.classList.add('reveal');
+                            }, i * 200);
+                        }
+                        
+                        // Affichage du texte "continuer"
+                        setTimeout(() => {
+                            continueText.classList.add('visible');
+                            document.addEventListener('click', finishAnimation);
+                        }, numCards * 200 + 500);
+                    }, 1000);
+                    
+                    booster.removeEventListener('click', openBooster);
+                });
+            }, 1000);
+        }
+
+        function finishAnimation() {
+            const cardsReveal = document.querySelector('.cards-reveal');
+            const continueText = document.querySelector('.continue-text');
+            const booster = document.querySelector('.booster-animation');
+            
+            cardsReveal.classList.remove('active');
+            continueText.classList.remove('visible');
+            booster.classList.remove('active', 'booster-opening');
+            booster.style.opacity = '1';
+            
+            // Nettoyage
+            cardsReveal.innerHTML = '';
+            document.removeEventListener('click', finishAnimation);
+            
+            // Affichage des récompenses dans le conteneur original
+            if(currentRewards) {
+                displayRewards(currentRewards);
+            }
+        }
+
+        let currentRewards = null;
+
         function singleSummon() {
-    const cost = 50; // Coût de 1 pièce
-    if (!canSummon(cost)) {
-        alert("Vous n'avez pas assez de koumi pour une invocation !");
-        return;
-    }
+            if(!canSummon(50)) {
+                alert("Vous n'avez pas assez de koumi pour une invocation !");
+                return;
+            }
+            
+            availableCoins -= 50;
+            localStorage.setItem('totalCoins', availableCoins);
+            updateAvailableCoins();
+            
+            currentRewards = [getRandomReward()];
+            startBoosterAnimation(false);
+        }
 
-    availableCoins -= cost;
-    localStorage.setItem('totalCoins', availableCoins);
-    updateAvailableCoins();
-    
-    clearRewards();
-    rewardsContainer.style.gridTemplateColumns = '1fr'; 
-    rewardsContainer.style.gridTemplateRows = '1fr'; 
-    
-    const reward = getRandomReward();
-    const rewardElement = document.createElement('div');
-    rewardElement.classList.add('reward', 'single-reward', reward.rarity.toLowerCase());
-    rewardElement.onclick = () => showModal(reward.image); // Ajout de l'événement onclick
-
-    const rewardImage = document.createElement('img');
-    rewardImage.src = reward.image;
-    rewardImage.alt = reward.name;
-    rewardImage.style.width = '100px';
-    rewardImage.style.height = '100px';
-    rewardElement.appendChild(rewardImage);
-
-    const rewardTextBottom = document.createElement('div');
-    rewardTextBottom.classList.add('reward-text-bottom');
-    rewardTextBottom.textContent = `${reward.name} (${reward.rarity})`;
-    rewardElement.appendChild(rewardTextBottom);
-
-    rewardsContainer.appendChild(rewardElement);
-    saveRewardToCollection(reward);
-}
-
-function multiSummon() {
-    const cost = 500; // Coût pour invocation x10
-    if (!canSummon(cost)) {
-        alert("Vous n'avez pas assez de koumi pour une invocation x10 !");
-        return;
-    }
-
-    availableCoins -= cost;
-    localStorage.setItem('totalCoins', availableCoins);
-    updateAvailableCoins();
-    
-    clearRewards();
-    rewardsContainer.style.gridTemplateColumns = 'repeat(5, 1fr)';
-    rewardsContainer.style.gridTemplateRows = 'repeat(2, 1fr)';
-    
-    for (let i = 0; i < 10; i++) {
-        const reward = getRandomReward();
-        const rewardElement = document.createElement('div');
-        rewardElement.classList.add('reward', reward.rarity.toLowerCase());
-        rewardElement.onclick = () => showModal(reward.image); // Ajout de l'événement onclick
-
-        const rewardImage = document.createElement('img');
-        rewardImage.src = reward.image;
-        rewardImage.alt = reward.name;
-        rewardImage.style.width = '50px';
-        rewardImage.style.height = '50px';
-        rewardElement.appendChild(rewardImage);
-
-        const rewardTextBottom = document.createElement('div');
-        rewardTextBottom.classList.add('reward-text-bottom');
-        rewardTextBottom.textContent = `${reward.name} (${reward.rarity})`;
-        rewardElement.appendChild(rewardTextBottom);
-
-        rewardsContainer.appendChild(rewardElement);
-        saveRewardToCollection(reward);
-    }
-    invocationCount += 10;
-    updateProfileDisplay();
-}
+        function multiSummon() {
+            if(!canSummon(500)) {
+                alert("Vous n'avez pas assez de koumi pour une invocation x10 !");
+                return;
+            }
+            
+            availableCoins -= 500;
+            localStorage.setItem('totalCoins', availableCoins);
+            updateAvailableCoins();
+            
+            currentRewards = Array(10).fill().map(() => getRandomReward());
+            startBoosterAnimation(true);
+        }
 
 
-function showModal(imageSrc) {
-    const modal = document.getElementById('modal');
-    const modalImage = document.getElementById('modal-image');
-    modalImage.src = imageSrc;
-    modal.style.display = 'flex';
-}
+        function showModal(imageSrc) {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modal-image');
+            modalImage.src = imageSrc;
+            modal.style.display = 'flex';
+        }
 
-function closeModal() {
-    const modal = document.getElementById('modal');
-    modal.style.display = 'none';
-}
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
 
 
         function toggleInfo() {
