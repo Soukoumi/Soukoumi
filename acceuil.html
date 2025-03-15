@@ -4,111 +4,254 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soukoumi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
+        :root {
+            --primary: #ff4655;
+            --secondary: #0fb6d6;
+            --accent: #bd3944;
+            --dark: #0f1923;
+            --light: #ffffff;
+            --violet: #b892ff;
+            --neon-violet: #b892ff;
+            --neon-pink: #ff69b4;
+            --apex-red: #DA292E;
+            --apex-gold: #F0A500;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
+            min-height: 100vh;
+            color: var(--light);
             position: relative;
-            color: white;
             overflow: hidden;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(184, 146, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
         }
 
-        h1 {
-            position: absolute;
-            top: 20px;
-            font-size: 48px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .title {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            font-size: 4.5rem;
             font-weight: 700;
-            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
-            margin: 0;
-            background: linear-gradient(45deg, #fff, #f3f3f3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: titleFloat 3s ease-in-out infinite;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--light);
+            text-shadow: 
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px var(--neon-violet),
+                0 0 82px var(--neon-violet),
+                0 0 92px var(--neon-pink),
+                0 0 102px var(--neon-pink),
+                0 0 151px var(--neon-violet);
+            animation: flicker 1.5s infinite alternate;
         }
 
-        @keyframes titleFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 7px #fff,
+                    0 0 10px #fff,
+                    0 0 21px #fff,
+                    0 0 42px var(--neon-violet),
+                    0 0 82px var(--neon-violet),
+                    0 0 92px var(--neon-pink),
+                    0 0 102px var(--neon-pink),
+                    0 0 151px var(--neon-violet);
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
         }
 
-        #discordButton {
-            position: absolute;
+        .profile-card {
+            position: fixed;
             top: 20px;
-            left: 20px;
-            background: linear-gradient(45deg, #5865F2, #7289da);
-            color: white;
-            border: none;
+            right: 20px;
+            width: 280px;
+            background: rgba(15, 25, 35, 0.95);
+            border: 2px solid var(--apex-gold);
+            padding: 0.8rem 1.2rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
             cursor: pointer;
-            border-radius: 25px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
-            text-decoration: none;
             transition: all 0.3s ease;
         }
 
-        #discordButton:hover {
+        .profile-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
+            box-shadow: 
+                0 5px 15px rgba(184, 146, 255, 0.2),
+                0 0 30px rgba(184, 146, 255, 0.1);
+            border-color: var(--neon-violet);
         }
 
-        .hidden-buttons {
+        .profile-header {
             display: flex;
-            flex-direction: row;
-            gap: 25px;
-            margin-top: 10px;
-            position: absolute;
-            bottom: 180px;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            align-items: center;
+            gap: 0.8rem;
         }
 
-        .hidden-buttons.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .hidden-buttons.hidden {
-            opacity: 0;
-            transform: translateX(-50%) translateY(50px);
-        }
-
-        .hidden-buttons button {
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #1a2a6c;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
+        .profile-pic {
+            width: 45px;
+            height: 45px;
+            border: 2px solid var(--apex-gold);
+            clip-path: polygon(
+                20% 0%,
+                80% 0%,
+                100% 20%,
+                100% 80%,
+                80% 100%,
+                20% 100%,
+                0% 80%,
+                0% 20%
+            );
             overflow: hidden;
         }
 
-        .hidden-buttons button::before {
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+        }
+
+        .profile-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--apex-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-level {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .level-badge {
+            background: var(--apex-gold);
+            color: var(--dark);
+            padding: 0.1rem 0.4rem;
+            border-radius: 2px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .profile-level span:last-child {
+            font-size: 0.8rem;
+            color: var(--light);
+            opacity: 0.9;
+        }
+
+        .profile-banner {
+            width: 100%;
+            height: 100px;
+            margin: -1rem -1rem 1rem -1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--apex-red), var(--dark));
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid var(--apex-gold);
+        }
+
+        .profile-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 45%, var(--apex-gold) 49%, transparent 51%),
+                linear-gradient(-45deg, transparent 45%, var(--apex-gold) 49%, transparent 51%);
+            background-size: 10px 10px;
+            opacity: 0.1;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(240, 165, 0, 0.3);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--apex-gold);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--light);
+            opacity: 0.8;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 4rem auto;
+            max-width: 900px;
+            padding: 0 1rem;
+        }
+
+        .nav-button {
+            position: relative;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(184, 146, 255, 0.3);
+            color: var(--light);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-button::before {
             content: '';
             position: absolute;
             top: 0;
@@ -116,94 +259,159 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(
-                120deg,
+                90deg,
                 transparent,
-                rgba(255, 255, 255, 0.3),
+                rgba(255, 70, 85, 0.2),
                 transparent
             );
             transition: 0.5s;
         }
 
-        .hidden-buttons button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            background: white;
+        .nav-button:hover {
+            background: rgba(184, 146, 255, 0.1);
+            border-color: var(--violet);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 5px 15px rgba(184, 146, 255, 0.2),
+                0 0 30px rgba(184, 146, 255, 0.1);
         }
 
-        .hidden-buttons button:hover::before {
+        .nav-button:hover::before {
             left: 100%;
         }
 
-        .diamond {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #ffffff, #f0f0f0);
-            position: absolute;
-            bottom: 100px;
-            transform: rotate(45deg);
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        .nav-button:active {
+            transform: translateY(0);
         }
 
-        .diamond::after {
-            content: '';
-            width: 40%;
-            height: 40%;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+        #discordButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 0.8rem 1.5rem;
+            background: rgba(184, 146, 255, 0.2);
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             transition: all 0.3s ease;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .diamond:hover {
-            transform: rotate(45deg) scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        #discordButton:hover {
+            background: rgba(184, 146, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
         }
 
-        .rotated {
-            transform: rotate(405deg);
+        .background-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: -1;
         }
 
-        .rotated:hover {
-            transform: rotate(405deg) scale(1.1);
+        .line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, var(--violet), transparent);
+            opacity: 0.2;
+        }
+
+        .line-1 {
+            top: 20%;
+            left: -5%;
+            width: 110%;
+            height: 1px;
+            transform: rotate(-15deg);
+        }
+
+        .line-2 {
+            top: 60%;
+            left: -5%;
+            width: 110%;
+            height: 1px;
+            transform: rotate(15deg);
+        }
+
+        @media (max-width: 768px) {
+            .nav-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .nav-button {
+                font-size: 1rem;
+                padding: 1rem;
+            }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
         }
     </style>
 </head>
 <body>
-    <h1>Soukoumi</h1>
-    <a id="discordButton" href="https://discord.gg/c3b2MC5se4" target="_blank">Discord</a>
-    
-    <div id="hiddenButtons" class="hidden-buttons hidden">
-        <button onclick="window.location.href='Koumi.html'">Koumi</button>
-        <button onclick="window.location.href='invocation.html'">Invocation</button>
-        <button onclick="window.location.href='collection.html'">Collection</button>
-        <button onclick="window.location.href='combats.html'">Combats</button>
+    <div class="background-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
     </div>
 
-    <div class="diamond" id="diamondButton" onclick="toggleButtons()"></div>
+    <div class="container">
+        <h1 class="title">Soukoumi</h1>
+
+        <a id="discordButton" href="https://discord.gg/c3b2MC5se4" target="_blank">Discord</a>
+
+        <a href="profile.html" style="text-decoration: none;">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-pic">
+                        <img src="https://placehold.co/45x45" alt="Profile Picture">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Joueur_123</div>
+                        <div class="profile-level">
+                            <span class="level-badge">42</span>
+                            <span>Légende</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        <div class="nav-grid">
+            <button class="nav-button" onclick="window.location.href='Koumi.html'">Koumi</button>
+            <button class="nav-button" onclick="window.location.href='invocation.html'">Invocation</button>
+            <button class="nav-button" onclick="window.location.href='collection.html'">Collection</button>
+            <button class="nav-button" onclick="window.location.href='combats.html'">Combats</button>
+        </div>
+    </div>
 
     <script>
-        function toggleButtons() {
-            const buttons = document.getElementById('hiddenButtons');
-            const diamond = document.getElementById('diamondButton');
-            if (buttons.classList.contains('hidden')) {
-                buttons.style.display = 'flex';
-                setTimeout(() => {
-                    buttons.classList.remove('hidden');
-                    buttons.classList.add('visible');
-                }, 10);
-                diamond.classList.add('rotated');
-            } else {
-                buttons.classList.remove('visible');
-                buttons.classList.add('hidden');
-                diamond.classList.remove('rotated');
-                setTimeout(() => {
-                    buttons.style.display = 'none';
-                }, 500);
-            }
-        }
+        // Animation des boutons
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                button.style.setProperty('--x', `${x}px`);
+                button.style.setProperty('--y', `${y}px`);
+            });
+        });
     </script>
 </body>
 </html>
