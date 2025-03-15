@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Soukoumi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4655;
+            --secondary: #0fb6d6;
+            --accent: #bd3944;
+            --dark: #0f1923;
+            --light: #ffffff;
+            --violet: #b892ff;
+            --neon-violet: #b892ff;
+            --neon-pink: #ff69b4;
+            --apex-red: #DA292E;
+            --apex-gold: #F0A500;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 0.8rem 1.5rem;
+            background: rgba(184, 146, 255, 0.2);
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button:hover {
+            background: rgba(184, 146, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+        }
+
+        .profile-section {
+            background: rgba(15, 25, 35, 0.95);
+            border: 2px solid var(--apex-gold);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: var(--apex-gold);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-pic-large {
+            width: 150px;
+            height: 150px;
+            border: 3px solid var(--apex-gold);
+            clip-path: polygon(
+                20% 0%,
+                80% 0%,
+                100% 20%,
+                100% 80%,
+                80% 100%,
+                20% 100%,
+                0% 80%,
+                0% 20%
+            );
+            overflow: hidden;
+        }
+
+        .profile-pic-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info-large {
+            flex-grow: 1;
+        }
+
+        .profile-name-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--apex-gold);
+            padding: 0.5rem 1rem;
+            color: var(--light);
+            font-size: 1.2rem;
+            font-family: 'Rajdhani', sans-serif;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--apex-gold);
+            padding: 1.5rem;
+            text-align: center;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--apex-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .achievement {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--neon-violet);
+            padding: 1rem;
+            text-align: center;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            color: var(--neon-violet);
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-size: 0.9rem;
+            color: var(--light);
+            margin-bottom: 0.3rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="acceuil.html" class="back-button">Retour</a>
+
+        <div class="profile-section">
+            <h2 class="section-title">Informations du Profil</h2>
+            <div class="profile-header">
+                <div class="profile-pic-large">
+                    <img src="https://placehold.co/150x150" alt="Profile Picture">
+                </div>
+                <div class="profile-info-large">
+                    <input type="text" class="profile-name-input" value="Joueur_123" placeholder="Nom du joueur">
+                    <div class="profile-level">
+                        <span class="level-badge">Niveau 42</span>
+                        <span>Légende</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2 class="section-title">Statistiques</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">157</div>
+                    <div class="stat-label">Victoires</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1.2K</div>
+                    <div class="stat-label">Éliminations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">89%</div>
+                    <div class="stat-label">Top 5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">42</div>
+                    <div class="stat-label">Koumis Capturés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Koumis Légendaires</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">324</div>
+                    <div class="stat-label">Combats Gagnés</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2 class="section-title">Succès</h2>
+            <div class="achievements">
+                <div class="achievement">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-name">Premier Sang</div>
+                    <div class="achievement-desc">Remporter votre premier combat</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">⚔️</div>
+                    <div class="achievement-name">Maître Stratège</div>
+                    <div class="achievement-desc">Gagner 100 combats</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🌟</div>
+                    <div class="achievement-name">Collectionneur</div>
+                    <div class="achievement-desc">Capturer 50 Koumis</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-name">Légende</div>
+                    <div class="achievement-desc">Atteindre le niveau 40</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
