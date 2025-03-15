@@ -12,8 +12,8 @@
             --accent: #bd3944;
             --dark: #0f1923;
             --light: #ffffff;
-            --violet: #b892ff;
-            --neon-violet: #b892ff;
+            --violet-clair: #e6d5ff;
+            --neon-violet: #e6d5ff;
             --neon-pink: #ff69b4;
             --apex-red: #DA292E;
             --apex-gold: #F0A500;
@@ -45,7 +45,7 @@
             top: 20px;
             left: 20px;
             padding: 0.8rem 1.5rem;
-            background: rgba(184, 146, 255, 0.2);
+            background: black;
             color: var(--light);
             text-decoration: none;
             font-weight: 500;
@@ -54,27 +54,24 @@
             transition: all 0.3s ease;
             clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
             z-index: 100;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--violet-clair);
         }
 
         .back-button:hover {
-            background: rgba(184, 146, 255, 0.3);
+            background: rgba(0, 0, 0, 0.8);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
         }
 
         .profile-section {
-            background: rgba(15, 25, 35, 0.95);
-            border: 2px solid var(--apex-gold);
+            background: black;
+            border: 2px solid var(--violet-clair);
             margin: 2rem 0;
             padding: 2rem;
             border-radius: 4px;
-            backdrop-filter: blur(10px);
         }
 
         .section-title {
-            color: var(--apex-gold);
+            color: var(--violet-clair);
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
@@ -89,10 +86,17 @@
             margin-bottom: 2rem;
         }
 
-        .profile-pic-large {
+        .profile-pic-container {
+            position: relative;
             width: 150px;
             height: 150px;
-            border: 3px solid var(--apex-gold);
+            cursor: pointer;
+        }
+
+        .profile-pic-large {
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--violet-clair);
             clip-path: polygon(
                 20% 0%,
                 80% 0%,
@@ -104,6 +108,7 @@
                 0% 20%
             );
             overflow: hidden;
+            position: relative;
         }
 
         .profile-pic-large img {
@@ -112,13 +117,41 @@
             object-fit: cover;
         }
 
+        .profile-pic-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .profile-pic-container:hover .profile-pic-overlay {
+            opacity: 1;
+        }
+
+        .profile-pic-text {
+            color: white;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        #profile-pic-input {
+            display: none;
+        }
+
         .profile-info-large {
             flex-grow: 1;
         }
 
         .profile-name-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--apex-gold);
+            background: black;
+            border: 2px solid var(--violet-clair);
             padding: 0.5rem 1rem;
             color: var(--light);
             font-size: 1.2rem;
@@ -136,8 +169,8 @@
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--apex-gold);
+            background: black;
+            border: 1px solid var(--violet-clair);
             padding: 1.5rem;
             text-align: center;
             clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
@@ -146,7 +179,7 @@
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
-            color: var(--apex-gold);
+            color: var(--violet-clair);
             margin-bottom: 0.5rem;
         }
 
@@ -157,36 +190,24 @@
             letter-spacing: 1px;
         }
 
-        .achievements {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .achievement {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--neon-violet);
-            padding: 1rem;
+        .login-section {
+            margin-top: 2rem;
             text-align: center;
-            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
         }
 
-        .achievement-icon {
-            font-size: 2rem;
-            color: var(--neon-violet);
-            margin-bottom: 0.5rem;
-        }
-
-        .achievement-name {
-            font-size: 0.9rem;
+        .login-button {
+            background: black;
+            border: 1px solid var(--violet-clair);
             color: var(--light);
-            margin-bottom: 0.3rem;
+            padding: 0.8rem 2rem;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .achievement-desc {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
+        .login-button:hover {
+            background: var(--violet-clair);
+            color: black;
         }
     </style>
 </head>
@@ -197,16 +218,27 @@
         <div class="profile-section">
             <h2 class="section-title">Informations du Profil</h2>
             <div class="profile-header">
-                <div class="profile-pic-large">
-                    <img src="https://placehold.co/150x150" alt="Profile Picture">
+                <div class="profile-pic-container">
+                    <input type="file" id="profile-pic-input" accept="image/*">
+                    <div class="profile-pic-large">
+                        <img src="https://placehold.co/150x150" alt="Profile Picture" id="profile-pic">
+                        <div class="profile-pic-overlay">
+                            <div class="profile-pic-text">Cliquez pour changer<br>votre photo</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="profile-info-large">
                     <input type="text" class="profile-name-input" value="Joueur_123" placeholder="Nom du joueur">
                     <div class="profile-level">
-                        <span class="level-badge">Niveau 42</span>
-                        <span>Légende</span>
+                        <span class="level-badge">Niveau 0</span>
+                        <span>Débutant</span>
                     </div>
                 </div>
+            </div>
+
+            <div class="login-section">
+                <button class="login-button">Se connecter avec Google</button>
+                <button class="login-button">Se connecter avec Email</button>
             </div>
         </div>
 
@@ -214,57 +246,49 @@
             <h2 class="section-title">Statistiques</h2>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-value">157</div>
+                    <div class="stat-value">0</div>
                     <div class="stat-label">Victoires</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">1.2K</div>
-                    <div class="stat-label">Éliminations</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Défaites</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">89%</div>
-                    <div class="stat-label">Top 5</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Total de parties</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">42</div>
-                    <div class="stat-label">Koumis Capturés</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Boosters ouverts</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">15</div>
-                    <div class="stat-label">Koumis Légendaires</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">324</div>
-                    <div class="stat-label">Combats Gagnés</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="profile-section">
-            <h2 class="section-title">Succès</h2>
-            <div class="achievements">
-                <div class="achievement">
-                    <div class="achievement-icon">🏆</div>
-                    <div class="achievement-name">Premier Sang</div>
-                    <div class="achievement-desc">Remporter votre premier combat</div>
-                </div>
-                <div class="achievement">
-                    <div class="achievement-icon">⚔️</div>
-                    <div class="achievement-name">Maître Stratège</div>
-                    <div class="achievement-desc">Gagner 100 combats</div>
-                </div>
-                <div class="achievement">
-                    <div class="achievement-icon">🌟</div>
-                    <div class="achievement-name">Collectionneur</div>
-                    <div class="achievement-desc">Capturer 50 Koumis</div>
-                </div>
-                <div class="achievement">
-                    <div class="achievement-icon">👑</div>
-                    <div class="achievement-name">Légende</div>
-                    <div class="achievement-desc">Atteindre le niveau 40</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Heures de jeu</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Gestion du changement de photo de profil
+        const profilePicContainer = document.querySelector('.profile-pic-container');
+        const profilePicInput = document.getElementById('profile-pic-input');
+        const profilePic = document.getElementById('profile-pic');
+
+        profilePicContainer.addEventListener('click', () => {
+            profilePicInput.click();
+        });
+
+        profilePicInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profilePic.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
 </html> 
