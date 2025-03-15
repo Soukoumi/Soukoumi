@@ -17,6 +17,7 @@
             --neon-pink: #ff69b4;
             --apex-red: #DA292E;
             --apex-gold: #F0A500;
+            --dark-gray: #1a1a1a;
         }
 
         * {
@@ -45,7 +46,7 @@
             top: 20px;
             left: 20px;
             padding: 0.8rem 1.5rem;
-            background: black;
+            background: var(--dark-gray);
             color: var(--light);
             text-decoration: none;
             font-weight: 500;
@@ -63,7 +64,7 @@
         }
 
         .profile-section {
-            background: black;
+            background: var(--dark-gray);
             border: 2px solid var(--violet-clair);
             margin: 2rem 0;
             padding: 2rem;
@@ -150,7 +151,7 @@
         }
 
         .profile-name-input {
-            background: black;
+            background: var(--dark-gray);
             border: 2px solid var(--violet-clair);
             padding: 0.5rem 1rem;
             color: var(--light);
@@ -169,7 +170,7 @@
         }
 
         .stat-card {
-            background: black;
+            background: var(--dark-gray);
             border: 1px solid var(--violet-clair);
             padding: 1.5rem;
             text-align: center;
@@ -196,7 +197,7 @@
         }
 
         .login-button {
-            background: black;
+            background: var(--dark-gray);
             border: 1px solid var(--violet-clair);
             color: var(--light);
             padding: 0.8rem 2rem;
@@ -270,11 +271,32 @@
     </div>
 
     <script>
-        // Gestion du changement de photo de profil
+        // Gestion du changement de photo de profil et sauvegarde des données
         const profilePicContainer = document.querySelector('.profile-pic-container');
         const profilePicInput = document.getElementById('profile-pic-input');
         const profilePic = document.getElementById('profile-pic');
+        const profileNameInput = document.querySelector('.profile-name-input');
 
+        // Charger les données sauvegardées
+        window.addEventListener('load', () => {
+            const savedName = localStorage.getItem('playerName');
+            const savedPic = localStorage.getItem('playerPic');
+            
+            if (savedName) {
+                profileNameInput.value = savedName;
+            }
+            
+            if (savedPic) {
+                profilePic.src = savedPic;
+            }
+        });
+
+        // Sauvegarder le nom du joueur
+        profileNameInput.addEventListener('change', () => {
+            localStorage.setItem('playerName', profileNameInput.value);
+        });
+
+        // Gestion de la photo de profil
         profilePicContainer.addEventListener('click', () => {
             profilePicInput.click();
         });
@@ -284,7 +306,9 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    profilePic.src = e.target.result;
+                    const imageData = e.target.result;
+                    profilePic.src = imageData;
+                    localStorage.setItem('playerPic', imageData);
                 };
                 reader.readAsDataURL(file);
             }
