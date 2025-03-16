@@ -4,57 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ma Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Styles inchangés */
+        :root {
+            --primary: #ff4655;
+            --secondary: #0fb6d6;
+            --accent: #bd3944;
+            --dark: #0f1923;
+            --light: #ffffff;
+            --violet: #b892ff;
+            --neon-violet: #b892ff;
+            --neon-pink: #ff69b4;
+            --apex-red: #DA292E;
+            --apex-gold: #F0A500;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
             margin: 0;
-            padding: 0;
-            background-color: #f0f8ff;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(184, 146, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         h1 {
-            color: #333;
+            color: var(--light);
             margin: 20px 0;
+            font-size: 3rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            text-shadow: 0 0 10px var(--neon-violet);
         }
 
         .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
             margin: 20px;
+            flex-wrap: wrap;
         }
 
         .sort-button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            border: 2px solid var(--neon-violet);
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
         }
 
         .sort-button:hover {
-            background-color: #27ae60;
+            background: rgba(184, 146, 255, 0.2);
+            box-shadow: 0 0 20px var(--neon-violet);
         }
 
         .collection-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
             padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .reward {
-            width: 180px;
-            height: 280px;
+            width: 100%;
+            aspect-ratio: 2/3;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: transparent;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--neon-violet);
+            border-radius: 10px;
             overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .reward:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-violet);
         }
 
         .reward img {
@@ -63,13 +111,28 @@
             object-fit: cover;
         }
 
+        .reward-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .reward:hover .reward-info {
+            transform: translateY(0);
+        }
+
         .reward-rarity {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--light);
             text-align: center;
             padding: 5px 0;
             font-size: 14px;
@@ -79,10 +142,10 @@
 
         .reward-count {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--light);
             padding: 5px 10px;
             font-size: 18px;
             font-weight: bold;
@@ -91,33 +154,126 @@
         }
 
         .back-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            border: 2px solid var(--neon-violet);
             text-decoration: none;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            z-index: 100;
         }
 
         .back-button:hover {
-            background-color: #2980b9;
+            background: rgba(184, 146, 255, 0.2);
+            box-shadow: 0 0 20px var(--neon-violet);
         }
 
         .collection-counter {
             margin: 20px;
-            font-size: 18px;
+            font-size: 1.5rem;
             font-weight: bold;
+            text-align: center;
+            color: var(--light);
+            text-shadow: 0 0 10px var(--neon-violet);
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: rgba(15, 25, 35, 0.95);
+            border: 2px solid var(--neon-violet);
+            border-radius: 15px;
+            padding: 20px;
+            color: var(--light);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 40px;
+            height: 40px;
+            background: var(--apex-red);
+            color: var(--light);
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .modal-info {
+            text-align: left;
+            padding: 10px;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-20px);
+            }
         }
     </style>
 </head>
 <body>
-
+    <div class="stars"></div>
     <a href="index.html" class="back-button">Retour</a>
 
     <h1>Ma Collection</h1>
@@ -127,17 +283,20 @@
     </div>
 
     <div class="controls">
-        <button class="sort-button" onclick="sortCollection()">Trier par Rareté</button>
+        <button class="sort-button" onclick="sortByRarity()">Trier par Rareté</button>
+        <button class="sort-button" onclick="sortByCount()">Trier par Nombre</button>
+        <button class="sort-button" onclick="sortByDate()">Trier par Date</button>
     </div>
 
     <div class="collection-container" id="collection-container">
         <!-- Les récompenses collectées apparaîtront ici -->
     </div>
 
-    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 100;">
-        <div style="position: relative; max-width: 90%; max-height: 90%;">
-            <img id="modal-image" src="" alt="Reward Image" style="width: auto; height: auto; max-width: 100%; max-height: 100%; border: 5px solid white; border-radius: 15px; object-fit: contain;">
-            <button onclick="closeModal()" style="position: absolute; top: -20px; right: -20px; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;">X</button>
+    <div id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <img class="modal-image" id="modal-image" src="" alt="Reward Image">
+            <div class="modal-info" id="modal-info"></div>
         </div>
     </div>
 
@@ -159,46 +318,51 @@
 
         function renderCollection(rewardsCollection) {
             const collectionContainer = document.getElementById('collection-container');
-            collectionContainer.innerHTML = ''; // Clear the container
+            collectionContainer.innerHTML = '';
 
-            // Compter les cartes uniques
-            const uniqueRewards = new Set(rewardsCollection.map(reward => reward.name));
-            updateCounter(uniqueRewards.size);
-
-            // Compter les occurrences de chaque récompense
-            const rewardCounts = rewardsCollection.reduce((acc, reward) => {
+            // Compter les cartes uniques et leurs occurrences
+            const rewardCounts = {};
+            const rewardDates = {};
+            
+            rewardsCollection.forEach(reward => {
                 const key = `${reward.name} (${reward.rarity})`;
-                if (acc[key]) {
-                    acc[key]++;
+                if (rewardCounts[key]) {
+                    rewardCounts[key]++;
+                    // Garder la date la plus récente
+                    if (reward.obtainedAt > rewardDates[key]) {
+                        rewardDates[key] = reward.obtainedAt;
+                    }
                 } else {
-                    acc[key] = 1;
+                    rewardCounts[key] = 1;
+                    rewardDates[key] = reward.obtainedAt || new Date().toISOString();
                 }
-                return acc;
-            }, {});
+            });
 
-            // Afficher les récompenses avec leur nombre
+            // Mettre à jour le compteur
+            const uniqueCount = Object.keys(rewardCounts).length;
+            updateCounter(uniqueCount);
+
+            // Afficher les récompenses
             Object.keys(rewardCounts).forEach(key => {
                 const [name, rarity] = key.split(' (');
                 const count = rewardCounts[key];
+                const obtainedAt = new Date(rewardDates[key]);
                 const rewardData = rewardsCollection.find(r => `${r.name} (${r.rarity})` === key);
 
                 const rewardElement = document.createElement('div');
                 rewardElement.classList.add('reward');
+                rewardElement.onclick = () => showModal(rewardData, count, obtainedAt);
 
-                // Ajouter la rareté en haut de la carte
                 const rewardRarityElement = document.createElement('div');
                 rewardRarityElement.classList.add('reward-rarity');
-                rewardRarityElement.textContent = rarity.replace(')', ''); // Enlever la parenthèse fermante
+                rewardRarityElement.textContent = rarity.replace(')', '');
                 rewardElement.appendChild(rewardRarityElement);
 
-                // Créer l'image de la récompense
                 const rewardImage = document.createElement('img');
                 rewardImage.src = rewardData.image;
                 rewardImage.alt = name;
-                rewardImage.onclick = () => showModal(rewardData.image); // Ajout de la fonction d'ouverture du modal
                 rewardElement.appendChild(rewardImage);
 
-                // Ajouter le comptage des doublons
                 const rewardCountElement = document.createElement('div');
                 rewardCountElement.classList.add('reward-count');
                 rewardCountElement.textContent = `x${count}`;
@@ -213,30 +377,102 @@
             counter.textContent = `Cartes collectées : ${uniqueCount} / ${MAX_CARDS}`;
         }
 
-        function showModal(imageSrc) {
+        function showModal(reward, count, obtainedAt) {
             const modal = document.getElementById('modal');
             const modalImage = document.getElementById('modal-image');
-            modalImage.src = imageSrc; // Charge l'image haute résolution dans le modal
-            modal.style.display = 'flex'; // Affiche le modal
+            const modalInfo = document.getElementById('modal-info');
+            
+            modalImage.src = reward.image;
+            modalInfo.innerHTML = `
+                <h3>${reward.name}</h3>
+                <p>Rareté: ${reward.rarity}</p>
+                <p>Nombre possédé: ${count}</p>
+                <p>Dernière obtention: ${obtainedAt.toLocaleDateString('fr-FR')} à ${obtainedAt.toLocaleTimeString('fr-FR')}</p>
+            `;
+            
+            modal.style.display = 'flex';
         }
 
         function closeModal() {
             const modal = document.getElementById('modal');
-            modal.style.display = 'none'; // Cache le modal
+            modal.style.display = 'none';
         }
 
-        function sortCollection() {
+        function sortByRarity() {
             const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            const rarityOrder = {
+                'Arc-en-ciel': 6,
+                'Spécial': 5,
+                'Légendaire': 4,
+                'Epique': 3,
+                'Rare': 2,
+                'Commune': 1
+            };
 
-            // Tri par puissance décroissante
-            rewardsCollection.sort((a, b) => b.weight - a.weight);
+            rewardsCollection.sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
+            renderCollection(rewardsCollection);
+        }
+
+        function sortByCount() {
+            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            const counts = {};
+            
+            rewardsCollection.forEach(reward => {
+                const key = `${reward.name} (${reward.rarity})`;
+                counts[key] = (counts[key] || 0) + 1;
+            });
+
+            rewardsCollection.sort((a, b) => {
+                const keyA = `${a.name} (${a.rarity})`;
+                const keyB = `${b.name} (${b.rarity})`;
+                return counts[keyB] - counts[keyA];
+            });
 
             renderCollection(rewardsCollection);
         }
 
-        // Charger la collection au démarrage
-        document.addEventListener('DOMContentLoaded', loadCollection);
-    </script>
+        function sortByDate() {
+            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            rewardsCollection.sort((a, b) => {
+                const dateA = new Date(a.obtainedAt || 0);
+                const dateB = new Date(b.obtainedAt || 0);
+                return dateB - dateA;
+            });
+            renderCollection(rewardsCollection);
+        }
 
+        // Créer les étoiles
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numberOfStars = 50;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 3 + 1;
+                const duration = Math.random() * 3 + 2;
+                
+                star.style.cssText = `
+                    left: ${x}%;
+                    top: ${y}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    --duration: ${duration}s;
+                    animation-delay: ${Math.random() * 2}s;
+                `;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            loadCollection();
+        });
+    </script>
 </body>
 </html>
