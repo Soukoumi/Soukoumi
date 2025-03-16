@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invocation</title>
+    <title>Ma Collection</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,23 +19,14 @@
             --apex-gold: #F0A500;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Rajdhani', sans-serif;
             background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
             min-height: 100vh;
             color: var(--light);
             position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            overflow-x: hidden;
+            margin: 0;
             padding: 20px;
         }
 
@@ -50,313 +41,204 @@
             pointer-events: none;
         }
 
-        .animated-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(62, 184, 229, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(183, 92, 255, 0.1) 0%, transparent 50%);
-            animation: pulseBackground 15s ease-in-out infinite;
-            z-index: -1;
-        }
-
-        @keyframes pulseBackground {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
         h1 {
-            font-size: 3em;
-            margin-bottom: 30px;
             color: var(--light);
-            text-shadow: 
-                0 0 7px #fff,
-                0 0 10px #fff,
-                0 0 21px #fff,
-                0 0 42px var(--neon-violet),
-                0 0 82px var(--neon-violet),
-                0 0 92px var(--neon-pink),
-                0 0 102px var(--neon-pink),
-                0 0 151px var(--neon-violet);
-            animation: flicker 1.5s infinite alternate;
+            margin: 20px 0;
+            font-size: 3rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            text-shadow: 0 0 10px var(--neon-violet);
         }
 
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: 
-                    0 0 7px #fff,
-                    0 0 10px #fff,
-                    0 0 21px #fff,
-                    0 0 42px var(--neon-violet),
-                    0 0 82px var(--neon-violet),
-                    0 0 92px var(--neon-pink),
-                    0 0 102px var(--neon-pink),
-                    0 0 151px var(--neon-violet);
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-            }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px;
+            flex-wrap: wrap;
         }
 
-        #coins-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--apex-gold);
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(240, 165, 0, 0.5);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 30px;
-            border-radius: 30px;
-            border: 1px solid rgba(240, 165, 0, 0.3);
-        }
-
-        .invocation-container {
-            background: rgba(15, 25, 35, 0.95);
-            backdrop-filter: blur(10px);
+        .sort-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
             border: 2px solid var(--neon-violet);
-            border-radius: 20px;
-            padding: 30px;
-            width: 80%;
-            max-width: 800px;
-            box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
-            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            position: relative;
-        }
-
-        .rewards-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-            width: 100%;
-            min-height: 400px;
-            padding: 20px;
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .button-container button {
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            border-radius: 50px;
-            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
-            color: var(--light);
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
             font-family: 'Rajdhani', sans-serif;
-            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            flex: 1;
-            max-width: 250px;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
         }
 
-        .button-container button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
+        .sort-button:hover {
+            background: rgba(184, 146, 255, 0.2);
+            box-shadow: 0 0 20px var(--neon-violet);
+        }
+
+        .collection-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .reward {
-            background: rgba(15, 25, 35, 0.6);
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(184, 146, 255, 0.3);
-            border-radius: 15px;
-            padding: 20px;
+            width: 100%;
+            aspect-ratio: 2/3;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--neon-violet);
+            border-radius: 10px;
+            overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
-            margin: 10px;
-            min-width: 150px;
-            min-height: 150px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: var(--light);
         }
 
         .reward:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 10px 20px rgba(184, 146, 255, 0.3);
-            border-color: var(--neon-violet);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-violet);
         }
 
-        .commune {
-            border-color: #28a745;
-            box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+        .reward img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .rare {
-            border-color: var(--secondary);
-            box-shadow: 0 0 15px rgba(15, 182, 214, 0.3);
+        .reward-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
         }
 
-        .epique {
-            border-color: var(--violet);
-            box-shadow: 0 0 15px rgba(184, 146, 255, 0.3);
+        .reward:hover .reward-info {
+            transform: translateY(0);
         }
 
-        .légendaire {
-            border-color: var(--apex-gold);
-            box-shadow: 0 0 15px rgba(240, 165, 0, 0.3);
+        .reward-rarity {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--light);
+            text-align: center;
+            padding: 5px 0;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10;
         }
 
-        .spécial {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(255, 70, 85, 0.3);
-        }
-
-        .arc-en-ciel {
-            border-image: linear-gradient(
-                45deg,
-                var(--primary),
-                var(--secondary),
-                var(--violet),
-                var(--neon-pink),
-                var(--apex-gold)
-            ) 1;
-            box-shadow: 0 0 20px rgba(255, 0, 212, 0.5);
-            animation: rainbow-border 3s linear infinite;
-        }
-
-        @keyframes rainbow-border {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        .reward-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--light);
+            padding: 5px 10px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            z-index: 10;
         }
 
         .back-button {
             position: fixed;
             top: 20px;
             left: 20px;
-            padding: 12px 25px;
+            padding: 10px 20px;
             font-size: 16px;
-            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            background: rgba(255, 255, 255, 0.05);
             color: var(--light);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
+            border: 2px solid var(--neon-violet);
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
             font-family: 'Rajdhani', sans-serif;
-            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
             z-index: 100;
         }
 
         .back-button:hover {
-            transform: translateX(5px);
-            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
+            background: rgba(184, 146, 255, 0.2);
+            box-shadow: 0 0 20px var(--neon-violet);
         }
 
-        .info-button {
-            position: fixed;
-            top: 50%;
-            right: 290px;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
-            color: var(--light);
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
-            z-index: 101;
-        }
-
-        .info-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
-        }
-
-        .info-popup {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            background: rgba(15, 25, 35, 0.95);
-            backdrop-filter: blur(15px);
-            border: 2px solid var(--neon-violet);
-            border-radius: 15px;
-            padding: 25px;
-            width: 250px;
-            display: none;
-            z-index: 100;
-            box-shadow: 0 10px 30px rgba(184, 146, 255, 0.2);
-        }
-
-        .info-popup strong {
-            display: block;
-            margin-bottom: 15px;
-            font-size: 20px;
-            color: var(--neon-violet);
-            text-shadow: 0 0 10px var(--neon-violet);
-            text-align: center;
-        }
-
-        .info-popup ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .info-popup li {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(184, 146, 255, 0.3);
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .info-popup li span:first-child {
+        .collection-counter {
+            margin: 20px;
+            font-size: 1.5rem;
             font-weight: bold;
-        }
-
-        .info-popup li:hover {
-            background: rgba(184, 146, 255, 0.15);
-            transform: translateX(5px);
+            text-align: center;
+            color: var(--light);
+            text-shadow: 0 0 10px var(--neon-violet);
         }
 
         #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
             background: rgba(15, 25, 35, 0.95);
-            backdrop-filter: blur(15px);
-        }
-
-        #modal img {
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(184, 146, 255, 0.3);
             border: 2px solid var(--neon-violet);
-            transition: transform 0.3s ease;
+            border-radius: 15px;
+            padding: 20px;
+            color: var(--light);
         }
 
-        #modal img:hover {
-            transform: scale(1.05);
+        .modal-close {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 40px;
+            height: 40px;
+            background: var(--apex-red);
+            color: var(--light);
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .modal-info {
+            text-align: left;
+            padding: 10px;
         }
 
         .stars {
@@ -388,226 +270,126 @@
                 transform: translateY(-20px);
             }
         }
-
-        @keyframes popIn {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-            70% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="stars"></div>
-    <div class="animated-background"></div>
     <a href="index.html" class="back-button">Retour</a>
-    <h1>Invocation</h1>
-    <div id="coins-display">Koumi disponibles : 0</div>
 
-    <div class="invocation-container">
-        <div id="rewards" class="rewards-container">
-            <div class="reward" id="placeholder">?</div>
-        </div>
+    <h1>Ma Collection</h1>
 
-        <div class="button-container">
-            <button onclick="singleSummon()">50 koumi x1</button>
-            <button onclick="multiSummon()">500 koumi x10</button>
-        </div>
+    <div class="collection-counter" id="collection-counter">
+        Cartes collectées : 0 / 46
     </div>
 
-    <button class="info-button" onclick="toggleInfo()">i</button>
-    <div class="info-popup" id="info-popup">
-        <strong>Probabilités</strong>
-        <ul>
-            <li>
-                <span style="color: #28a745;">Commune</span>
-                <span>60%</span>
-            </li>
-            <li>
-                <span style="color: var(--secondary);">Rare</span>
-                <span>35%</span>
-            </li>
-            <li>
-                <span style="color: var(--violet);">Epique</span>
-                <span>12%</span>
-            </li>
-            <li>
-                <span style="color: var(--apex-gold);">Légendaire</span>
-                <span>2%</span>
-            </li>
-            <li>
-                <span style="color: var(--primary);">Spécial</span>
-                <span>0.2%</span>
-            </li>
-            <li>
-                <span style="color: var(--neon-pink);">Arc-en-ciel</span>
-                <span>0.05%</span>
-            </li>
-        </ul>
+    <div class="controls">
+        <button class="sort-button" onclick="sortByRarity()">Trier par Rareté</button>
+        <button class="sort-button" onclick="sortByCount()">Trier par Nombre</button>
+        <button class="sort-button" onclick="sortByDate()">Trier par Date</button>
     </div>
 
-    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 100;">
-        <div style="position: relative; max-width: 90%; max-height: 90%;">
-            <img id="modal-image" src="" alt="Reward Image" style="width: auto; height: auto; max-width: 100%; max-height: 100%; border: 5px solid white; border-radius: 15px; object-fit: contain;">
-            <button onclick="closeModal()" style="position: absolute; top: -20px; right: -20px; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;">X</button>
+    <div class="collection-container" id="collection-container">
+        <!-- Les récompenses collectées apparaîtront ici -->
+    </div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <img class="modal-image" id="modal-image" src="" alt="Reward Image">
+            <div class="modal-info" id="modal-info"></div>
         </div>
     </div>
 
     <script>
-        let availableCoins = 0;
-        let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
-        let invocationCount = parseInt(localStorage.getItem('invocationCount')) || 0;
-        const rewardsContainer = document.getElementById('rewards');
-        const placeholder = document.getElementById('placeholder');
+        const MAX_CARDS = 46;
 
-        const rewardsPool = [
-            { name: "Radolf le magicien", rarity: "Epique", "type": "Prestige", weight: 12, image: "1.png" },
-            { name: "El verme musician", rarity: "Rare", "type": "animal", weight: 35, image: "2.png" },      
-            { name: "Eau mouillée", rarity: "Epique", "type": "objet", weight: 12, image: "3.png" },
-            { name: "Le dos fin", rarity: "Légendaire", "type": "animal", weight: 2, image: "4.png" },
-            { name: "Chococaca", rarity: "Rare", "type": "objet", weight: 35, image: "5.png" }, 
-            { name: "Père pète", rarity: "Epique", "type": "Prestige", weight: 12, image: "6.png" },
-            { name: "Cervoloant", rarity: "Commune", "type": "Objet", weight: 60, image: "7.png" },
-            { name: "Gilberto le camionneur", rarity: "Epique", "type": "Humain", weight: 12, image: "8.png" },
-            { name: "Enceinte à musique", rarity: "Rare", "type": "Humain", weight: 35, image: "9.png" }, 
-            { name: "Pierre la pierre", rarity: "Rare", "type": "Objet", weight: 35, image: "10.png" }, 
-            { name: "TireXhandicapé", rarity: "Epique", "type": "Animal", weight: 12, image: "11.png" },
-            { name: "Radolf le magicien", rarity: "Arc-en-ciel", "type": "Prestige", weight: 0.05, image: "12.png" },
-            { name: "Le manouche prend sa douche", rarity: "Commune", "type": "Animal", weight: 60, image: "13.png" },
-            { name: "Pedro au quais ", rarity: "Rare", "type": "Animal", weight: 35, image: "14.png" },      
-            { name: "Raoul ça roule", rarity: "Epique", "type": "Objet", weight: 12, image: "15.png" },
-            { name: "Gaston le ballon", rarity: "Rare", "type": "Objet", weight: 35, image: "16.png" },
-            { name: "Stéphane carry", rarity: "Légendaire", "type": "Objet", weight: 2, image: "17.png" },
-            { name: "Carotte qui rote", rarity: "Rare", "type": "Objet", weight: 35, image: "18.png" },     
-            { name: "Tron pète", rarity: "Commune", "type": "Objet", weight: 60, image: "19.png" },
-            { name: "Glaçons maçon", rarity: "Rare", "type": "Objet", weight: 35, image: "20.png" },
-            { name: "El verme musician", rarity: "Spécial", "type": "Animal", weight: 0.2, image: "21.png" },
-            { name: "La reine baleine", rarity: "Epique", "type": "Animal", weight: 12, image: "22.png" },
-            { name: "La reine baleine", rarity: "Spécial", "type": "Animal", weight: 0.2, image: "23.png" },
-            { name: "Marion le papillon", rarity: "Légendaire", "type": "Prestige", weight: 2, image: "24.png" },
-            { name: "Marion le papillon", rarity: "Spécial", "type": "Prestige", weight: 0.2, image: "25.png" },
-            { name: "Tristan volan", rarity: "Rare", "type": "Prestige", weight: 35, image: "26.png" },
-            { name: "Tristan volan", rarity: "Spécial", "type": "OPrestige", weight: 0.2, image: "27.png" },
-            { name: "Jimmy le bonhomme de neige", rarity: "Légendaire", "type": "Prestige", weight: 35, image: "28.png" },
-            { name: "Jimmy le bonhomme de neige", rarity: "Spécial", "type": "Prestige", weight: 0.2, image: "29.png" },
-        ];
+        function loadCollection() {
+            const collectionContainer = document.getElementById('collection-container');
+            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
 
-        function loadCoins() {
-            availableCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
-            updateAvailableCoins();
-        }
-
-        function updateAvailableCoins() {
-            const coinsDisplay = document.getElementById('coins-display');
-            coinsDisplay.textContent = `Koumi disponibles : ${availableCoins}`;
-        }
-
-        function canSummon(cost) {
-            return availableCoins >= cost;
-        }
-
-        function saveToCollection(reward) {
-            // Récupérer la collection existante ou créer une nouvelle
-            let collection = JSON.parse(localStorage.getItem('collection')) || [];
-            
-            // Ajouter la nouvelle carte
-            collection.push({
-                name: reward.name,
-                rarity: reward.rarity,
-                type: reward.type,
-                image: reward.image,
-                obtainedDate: new Date().toISOString()
-            });
-            
-            // Sauvegarder la collection mise à jour
-            localStorage.setItem('collection', JSON.stringify(collection));
-        }
-
-        function displayReward(reward) {
-            const rewardElement = document.createElement('div');
-            rewardElement.className = `reward ${reward.rarity.toLowerCase()}`;
-            rewardElement.innerHTML = `
-                <img src="${reward.image}" alt="${reward.name}" style="width: 100px; height: 100px; object-fit: contain;">
-                <div style="text-align: center; margin-top: 10px;">
-                    <div>${reward.name}</div>
-                    <div style="font-size: 0.8em; color: var(--${reward.rarity.toLowerCase()});">${reward.rarity}</div>
-                </div>
-            `;
-            
-            rewardElement.onclick = () => showModal(reward.image);
-            
-            // Animation d'apparition
-            rewardElement.style.animation = 'popIn 0.5s ease-out';
-            
-            // Sauvegarder dans la collection
-            saveToCollection(reward);
-            
-            rewardsContainer.appendChild(rewardElement);
-        }
-
-        function singleSummon() {
-            if(!canSummon(50)) {
-                alert("Vous n'avez pas assez de koumi pour une invocation !");
+            if (rewardsCollection.length === 0) {
+                collectionContainer.innerHTML = "<p>Aucune récompense collectée.</p>";
+                updateCounter(0);
                 return;
             }
-            
-            // Vider le conteneur avant une nouvelle invocation
-            rewardsContainer.innerHTML = '';
-            
-            availableCoins -= 50;
-            localStorage.setItem('totalCoins', availableCoins);
-            updateAvailableCoins();
 
-            // Générer et afficher une récompense
-            const reward = generateReward();
-            displayReward(reward);
+            renderCollection(rewardsCollection);
         }
 
-        function multiSummon() {
-            if(!canSummon(500)) {
-                alert("Vous n'avez pas assez de koumi pour une invocation x10 !");
-                return;
-            }
-            
-            // Vider le conteneur avant une nouvelle invocation
-            rewardsContainer.innerHTML = '';
-            
-            availableCoins -= 500;
-            localStorage.setItem('totalCoins', availableCoins);
-            updateAvailableCoins();
+        function renderCollection(rewardsCollection) {
+            const collectionContainer = document.getElementById('collection-container');
+            collectionContainer.innerHTML = '';
 
-            // Générer et afficher 10 récompenses
-            for(let i = 0; i < 10; i++) {
-                const reward = generateReward();
-                displayReward(reward);
-            }
-        }
-
-        function generateReward() {
-            const random = Math.random() * 100;
-            let totalWeight = 0;
+            // Compter les cartes uniques et leurs occurrences
+            const rewardCounts = {};
+            const rewardDates = {};
             
-            for(const reward of rewardsPool) {
-                totalWeight += reward.weight;
-                if(random <= totalWeight) {
-                    return reward;
+            rewardsCollection.forEach(reward => {
+                const key = `${reward.name} (${reward.rarity})`;
+                if (rewardCounts[key]) {
+                    rewardCounts[key]++;
+                    // Garder la première date d'obtention
+                    if (!rewardDates[key]) {
+                        rewardDates[key] = reward.obtainedAt;
+                    }
+                } else {
+                    rewardCounts[key] = 1;
+                    rewardDates[key] = reward.obtainedAt || new Date().toISOString();
                 }
-            }
-            
-            return rewardsPool[0]; // Fallback au cas où
+            });
+
+            // Mettre à jour le compteur
+            const uniqueCount = Object.keys(rewardCounts).length;
+            updateCounter(uniqueCount);
+
+            // Afficher les récompenses
+            Object.keys(rewardCounts).forEach(key => {
+                const [name, rarity] = key.split(' (');
+                const count = rewardCounts[key];
+                const obtainedAt = new Date(rewardDates[key]);
+                const rewardData = rewardsCollection.find(r => `${r.name} (${r.rarity})` === key);
+
+                const rewardElement = document.createElement('div');
+                rewardElement.classList.add('reward');
+                rewardElement.onclick = () => showModal(rewardData, count, obtainedAt);
+
+                const rewardRarityElement = document.createElement('div');
+                rewardRarityElement.classList.add('reward-rarity');
+                rewardRarityElement.textContent = rarity.replace(')', '');
+                rewardElement.appendChild(rewardRarityElement);
+
+                const rewardImage = document.createElement('img');
+                rewardImage.src = rewardData.image;
+                rewardImage.alt = name;
+                rewardElement.appendChild(rewardImage);
+
+                const rewardCountElement = document.createElement('div');
+                rewardCountElement.classList.add('reward-count');
+                rewardCountElement.textContent = `x${count}`;
+                rewardElement.appendChild(rewardCountElement);
+
+                collectionContainer.appendChild(rewardElement);
+            });
         }
 
-        function showModal(imageSrc) {
+        function updateCounter(uniqueCount) {
+            const counter = document.getElementById('collection-counter');
+            counter.textContent = `Cartes collectées : ${uniqueCount} / ${MAX_CARDS}`;
+        }
+
+        function showModal(reward, count, obtainedAt) {
             const modal = document.getElementById('modal');
             const modalImage = document.getElementById('modal-image');
-            modalImage.src = imageSrc;
+            const modalInfo = document.getElementById('modal-info');
+            
+            modalImage.src = reward.image;
+            modalInfo.innerHTML = `
+                <h3>${reward.name}</h3>
+                <p>Rareté: ${reward.rarity}</p>
+                <p>Nombre possédé: ${count}</p>
+                <p>Dernière obtention: ${obtainedAt.toLocaleDateString('fr-FR')} à ${obtainedAt.toLocaleTimeString('fr-FR')}</p>
+            `;
+            
             modal.style.display = 'flex';
         }
 
@@ -616,13 +398,50 @@
             modal.style.display = 'none';
         }
 
-        function toggleInfo() {
-            const infoPopup = document.getElementById('info-popup');
-            infoPopup.style.display = infoPopup.style.display === 'none' || !infoPopup.style.display ? 'block' : 'none';
-            infoPopup.style.opacity = infoPopup.style.display === 'none' ? '0' : '1';
+        function sortByRarity() {
+            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            const rarityOrder = {
+                'Arc-en-ciel': 6,
+                'Spécial': 5,
+                'Légendaire': 4,
+                'Epique': 3,
+                'Rare': 2,
+                'Commune': 1
+            };
+
+            rewardsCollection.sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
+            renderCollection(rewardsCollection);
         }
 
-        // Animation des étoiles
+        function sortByCount() {
+            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            const counts = {};
+            
+            rewardsCollection.forEach(reward => {
+                const key = `${reward.name} (${reward.rarity})`;
+                counts[key] = (counts[key] || 0) + 1;
+            });
+
+            rewardsCollection.sort((a, b) => {
+                const keyA = `${a.name} (${a.rarity})`;
+                const keyB = `${b.name} (${b.rarity})`;
+                return counts[keyB] - counts[keyA];
+            });
+
+            renderCollection(rewardsCollection);
+        }
+
+        function sortByDate() {
+            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            rewardsCollection.sort((a, b) => {
+                const dateA = new Date(a.obtainedAt || 0);
+                const dateB = new Date(b.obtainedAt || 0);
+                return dateB - dateA;
+            });
+            renderCollection(rewardsCollection);
+        }
+
+        // Créer les étoiles
         function createStars() {
             const starsContainer = document.querySelector('.stars');
             const numberOfStars = 50;
@@ -631,14 +450,9 @@
                 const star = document.createElement('div');
                 star.className = 'star';
                 
-                // Position aléatoire
                 const x = Math.random() * 100;
                 const y = Math.random() * 100;
-                
-                // Taille aléatoire
                 const size = Math.random() * 3 + 1;
-                
-                // Durée d'animation aléatoire
                 const duration = Math.random() * 3 + 2;
                 
                 star.style.cssText = `
@@ -654,11 +468,11 @@
             }
         }
 
-        // Créer les étoiles au chargement
-        createStars();
-
         // Initialisation
-        document.addEventListener('DOMContentLoaded', loadCoins);
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            loadCollection();
+        });
     </script>
 </body>
 </html>
