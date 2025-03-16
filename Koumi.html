@@ -468,12 +468,12 @@
             <div class="info-popup" id="info-popup">
                 <strong>Probabilités de Gain</strong>
                 <ul>
-                    <li>50 Koumi : 70%</li>
-                    <li>100 Koumi : 35%</li>
-                    <li>200 Koumi : 10%</li>
-                    <li>300 Koumi : 6%</li>
+                    <li>50 Koumi : 60%</li>
+                    <li>100 Koumi : 30%</li>
+                    <li>200 Koumi : 15%</li>
+                    <li>300 Koumi : 8%</li>
                     <li>500 Koumi : 3.4%</li>
-                    <li>1000 Koumi : 0.8%</li>
+                    <li>1000 Koumi : 0.6%</li>
                 </ul>
             </div>
             <div class="roulette-container" id="roulette">
@@ -570,7 +570,7 @@
 
             if (lastSpinTime) {
                 const timeDiff = now - lastSpinTime;
-                const timeLeft = 12 * 60 * 60 * 1000 - timeDiff;
+                const timeLeft = 6 * 60 * 60 * 1000 - timeDiff;
 
                 if (timeLeft > 0) {
                     const hoursRemaining = Math.floor(timeLeft / (1000 * 60 * 60));
@@ -602,12 +602,12 @@
             const centerSlot = document.getElementById('center-slot');
 
             const prizes = [
-                { prize: "50", weight: 70 },
-                { prize: "100", weight: 35 },
-                { prize: "200", weight: 10 },
-                { prize: "300", weight: 6 },
+                { prize: "50", weight: 60 },
+                { prize: "100", weight: 30 },
+                { prize: "200", weight: 15 },
+                { prize: "300", weight: 8 },
                 { prize: "500", weight: 3.4 },
-                { prize: "1000", weight: 0.8 }
+                { prize: "1000", weight: 0.6 }
             ];
 
             const weightedArray = [];
