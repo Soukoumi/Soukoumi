@@ -402,12 +402,39 @@
                 opacity: 1;
             }
         }
+
+        .collection-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            z-index: 100;
+        }
+
+        .collection-link:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
+        }
     </style>
 </head>
 <body>
     <div class="stars"></div>
     <div class="animated-background"></div>
     <a href="index.html" class="back-button">Retour</a>
+    <a href="collection.html" class="collection-link">Collection</a>
     <h1>Invocation</h1>
     <div id="coins-display">Koumi disponibles : 0</div>
 
@@ -517,14 +544,29 @@
             // Récupérer la collection existante ou créer une nouvelle
             let collection = JSON.parse(localStorage.getItem('collection')) || [];
             
-            // Ajouter la nouvelle carte
-            collection.push({
-                name: reward.name,
-                rarity: reward.rarity,
-                type: reward.type,
-                image: reward.image,
-                obtainedDate: new Date().toISOString()
-            });
+            // Vérifier si la carte existe déjà
+            const existingCard = collection.find(card => 
+                card.name === reward.name && 
+                card.rarity === reward.rarity && 
+                card.type === reward.type
+            );
+            
+            if (existingCard) {
+                // Si la carte existe, incrémenter le compteur
+                existingCard.count = (existingCard.count || 1) + 1;
+                existingCard.lastObtainedDate = new Date().toISOString();
+            } else {
+                // Si la carte n'existe pas, l'ajouter avec un compteur de 1
+                collection.push({
+                    name: reward.name,
+                    rarity: reward.rarity,
+                    type: reward.type,
+                    image: reward.image,
+                    count: 1,
+                    obtainedDate: new Date().toISOString(),
+                    lastObtainedDate: new Date().toISOString()
+                });
+            }
             
             // Sauvegarder la collection mise à jour
             localStorage.setItem('collection', JSON.stringify(collection));
