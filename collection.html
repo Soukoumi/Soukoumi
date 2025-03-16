@@ -24,31 +24,50 @@
             background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
             min-height: 100vh;
             color: var(--light);
-            position: relative;
-            overflow-x: hidden;
             margin: 0;
             padding: 20px;
         }
 
-        body::before {
-            content: '';
+        .back-button {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(184, 146, 255, 0.1) 0%, transparent 60%);
-            pointer-events: none;
+            top: 20px;
+            left: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
         }
 
         h1 {
-            color: var(--light);
-            margin: 20px 0;
-            font-size: 3rem;
             text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            text-shadow: 0 0 10px var(--neon-violet);
+            font-size: 3em;
+            margin: 20px 0;
+            color: var(--light);
+            text-shadow: 
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px var(--neon-violet),
+                0 0 82px var(--neon-violet),
+                0 0 92px var(--neon-pink),
+                0 0 102px var(--neon-pink),
+                0 0 151px var(--neon-violet);
         }
 
         .controls {
@@ -59,130 +78,104 @@
             flex-wrap: wrap;
         }
 
-        .sort-button {
+        .filter-button {
             padding: 10px 20px;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--light);
             border: 2px solid var(--neon-violet);
-            border-radius: 5px;
+            border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Rajdhani', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
         }
 
-        .sort-button:hover {
+        .filter-button:hover, .filter-button.active {
             background: rgba(184, 146, 255, 0.2);
             box-shadow: 0 0 20px var(--neon-violet);
         }
 
         .collection-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .reward {
-            width: 100%;
-            aspect-ratio: 2/3;
-            position: relative;
-            background-color: rgba(255, 255, 255, 0.05);
+        .card {
+            background: rgba(15, 25, 35, 0.9);
             border: 2px solid var(--neon-violet);
-            border-radius: 10px;
-            overflow: hidden;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
 
-        .reward:hover {
+        .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0 20px var(--neon-violet);
+            box-shadow: 0 10px 20px rgba(184, 146, 255, 0.3);
         }
 
-        .reward img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .card img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
 
-        .reward-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .reward:hover .reward-info {
-            transform: translateY(0);
-        }
-
-        .reward-rarity {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: var(--light);
+        .card-info {
             text-align: center;
-            padding: 5px 0;
-            font-size: 14px;
-            font-weight: bold;
-            z-index: 10;
+            width: 100%;
         }
 
-        .reward-count {
+        .card-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .card-rarity {
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .card-count {
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.8);
             color: var(--light);
             padding: 5px 10px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
-            z-index: 10;
+            border-radius: 15px;
+            font-size: 0.9em;
         }
 
-        .back-button {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--light);
-            border: 2px solid var(--neon-violet);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-family: 'Rajdhani', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-            z-index: 100;
+        .commune { border-color: #28a745; }
+        .rare { border-color: var(--secondary); }
+        .epique { border-color: var(--violet); }
+        .légendaire { border-color: var(--apex-gold); }
+        .spécial { border-color: var(--primary); }
+        .arc-en-ciel {
+            border-image: linear-gradient(
+                45deg,
+                var(--primary),
+                var(--secondary),
+                var(--violet),
+                var(--neon-pink),
+                var(--apex-gold)
+            ) 1;
+            animation: rainbow-border 3s linear infinite;
         }
 
-        .back-button:hover {
-            background: rgba(184, 146, 255, 0.2);
-            box-shadow: 0 0 20px var(--neon-violet);
-        }
-
-        .collection-counter {
-            margin: 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            color: var(--light);
-            text-shadow: 0 0 10px var(--neon-violet);
+        @keyframes rainbow-border {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
         #modal {
@@ -192,21 +185,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
 
         .modal-content {
-            position: relative;
+            background: rgba(15, 25, 35, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--neon-violet);
             max-width: 90%;
             max-height: 90%;
-            background: rgba(15, 25, 35, 0.95);
-            border: 2px solid var(--neon-violet);
-            border-radius: 15px;
-            padding: 20px;
-            color: var(--light);
+            position: relative;
         }
 
         .modal-close {
@@ -215,181 +207,122 @@
             right: -20px;
             width: 40px;
             height: 40px;
-            background: var(--apex-red);
-            color: var(--light);
+            background: var(--primary);
+            color: white;
             border: none;
             border-radius: 50%;
-            font-size: 18px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 20px;
         }
 
-        .modal-close:hover {
-            background: var(--primary);
-            transform: scale(1.1);
-        }
-
-        .modal-image {
-            max-width: 100%;
-            max-height: 70vh;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .modal-info {
-            text-align: left;
-            padding: 10px;
-        }
-
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle var(--duration) ease-in-out infinite;
-            opacity: 0;
-        }
-
-        @keyframes twinkle {
-            0%, 100% {
-                opacity: 0;
-                transform: translateY(0);
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(-20px);
-            }
+        .collection-stats {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: inline-block;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
         }
     </style>
 </head>
 <body>
-    <div class="stars"></div>
     <a href="index.html" class="back-button">Retour</a>
-
     <h1>Ma Collection</h1>
 
-    <div class="collection-counter" id="collection-counter">
-        Cartes collectées : 0 / 46
+    <div class="collection-stats">
+        <div id="total-cards">Total des cartes : 0</div>
+        <div id="unique-cards">Cartes uniques : 0</div>
     </div>
 
     <div class="controls">
-        <button class="sort-button" onclick="sortByRarity()">Trier par Rareté</button>
-        <button class="sort-button" onclick="sortByCount()">Trier par Nombre</button>
-        <button class="sort-button" onclick="sortByDate()">Trier par Date</button>
+        <button class="filter-button active" onclick="filterCards('all')">Toutes</button>
+        <button class="filter-button" onclick="filterCards('commune')">Communes</button>
+        <button class="filter-button" onclick="filterCards('rare')">Rares</button>
+        <button class="filter-button" onclick="filterCards('epique')">Épiques</button>
+        <button class="filter-button" onclick="filterCards('légendaire')">Légendaires</button>
+        <button class="filter-button" onclick="filterCards('spécial')">Spéciales</button>
+        <button class="filter-button" onclick="filterCards('arc-en-ciel')">Arc-en-ciel</button>
     </div>
 
-    <div class="collection-container" id="collection-container">
-        <!-- Les récompenses collectées apparaîtront ici -->
-    </div>
+    <div class="collection-container" id="collection"></div>
 
     <div id="modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">×</button>
-            <img class="modal-image" id="modal-image" src="" alt="Reward Image">
-            <div class="modal-info" id="modal-info"></div>
+            <img id="modal-image" src="" alt="Card Image" style="max-width: 100%; max-height: 70vh;">
+            <div id="modal-info" style="margin-top: 15px; text-align: center;"></div>
         </div>
     </div>
 
     <script>
-        const MAX_CARDS = 46;
-
         function loadCollection() {
-            const collectionContainer = document.getElementById('collection-container');
-            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
+            const collection = JSON.parse(localStorage.getItem('collection')) || [];
+            const container = document.getElementById('collection');
+            container.innerHTML = '';
 
-            if (rewardsCollection.length === 0) {
-                collectionContainer.innerHTML = "<p>Aucune récompense collectée.</p>";
-                updateCounter(0);
-                return;
-            }
+            // Mettre à jour les statistiques
+            const totalCards = collection.reduce((sum, card) => sum + card.count, 0);
+            const uniqueCards = collection.length;
+            document.getElementById('total-cards').textContent = `Total des cartes : ${totalCards}`;
+            document.getElementById('unique-cards').textContent = `Cartes uniques : ${uniqueCards}`;
 
-            renderCollection(rewardsCollection);
+            collection.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.rarity.toLowerCase()}`;
+                cardElement.innerHTML = `
+                    <div class="card-count">×${card.count}</div>
+                    <img src="${card.image}" alt="${card.name}">
+                    <div class="card-info">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-rarity" style="color: var(--${card.rarity.toLowerCase()})">${card.rarity}</div>
+                        <div class="card-type">${card.type}</div>
+                    </div>
+                `;
+
+                cardElement.onclick = () => showModal(card);
+                container.appendChild(cardElement);
+            });
         }
 
-        function renderCollection(rewardsCollection) {
-            const collectionContainer = document.getElementById('collection-container');
-            collectionContainer.innerHTML = '';
+        function filterCards(rarity) {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.filter-button');
 
-            // Compter les cartes uniques et leurs occurrences
-            const rewardCounts = {};
-            const rewardDates = {};
-            
-            rewardsCollection.forEach(reward => {
-                const key = `${reward.name} (${reward.rarity})`;
-                if (rewardCounts[key]) {
-                    rewardCounts[key]++;
-                    // Garder la première date d'obtention
-                    if (!rewardDates[key]) {
-                        rewardDates[key] = reward.obtainedAt;
-                    }
-                } else {
-                    rewardCounts[key] = 1;
-                    rewardDates[key] = reward.obtainedAt || new Date().toISOString();
+            // Mettre à jour les boutons actifs
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                if(button.textContent.toLowerCase().includes(rarity)) {
+                    button.classList.add('active');
                 }
             });
 
-            // Mettre à jour le compteur
-            const uniqueCount = Object.keys(rewardCounts).length;
-            updateCounter(uniqueCount);
-
-            // Afficher les récompenses
-            Object.keys(rewardCounts).forEach(key => {
-                const [name, rarity] = key.split(' (');
-                const count = rewardCounts[key];
-                const obtainedAt = new Date(rewardDates[key]);
-                const rewardData = rewardsCollection.find(r => `${r.name} (${r.rarity})` === key);
-
-                const rewardElement = document.createElement('div');
-                rewardElement.classList.add('reward');
-                rewardElement.onclick = () => showModal(rewardData, count, obtainedAt);
-
-                const rewardRarityElement = document.createElement('div');
-                rewardRarityElement.classList.add('reward-rarity');
-                rewardRarityElement.textContent = rarity.replace(')', '');
-                rewardElement.appendChild(rewardRarityElement);
-
-                const rewardImage = document.createElement('img');
-                rewardImage.src = rewardData.image;
-                rewardImage.alt = name;
-                rewardElement.appendChild(rewardImage);
-
-                const rewardCountElement = document.createElement('div');
-                rewardCountElement.classList.add('reward-count');
-                rewardCountElement.textContent = `x${count}`;
-                rewardElement.appendChild(rewardCountElement);
-
-                collectionContainer.appendChild(rewardElement);
+            cards.forEach(card => {
+                if(rarity === 'all') {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = card.classList.contains(rarity) ? 'flex' : 'none';
+                }
             });
         }
 
-        function updateCounter(uniqueCount) {
-            const counter = document.getElementById('collection-counter');
-            counter.textContent = `Cartes collectées : ${uniqueCount} / ${MAX_CARDS}`;
-        }
-
-        function showModal(reward, count, obtainedAt) {
+        function showModal(card) {
             const modal = document.getElementById('modal');
             const modalImage = document.getElementById('modal-image');
             const modalInfo = document.getElementById('modal-info');
-            
-            modalImage.src = reward.image;
+
+            modalImage.src = card.image;
             modalInfo.innerHTML = `
-                <h3>${reward.name}</h3>
-                <p>Rareté: ${reward.rarity}</p>
-                <p>Nombre possédé: ${count}</p>
-                <p>Dernière obtention: ${obtainedAt.toLocaleDateString('fr-FR')} à ${obtainedAt.toLocaleTimeString('fr-FR')}</p>
+                <h2>${card.name}</h2>
+                <p>Rareté : ${card.rarity}</p>
+                <p>Type : ${card.type}</p>
+                <p>Nombre possédé : ${card.count}</p>
+                <p>Obtenu le : ${new Date(card.obtainedDate).toLocaleDateString()}</p>
+                <p>Dernière obtention : ${new Date(card.lastObtainedDate).toLocaleDateString()}</p>
             `;
-            
+
             modal.style.display = 'flex';
         }
 
@@ -398,81 +331,16 @@
             modal.style.display = 'none';
         }
 
-        function sortByRarity() {
-            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
-            const rarityOrder = {
-                'Arc-en-ciel': 6,
-                'Spécial': 5,
-                'Légendaire': 4,
-                'Epique': 3,
-                'Rare': 2,
-                'Commune': 1
-            };
-
-            rewardsCollection.sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
-            renderCollection(rewardsCollection);
-        }
-
-        function sortByCount() {
-            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
-            const counts = {};
-            
-            rewardsCollection.forEach(reward => {
-                const key = `${reward.name} (${reward.rarity})`;
-                counts[key] = (counts[key] || 0) + 1;
-            });
-
-            rewardsCollection.sort((a, b) => {
-                const keyA = `${a.name} (${a.rarity})`;
-                const keyB = `${b.name} (${b.rarity})`;
-                return counts[keyB] - counts[keyA];
-            });
-
-            renderCollection(rewardsCollection);
-        }
-
-        function sortByDate() {
-            const rewardsCollection = JSON.parse(localStorage.getItem('rewardsCollection')) || [];
-            rewardsCollection.sort((a, b) => {
-                const dateA = new Date(a.obtainedAt || 0);
-                const dateB = new Date(b.obtainedAt || 0);
-                return dateB - dateA;
-            });
-            renderCollection(rewardsCollection);
-        }
-
-        // Créer les étoiles
-        function createStars() {
-            const starsContainer = document.querySelector('.stars');
-            const numberOfStars = 50;
-
-            for (let i = 0; i < numberOfStars; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-                const size = Math.random() * 3 + 1;
-                const duration = Math.random() * 3 + 2;
-                
-                star.style.cssText = `
-                    left: ${x}%;
-                    top: ${y}%;
-                    width: ${size}px;
-                    height: ${size}px;
-                    --duration: ${duration}s;
-                    animation-delay: ${Math.random() * 2}s;
-                `;
-                
-                starsContainer.appendChild(star);
+        // Fermer le modal en cliquant en dehors
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
         }
 
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            createStars();
-            loadCollection();
-        });
+        // Charger la collection au démarrage
+        document.addEventListener('DOMContentLoaded', loadCollection);
     </script>
 </body>
 </html>
