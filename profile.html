@@ -271,48 +271,61 @@
     </div>
 
     <script>
-        // Gestion du changement de photo de profil et sauvegarde des données
-        const profilePicContainer = document.querySelector('.profile-pic-container');
-        const profilePicInput = document.getElementById('profile-pic-input');
-        const profilePic = document.getElementById('profile-pic');
-        const profileNameInput = document.querySelector('.profile-name-input');
+        // Fonction pour charger les données du profil
+        function loadProfileData() {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                name: 'Joueur_123',
+                level: 42,
+                rank: 'Légende',
+                profilePic: 'https://placehold.co/150x150',
+                bannerColor: 'linear-gradient(135deg, var(--apex-red), var(--dark))'
+            };
 
-        // Charger les données sauvegardées
-        window.addEventListener('load', () => {
-            const savedName = localStorage.getItem('playerName');
-            const savedPic = localStorage.getItem('playerPic');
-            
-            if (savedName) {
-                profileNameInput.value = savedName;
-            }
-            
-            if (savedPic) {
-                profilePic.src = savedPic;
-            }
-        });
+            // Mettre à jour les éléments de la page
+            document.querySelector('.profile-name-input').value = profileData.name;
+            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
+            document.querySelector('.profile-level span:last-child').textContent = profileData.rank;
+            document.getElementById('profile-pic').src = profileData.profilePic;
+        }
 
-        // Sauvegarder le nom du joueur
-        profileNameInput.addEventListener('change', () => {
-            localStorage.setItem('playerName', profileNameInput.value);
-        });
+        // Fonction pour sauvegarder les données du profil
+        function saveProfileData(data) {
+            localStorage.setItem('profileData', JSON.stringify(data));
+        }
 
-        // Gestion de la photo de profil
-        profilePicContainer.addEventListener('click', () => {
-            profilePicInput.click();
-        });
-
-        profilePicInput.addEventListener('change', (e) => {
+        // Gestionnaire de changement de photo de profil
+        document.getElementById('profile-pic-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    const imageData = e.target.result;
-                    profilePic.src = imageData;
-                    localStorage.setItem('playerPic', imageData);
+                reader.onload = function(e) {
+                    const profilePic = e.target.result;
+                    document.getElementById('profile-pic').src = profilePic;
+                    
+                    // Sauvegarder dans le localStorage
+                    const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+                    profileData.profilePic = profilePic;
+                    saveProfileData(profileData);
                 };
                 reader.readAsDataURL(file);
             }
         });
+
+        // Gestionnaire de changement de nom
+        document.querySelector('.profile-name-input').addEventListener('change', function(e) {
+            const newName = e.target.value;
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+            profileData.name = newName;
+            saveProfileData(profileData);
+        });
+
+        // Permettre de cliquer sur le conteneur de la photo pour déclencher l'input file
+        document.querySelector('.profile-pic-container').addEventListener('click', function() {
+            document.getElementById('profile-pic-input').click();
+        });
+
+        // Charger les données au chargement de la page
+        document.addEventListener('DOMContentLoaded', loadProfileData);
     </script>
 </body>
 </html> 
