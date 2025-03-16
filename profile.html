@@ -352,21 +352,32 @@
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
                 name: 'Joueur_123',
                 level: 42,
-                rank: 'Légende',
-                profilePic: 'https://placehold.co/150x150',
-                bannerColor: 'linear-gradient(135deg, var(--apex-red), var(--dark))'
+                rank: 'Débutant',
+                profilePic: 'https://placehold.co/150x150'
             };
 
             // Mettre à jour les éléments de la page
             document.querySelector('.profile-name-input').value = profileData.name;
             document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
             document.querySelector('.profile-level span:last-child').textContent = profileData.rank;
-            document.getElementById('profile-pic').src = profileData.profilePic;
+            
+            // Charger l'image de profil depuis le localStorage
+            const savedProfilePic = localStorage.getItem('profilePicture');
+            if (savedProfilePic) {
+                document.getElementById('profile-pic').src = savedProfilePic;
+            } else {
+                document.getElementById('profile-pic').src = profileData.profilePic;
+            }
         }
 
         // Fonction pour sauvegarder les données du profil
         function saveProfileData(data) {
             localStorage.setItem('profileData', JSON.stringify(data));
+        }
+
+        // Fonction pour sauvegarder l'image de profil séparément
+        function saveProfilePicture(imageData) {
+            localStorage.setItem('profilePicture', imageData);
         }
 
         // Fonction pour initialiser le recadrage
@@ -425,14 +436,25 @@
 
         // Validation du recadrage
         document.getElementById('validate-crop').addEventListener('click', () => {
-            const canvas = cropper.getCroppedCanvas();
-            const croppedImage = canvas.toDataURL();
-            document.getElementById('profile-pic').src = croppedImage;
+            const canvas = cropper.getCroppedCanvas({
+                width: 300,  // Taille fixe pour optimiser le stockage
+                height: 300,
+                imageSmoothingQuality: 'high'
+            });
             
-            // Sauvegarder dans le localStorage
-            const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
-            profileData.profilePic = croppedImage;
-            saveProfileData(profileData);
+            canvas.toBlob((blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    document.getElementById('profile-pic').src = base64data;
+                    saveProfilePicture(base64data);
+                    
+                    // Mettre à jour les données du profil
+                    const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+                    saveProfileData(profileData);
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.8); // Compression JPEG pour optimiser la taille
             
             // Fermer la modal et détruire le cropper
             modal.style.display = 'none';
