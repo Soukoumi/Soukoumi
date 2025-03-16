@@ -328,13 +328,28 @@
                 name: 'Joueur_123',
                 level: 42,
                 rank: 'Débutant',
-                profilePic: 'https://placehold.co/150x150'
+                profilePic: 'https://placehold.co/150x150',
+                invocationsCount: 0,
+                gameStartTime: null,
+                totalPlayTime: 0
             };
+
+            // Si c'est la première connexion, initialiser le temps de jeu
+            if (!profileData.gameStartTime) {
+                profileData.gameStartTime = Date.now();
+                saveProfileData(profileData);
+            }
+
+            // Mettre à jour le temps de jeu
+            updatePlayTime();
 
             // Mettre à jour les éléments de la page
             document.querySelector('.profile-name-input').value = profileData.name;
             document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
             document.querySelector('.profile-level span:last-child').textContent = profileData.rank;
+            
+            // Mettre à jour les statistiques
+            document.querySelector('.stats-grid').children[3].querySelector('.stat-value').textContent = profileData.invocationsCount || 0;
             
             // Charger l'image de profil depuis le localStorage
             const savedProfilePic = localStorage.getItem('profilePicture');
@@ -344,6 +359,33 @@
                 document.getElementById('profile-pic').src = profileData.profilePic;
             }
         }
+
+        function updatePlayTime() {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+            if (profileData.gameStartTime) {
+                const currentTime = Date.now();
+                const elapsedHours = Math.floor((currentTime - profileData.gameStartTime) / (1000 * 60 * 60));
+                document.querySelector('.stats-grid').children[4].querySelector('.stat-value').textContent = elapsedHours;
+                
+                // Mettre à jour toutes les minutes
+                setTimeout(updatePlayTime, 60000);
+            }
+        }
+
+        // Fonction pour incrémenter le compteur d'invocations
+        function incrementInvocations() {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+            profileData.invocationsCount = (profileData.invocationsCount || 0) + 1;
+            saveProfileData(profileData);
+            document.querySelector('.stats-grid').children[3].querySelector('.stat-value').textContent = profileData.invocationsCount;
+        }
+
+        // Écouter les événements d'invocation
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'invocationPerformed') {
+                incrementInvocations();
+            }
+        });
 
         // Fonction pour sauvegarder les données du profil
         function saveProfileData(data) {
