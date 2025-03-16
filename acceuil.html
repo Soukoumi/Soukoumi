@@ -639,6 +639,40 @@
     </audio>
 
     <script>
+        // Fonction pour initialiser les données du profil
+        function initializeProfileData() {
+            if (!localStorage.getItem('profileData')) {
+                const defaultProfile = {
+                    name: 'Joueur_123',
+                    level: 42,
+                    rank: 'Légende',
+                    profilePic: 'https://placehold.co/45x45',
+                    bannerColor: 'linear-gradient(135deg, var(--apex-red), var(--dark))'
+                };
+                localStorage.setItem('profileData', JSON.stringify(defaultProfile));
+            }
+            updateProfileDisplay();
+        }
+
+        // Fonction pour mettre à jour l'affichage du profil
+        function updateProfileDisplay() {
+            const profileData = JSON.parse(localStorage.getItem('profileData'));
+            const profileCard = document.querySelector('.profile-card');
+            
+            // Mise à jour du nom
+            profileCard.querySelector('.profile-name').textContent = profileData.name;
+            
+            // Mise à jour du niveau et du rang
+            profileCard.querySelector('.level-badge').textContent = profileData.level;
+            profileCard.querySelector('.profile-level span:last-child').textContent = profileData.rank;
+            
+            // Mise à jour de la photo de profil
+            profileCard.querySelector('.profile-pic img').src = profileData.profilePic;
+        }
+
+        // Initialiser les données du profil au chargement de la page
+        document.addEventListener('DOMContentLoaded', initializeProfileData);
+
         // Animation des étoiles
         function createStars() {
             const starsContainer = document.querySelector('.stars');
