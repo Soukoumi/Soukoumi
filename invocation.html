@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+cbad893b-341f-4fc2-8a86-b83ca50df89e<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -655,17 +655,25 @@
         }
 
         function generateReward() {
-            const random = Math.random() * 100;
-            let totalWeight = 0;
+            // Calculer le poids total
+            const totalWeight = rewardsPool.reduce((sum, reward) => sum + reward.weight, 0);
             
-            for(const reward of rewardsPool) {
-                totalWeight += reward.weight;
-                if(random <= totalWeight) {
+            // Générer un nombre aléatoire entre 0 et le poids total
+            const random = Math.random() * totalWeight;
+            
+            // Variable pour suivre le poids cumulé
+            let currentWeight = 0;
+            
+            // Parcourir le pool de récompenses
+            for (const reward of rewardsPool) {
+                currentWeight += reward.weight;
+                if (random <= currentWeight) {
                     return reward;
                 }
             }
             
-            return rewardsPool[0]; // Fallback au cas où
+            // Fallback au cas où (ne devrait jamais arriver avec la nouvelle logique)
+            return rewardsPool[0];
         }
 
         function showModal(imageSrc) {
