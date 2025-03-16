@@ -602,22 +602,20 @@
 
         <a id="discordButton" href="https://discord.gg/c3b2MC5se4" target="_blank">Discord</a>
 
-        <a href="profile.html" style="text-decoration: none;">
-            <div class="profile-card">
-                <div class="profile-header">
-                    <div class="profile-pic">
-                        <img src="https://placehold.co/45x45" alt="Profile Picture">
-                    </div>
-                    <div class="profile-info">
-                        <div class="profile-name">Joueur_123</div>
-                        <div class="profile-level">
-                            <span class="level-badge">42</span>
-                            <span>Légende</span>
-                        </div>
+        <div class="profile-card" onclick="window.location.href='profile.html';" style="cursor: pointer;">
+            <div class="profile-header">
+                <div class="profile-pic">
+                    <img src="https://placehold.co/45x45" alt="Profile Picture">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Joueur_123</div>
+                    <div class="profile-level">
+                        <span class="level-badge">42</span>
+                        <span>Légende</span>
                     </div>
                 </div>
             </div>
-        </a>
+        </div>
 
         <div class="nav-grid">
             <button class="nav-button" onclick="window.location.href='Koumi.html'">Koumi</button>
@@ -639,21 +637,6 @@
     </audio>
 
     <script>
-        // Fonction pour initialiser les données du profil
-        function initializeProfileData() {
-            if (!localStorage.getItem('profileData')) {
-                const defaultProfile = {
-                    name: 'Joueur_123',
-                    level: 42,
-                    rank: 'Légende',
-                    profilePic: 'https://placehold.co/45x45',
-                    bannerColor: 'linear-gradient(135deg, var(--apex-red), var(--dark))'
-                };
-                localStorage.setItem('profileData', JSON.stringify(defaultProfile));
-            }
-            updateProfileDisplay();
-        }
-
         // Fonction pour mettre à jour l'affichage du profil
         function updateProfileDisplay() {
             const profileData = JSON.parse(localStorage.getItem('profileData'));
@@ -667,7 +650,26 @@
             profileCard.querySelector('.profile-level span:last-child').textContent = profileData.rank;
             
             // Mise à jour de la photo de profil
-            profileCard.querySelector('.profile-pic img').src = profileData.profilePic;
+            const savedProfilePic = localStorage.getItem('profilePicture');
+            if (savedProfilePic) {
+                profileCard.querySelector('.profile-pic img').src = savedProfilePic;
+            } else {
+                profileCard.querySelector('.profile-pic img').src = profileData.profilePic;
+            }
+        }
+
+        // Fonction pour initialiser les données du profil
+        function initializeProfileData() {
+            if (!localStorage.getItem('profileData')) {
+                const defaultProfile = {
+                    name: 'Joueur_123',
+                    level: 42,
+                    rank: 'Légende',
+                    profilePic: 'https://placehold.co/45x45'
+                };
+                localStorage.setItem('profileData', JSON.stringify(defaultProfile));
+            }
+            updateProfileDisplay();
         }
 
         // Initialiser les données du profil au chargement de la page
