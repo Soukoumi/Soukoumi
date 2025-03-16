@@ -59,15 +59,32 @@
             font-size: 3em;
             margin: 20px 0;
             color: var(--light);
-            text-shadow: 
-                0 0 7px #fff,
-                0 0 10px #fff,
-                0 0 21px #fff,
-                0 0 42px var(--neon-violet),
-                0 0 82px var(--neon-violet),
-                0 0 92px var(--neon-pink),
-                0 0 102px var(--neon-pink),
-                0 0 151px var(--neon-violet);
+            animation: neon 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neon {
+            from {
+                text-shadow: 
+                    0 0 7px #fff,
+                    0 0 10px #fff,
+                    0 0 21px #fff,
+                    0 0 42px var(--neon-violet),
+                    0 0 82px var(--neon-violet),
+                    0 0 92px var(--neon-pink),
+                    0 0 102px var(--neon-pink),
+                    0 0 151px var(--neon-violet);
+            }
+            to {
+                text-shadow: 
+                    0 0 5px #fff,
+                    0 0 8px #fff,
+                    0 0 15px #fff,
+                    0 0 30px var(--neon-violet),
+                    0 0 60px var(--neon-violet),
+                    0 0 70px var(--neon-pink),
+                    0 0 80px var(--neon-pink),
+                    0 0 120px var(--neon-violet);
+            }
         }
 
         .controls {
@@ -144,24 +161,26 @@
 
         .collection-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
             padding: 20px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .card {
             background: rgba(15, 25, 35, 0.9);
-            border: 2px solid var(--neon-violet);
+            border: 3px solid var(--neon-violet);
             border-radius: 15px;
-            padding: 15px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
+            aspect-ratio: 2.5/3.5;
+            min-height: 350px;
         }
 
         .card:hover {
@@ -170,26 +189,35 @@
         }
 
         .card img {
-            width: 120px;
-            height: 120px;
+            width: 180px;
+            height: 180px;
             object-fit: contain;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .card-info {
             text-align: center;
             width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
         }
 
         .card-name {
-            font-size: 1.2em;
+            font-size: 1.4em;
             font-weight: bold;
-            margin: 5px 0;
+            margin: 8px 0;
         }
 
         .card-rarity {
-            font-size: 0.9em;
+            font-size: 1.1em;
+            margin: 8px 0;
+        }
+
+        .card-type {
+            font-size: 1.1em;
             margin: 5px 0;
+            color: var(--light);
         }
 
         .card-count {
@@ -264,7 +292,7 @@
 
         .collection-stats {
             text-align: center;
-            margin: 20px 0;
+            margin: 20px auto;
             padding: 20px;
             background: rgba(15, 25, 35, 0.95);
             border: 2px solid var(--neon-violet);
@@ -272,33 +300,43 @@
             display: flex;
             gap: 20px;
             justify-content: center;
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
             box-shadow: 0 0 20px rgba(184, 146, 255, 0.2);
             backdrop-filter: blur(10px);
-            max-width: 600px;
+            max-width: 800px;
             width: 90%;
         }
 
         .stat-item {
-            padding: 10px 20px;
+            padding: 15px 25px;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
             flex: 1;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
         }
 
         .stat-label {
-            font-size: 0.9em;
+            font-size: 1.1em;
             color: var(--neon-violet);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .stat-value {
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
             color: var(--light);
             text-shadow: 0 0 10px var(--neon-violet);
+        }
+
+        .stat-description {
+            font-size: 0.9em;
+            color: var(--light);
         }
     </style>
 </head>
@@ -310,14 +348,17 @@
         <div class="stat-item">
             <div class="stat-label">Total des cartes</div>
             <div class="stat-value" id="total-cards">0</div>
+            <div class="stat-description">Avec doublons</div>
         </div>
         <div class="stat-item">
             <div class="stat-label">Cartes uniques</div>
             <div class="stat-value" id="unique-cards">0</div>
+            <div class="stat-description">Sans doublons</div>
         </div>
         <div class="stat-item">
-            <div class="stat-label">Cartes disponibles</div>
-            <div class="stat-value" id="available-cards">${allCards.length}</div>
+            <div class="stat-label">Collection totale</div>
+            <div class="stat-value" id="total-available">29</div>
+            <div class="stat-description">Cartes à collectionner</div>
         </div>
     </div>
 
@@ -388,9 +429,11 @@
             // Mettre à jour les statistiques
             const totalCards = collection.reduce((sum, card) => sum + card.count, 0);
             const uniqueCards = collection.length;
+            const totalAvailable = allCards.length;
+
             document.getElementById('total-cards').textContent = totalCards;
             document.getElementById('unique-cards').textContent = uniqueCards;
-            document.getElementById('available-cards').textContent = allCards.length;
+            document.getElementById('total-available').textContent = totalAvailable;
 
             // Afficher toutes les cartes
             allCards.forEach(card => {
