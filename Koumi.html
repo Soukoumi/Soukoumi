@@ -1,278 +1,482 @@
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Roulette des Koumi</title>
-        <style>
-            body {
-                font-family: 'Poppins', sans-serif;
-                text-align: center;
-                margin: 0;
-                padding: 0;
-                background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-                background-size: 400% 400%;
-                animation: gradientBG 15s ease infinite;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-                position: relative;
-                color: white;
-                overflow: hidden;
-            }
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette des Koumi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4655;
+            --secondary: #0fb6d6;
+            --accent: #bd3944;
+            --dark: #0f1923;
+            --light: #ffffff;
+            --violet: #b892ff;
+            --neon-violet: #b892ff;
+            --neon-pink: #ff69b4;
+            --apex-red: #DA292E;
+            --apex-gold: #F0A500;
+        }
 
-            @keyframes gradientBG {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            h1 {
-                color: white;
-                margin-bottom: 30px;
-                font-size: 48px;
-                font-weight: 700;
-                text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-                letter-spacing: 2px;
-                animation: titleFloat 3s ease-in-out infinite;
-            }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
 
-            @keyframes titleFloat {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-10px); }
-            }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(184, 146, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
 
-            .coins-counter {
-                position: absolute;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                font-size: 24px;
-                font-weight: bold;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                padding: 15px 30px;
-                border-radius: 30px;
-                color: white;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }
+        h1 {
+            color: white;
+            margin: 40px 0 20px 0;
+            font-size: 48px;
+            font-weight: 700;
+            text-shadow: 
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px var(--neon-violet),
+                0 0 82px var(--neon-violet),
+                0 0 92px var(--neon-pink),
+                0 0 102px var(--neon-pink),
+                0 0 151px var(--neon-violet);
+            letter-spacing: 2px;
+            animation: titleFloat 3s ease-in-out infinite, flicker 1.5s infinite alternate;
+            text-align: center;
+        }
 
-            .roulette-container-wrapper {
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 40px;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                transition: transform 0.3s ease;
-            }
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
 
-            .roulette-container-wrapper:hover {
-                transform: translateY(-5px);
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 7px #fff,
+                    0 0 10px #fff,
+                    0 0 21px #fff,
+                    0 0 42px var(--neon-violet),
+                    0 0 82px var(--neon-violet),
+                    0 0 92px var(--neon-pink),
+                    0 0 102px var(--neon-pink),
+                    0 0 151px var(--neon-violet);
             }
-
-            .roulette-container {
-                position: relative;
-                width: 400px;
-                height: 200px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: center;
-                border-radius: 15px;
-                background: rgba(255, 255, 255, 0.05);
-                padding: 20px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+            20%, 24%, 55% {
+                text-shadow: none;
             }
+        }
 
-            .info-button {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                width: 30px;
-                height: 30px;
-                border: none;
-                border-radius: 50%;
-                background: linear-gradient(45deg, #5865F2, #7289da);
-                color: white;
-                font-size: 18px;
-                font-weight: bold;
-                cursor: pointer;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                transition: transform 0.3s ease;
+        .coins-counter {
+            position: relative;
+            top: unset;
+            left: unset;
+            transform: none;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 100;
+            margin-bottom: 40px;
+        }
+
+        .roulette-container-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .roulette-container-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
+        .roulette-container {
+            position: relative;
+            width: 400px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-violet), var(--neon-pink));
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 0 15px var(--neon-violet);
+        }
+
+        .info-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px var(--neon-violet);
+        }
+
+        .info-popup {
+            position: absolute;
+            top: -20px;
+            right: -320px;
+            width: 300px;
+            padding: 25px;
+            background: rgba(15, 25, 35, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            font-size: 16px;
+            text-align: left;
+            display: none;
+            z-index: 10;
+            border: 2px solid var(--neon-violet);
+            color: white;
+            box-shadow: 0 0 30px rgba(184, 146, 255, 0.3);
+        }
+
+        .info-popup::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 35px;
+            width: 20px;
+            height: 20px;
+            background: rgba(15, 25, 35, 0.2);
+            backdrop-filter: blur(15px);
+            transform: rotate(45deg);
+            border-left: 2px solid var(--neon-violet);
+            border-bottom: 2px solid var(--neon-violet);
+        }
+
+        .info-popup strong {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: var(--neon-violet);
+            text-shadow: 0 0 10px var(--neon-violet);
+            text-align: center;
+        }
+
+        .info-popup ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .info-popup li {
+            padding: 12px 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(184, 146, 255, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .info-popup li:hover {
+            background: rgba(184, 146, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.2);
+        }
+
+        .segment-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .segment {
+            width: 100px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            position: relative;
+            border: 1px solid var(--neon-violet);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .segment:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--neon-violet);
+        }
+
+        .light {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--neon-violet), var(--neon-pink));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .segment .light.active {
+            opacity: 0.5;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.3; }
+        }
+
+        .center-slot {
+            width: 130px;
+            height: 130px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: white;
+            border: 2px solid var(--neon-violet);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .center-slot:hover {
+            box-shadow: 0 0 30px var(--neon-violet);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #5865F2, #7289da);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
+        }
+
+        .coins-control {
+            margin: 30px 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coins-button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(45deg, var(--neon-violet), var(--neon-pink));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(184, 146, 255, 0.4);
+        }
+
+        .coins-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 146, 255, 0.6);
+        }
+
+        #increment-selector {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--neon-violet);
+        }
+
+        #increment-selector option {
+            background: var(--dark);
+            color: white;
+        }
+
+        #spin-button {
+            margin: 20px 0;
+            padding: 15px 30px;
+            font-size: 18px;
+            background: linear-gradient(45deg, var(--neon-violet), var(--neon-pink));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(184, 146, 255, 0.4);
+        }
+
+        #spin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 146, 255, 0.6);
+        }
+
+        #spin-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #timer {
+            margin: 20px 0;
+            font-size: 16px;
+            color: var(--neon-violet);
+            text-shadow: 0 0 10px var(--neon-violet);
+            text-align: center;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: translateY(0);
             }
-
-            .info-button:hover {
-                transform: scale(1.1);
+            50% {
+                opacity: 1;
+                transform: translateY(-20px);
             }
+        }
 
-            .info-popup {
-                position: absolute;
-                top: 50px;
-                right: 10px;
-                width: 220px;
-                padding: 15px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 15px;
-                font-size: 14px;
-                text-align: left;
-                display: none;
-                z-index: 10;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                color: white;
-            }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <a href="acceuil.html" class="back-button">Retour</a>
 
-            .segment-row {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 15px;
-            }
-
-            .segment {
-                width: 100px;
-                height: 45px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border-radius: 10px;
-                font-size: 16px;
-                font-weight: bold;
-                background: rgba(255, 255, 255, 0.1);
-                color: white;
-                position: relative;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                transition: transform 0.3s ease;
-            }
-
-            .segment:hover {
-                transform: scale(1.05);
-            }
-
-            .light {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 10px;
-                background: linear-gradient(45deg, rgba(255, 215, 0, 0.3), rgba(255, 255, 255, 0.5));
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-                display: none;
-                pointer-events: none;
-            }
-
-            .center-slot {
-                width: 130px;
-                height: 130px;
-                border-radius: 15px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(5px);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 28px;
-                font-weight: bold;
-                margin: 15px 0;
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-            }
-
-            button {
-                padding: 12px 25px;
-                font-size: 16px;
-                border: none;
-                border-radius: 25px;
-                background: linear-gradient(45deg, #5865F2, #7289da);
-                color: white;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-weight: 600;
-                box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
-            }
-
-            button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
-            }
-
-            .back-button {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                padding: 12px 25px;
-                font-size: 16px;
-                background: linear-gradient(45deg, #5865F2, #7289da);
-                color: white;
-                border: none;
-                border-radius: 25px;
-                cursor: pointer;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                font-weight: 600;
-                box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
-            }
-
-            .back-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
-            }
-
-            .coins-control {
-                margin-top: 20px;
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-
-            #increment-selector {
-                padding: 10px;
-                font-size: 16px;
-                border: none;
-                border-radius: 25px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(5px);
-                color: white;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            #increment-selector option {
-                background: #1a2a6c;
-                color: white;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="coins-counter" id="coins-counter">Koumi: 0</div>
-
+    <div class="container">
         <h1>Roulette des Koumi</h1>
-        <a href="index.html" class="back-button">Retour</a>
+        <div class="coins-counter" id="coins-counter">Koumi: 0</div>
+        
         <div class="roulette-container-wrapper">
+            <button class="info-button" onclick="toggleInfo()">i</button>
+            <div class="info-popup" id="info-popup">
+                <strong>Probabilités de Gain</strong>
+                <ul>
+                    <li>50 Koumi : 70%</li>
+                    <li>100 Koumi : 35%</li>
+                    <li>200 Koumi : 10%</li>
+                    <li>300 Koumi : 6%</li>
+                    <li>500 Koumi : 3.4%</li>
+                    <li>1000 Koumi : 0.8%</li>
+                </ul>
+            </div>
             <div class="roulette-container" id="roulette">
-                <button class="info-button" onclick="toggleInfo()">i</button>
-                <div class="info-popup" id="info-popup">
-                    <strong>Probabilités :</strong>
-                    <ul>
-                        <li>50 Koumi : 70%</li>
-                        <li>100 Koumi : 35%</li>
-                        <li>200 Koumi : 10%</li>
-                        <li>300 Koumi : 6%</li>
-                        <li>500 Koumi : 3.4%</li>
-                        <li>1000 Koumi : 0.8%</li>
-                    </ul>
-                </div>
                 <div class="segment-row">
                     <div class="segment" data-prize="50">50 Koumi<div class="light"></div></div>
                     <div class="segment" data-prize="100">100 Koumi<div class="light"></div></div>
@@ -288,7 +492,6 @@
         </div>
 
         <div class="coins-control">
-            <!-- Boutons pour ajuster les pièces -->
             <button class="coins-button" onclick="adjustCoins(-incrementValue)">-</button>
             <button class="coins-button" onclick="adjustCoins(incrementValue)">+</button>
             <select id="increment-selector" onchange="updateIncrementValue()">
@@ -303,163 +506,181 @@
         <button id="spin-button" onclick="spinRoulette()">Lancer la Roulette</button>
 
         <div id="timer" class="timer"></div>
+    </div>
 
-        <script>
-            let spinning = false;
-            let totalCoins = 0; // Variable pour stocker le nombre total de pièces
-            let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
-            let incrementValue = 10; // Valeur par défaut de l'incrément
+    <script>
+        let spinning = false;
+        let totalCoins = 0;
+        let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
+        let incrementValue = 10;
 
+        // Animation des étoiles
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numberOfStars = 50;
 
-            // Fonction pour mettre à jour l'affichage du compteur de pièces
-    function updateCoinCounter() {
-        document.getElementById('coins-counter').textContent = `Koumi: ${totalCoins}`;
-        localStorage.setItem('totalCoins', totalCoins); // Sauvegarde dans le stockage local
-    }
-
-            // Fonction pour ajuster les pièces (maintenant les pièces peuvent être négatives)
-    function adjustCoins(amount) {
-        totalCoins += amount;
-        updateCoinCounter();
-    }
-
-        // Mettre à jour la valeur de l'incrément selon la sélection
-    function updateIncrementValue() {
-        const selector = document.getElementById('increment-selector');
-        incrementValue = parseInt(selector.value, 10);
-    }
-
-    function checkSpinAvailability() {
-    const lastSpinTime = localStorage.getItem('lastSpinTime');
-    const now = new Date().getTime();
-
-    if (lastSpinTime) {
-        const timeDiff = now - lastSpinTime;  // Calcul de la différence de temps depuis le dernier spin
-        const timeLeft = 12 * 60 * 60 * 1000 - timeDiff;  // Temps restant jusqu'à 12 heures (en millisecondes)
-
-        if (timeLeft > 0) {
-            // Calcul du temps restant en heures, minutes et secondes
-            const hoursRemaining = Math.floor(timeLeft / (1000 * 60 * 60));
-            const minutesRemaining = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const secondsRemaining = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-            // Mise à jour de l'affichage du décompte
-            document.getElementById('timer').textContent = `Prochain spin dans : ${hoursRemaining}h ${minutesRemaining}m ${secondsRemaining}s`;
-            document.getElementById('spin-button').disabled = true;  // Désactivation du bouton spin
-        } else {
-            // Le temps est écoulé, réinitialisation
-            document.getElementById('timer').textContent = '';
-            document.getElementById('spin-button').disabled = false;  // Activation du bouton spin
-        }
-    } else {
-        // Si aucun spin n'a eu lieu auparavant, on affiche le bouton comme disponible
-        document.getElementById('timer').textContent = '';
-        document.getElementById('spin-button').disabled = false;
-    }
-}
-
-
-            // Sauvegarder le temps du dernier spin
-            function updateLastSpinTime() {
-                const now = new Date().getTime();
-                localStorage.setItem('lastSpinTime', now);
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Position aléatoire
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Taille aléatoire
+                const size = Math.random() * 3 + 1;
+                
+                // Durée d'animation aléatoire
+                const duration = Math.random() * 3 + 2;
+                
+                star.style.cssText = `
+                    left: ${x}%;
+                    top: ${y}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    --duration: ${duration}s;
+                    animation-delay: ${Math.random() * 2}s;
+                `;
+                
+                starsContainer.appendChild(star);
             }
+        }
 
-            // Lancer la roulette
-            function spinRoulette() {
-                if (spinning) return;
-                spinning = true;
+        // Créer les étoiles au chargement
+        createStars();
 
-                const segments = document.querySelectorAll('.segment');
-                const centerSlot = document.getElementById('center-slot');
+        function updateCoinCounter() {
+            document.getElementById('coins-counter').textContent = `Koumi: ${totalCoins}`;
+            localStorage.setItem('totalCoins', totalCoins);
+        }
 
-                // Probabilités personnalisées pour chaque segment
-                const prizes = [
-                    { prize: "50", weight: 70 },
-                    { prize: "100", weight: 35 },
-                    { prize: "200", weight: 10 },
-                    { prize: "300", weight: 6 },
-                    { prize: "500", weight: 3.4 },
-                    { prize: "1000", weight: 0.8 }
-                ];
+        function adjustCoins(amount) {
+            totalCoins += amount;
+            updateCoinCounter();
+        }
 
-                const weightedArray = [];
-                prizes.forEach(item => {
-                    for (let i = 0; i < item.weight * 10; i++) {
-                        weightedArray.push(item.prize);
+        function updateIncrementValue() {
+            const selector = document.getElementById('increment-selector');
+            incrementValue = parseInt(selector.value, 10);
+        }
+
+        function checkSpinAvailability() {
+            const lastSpinTime = localStorage.getItem('lastSpinTime');
+            const now = new Date().getTime();
+
+            if (lastSpinTime) {
+                const timeDiff = now - lastSpinTime;
+                const timeLeft = 12 * 60 * 60 * 1000 - timeDiff;
+
+                if (timeLeft > 0) {
+                    const hoursRemaining = Math.floor(timeLeft / (1000 * 60 * 60));
+                    const minutesRemaining = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const secondsRemaining = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                    document.getElementById('timer').textContent = `Prochain spin dans : ${hoursRemaining}h ${minutesRemaining}m ${secondsRemaining}s`;
+                    document.getElementById('spin-button').disabled = true;
+                } else {
+                    document.getElementById('timer').textContent = '';
+                    document.getElementById('spin-button').disabled = false;
+                }
+            } else {
+                document.getElementById('timer').textContent = '';
+                document.getElementById('spin-button').disabled = false;
+            }
+        }
+
+        function updateLastSpinTime() {
+            const now = new Date().getTime();
+            localStorage.setItem('lastSpinTime', now);
+        }
+
+        function spinRoulette() {
+            if (spinning) return;
+            spinning = true;
+
+            const segments = document.querySelectorAll('.segment');
+            const centerSlot = document.getElementById('center-slot');
+
+            const prizes = [
+                { prize: "50", weight: 70 },
+                { prize: "100", weight: 35 },
+                { prize: "200", weight: 10 },
+                { prize: "300", weight: 6 },
+                { prize: "500", weight: 3.4 },
+                { prize: "1000", weight: 0.8 }
+            ];
+
+            const weightedArray = [];
+            prizes.forEach(item => {
+                for (let i = 0; i < item.weight * 10; i++) {
+                    weightedArray.push(item.prize);
+                }
+            });
+
+            const randomPrize = weightedArray[Math.floor(Math.random() * weightedArray.length)];
+            let finalIndex = Array.from(segments).findIndex(
+                segment => segment.getAttribute('data-prize') === randomPrize
+            );
+
+            let currentIndex = 0;
+            let rotations = Math.floor(Math.random() * 10) + 20;
+
+            const interval = setInterval(() => {
+                segments.forEach((segment, index) => {
+                    const light = segment.querySelector('.light');
+                    if (index === currentIndex) {
+                        light.classList.add('active');
+                    } else {
+                        light.classList.remove('active');
                     }
                 });
 
-                const randomPrize = weightedArray[Math.floor(Math.random() * weightedArray.length)];
+                if (rotations > 0) {
+                    currentIndex = (currentIndex + 1) % segments.length;
+                    rotations--;
+                } else if (currentIndex === finalIndex) {
+                    clearInterval(interval);
+                    spinning = false;
 
-                let finalIndex = Array.from(segments).findIndex(
-                    segment => segment.getAttribute('data-prize') === randomPrize
-                );
+                    setTimeout(() => {
+                        segments.forEach(segment => {
+                            const light = segment.querySelector('.light');
+                            light.classList.remove('active');
+                        });
 
-                let currentIndex = 0;
-                let rotations = Math.floor(Math.random() * 10) + 20; // Nombre aléatoire de rotations
+                        centerSlot.textContent = `${randomPrize} Koumi`;
+                        centerSlot.style.textShadow = `0 0 10px var(--neon-violet)`;
 
-                const interval = setInterval(() => {
-                    segments.forEach((segment, index) => {
-                        const light = segment.querySelector('.light');
-                        light.style.display = index === currentIndex ? 'block' : 'none';
-                    });
+                        totalCoins += parseInt(randomPrize);
+                        updateCoinCounter();
 
-                    if (rotations > 0) {
-                        currentIndex = (currentIndex + 1) % segments.length;
-                        rotations--;
-                    } else if (currentIndex === finalIndex) {
-                        clearInterval(interval);
-                        spinning = false;
+                        rouletteCount++;
+                        localStorage.setItem('rouletteCount', rouletteCount);
 
-                        setTimeout(() => {
-                            segments.forEach(segment => {
-                                const light = segment.querySelector('.light');
-                                light.style.display = 'none';
-                            });
+                        updateLastSpinTime();
+                        checkSpinAvailability();
+                    }, 100);
+                } else {
+                    currentIndex = (currentIndex + 1) % segments.length;
+                }
+            }, 100);
+        }
 
-                            centerSlot.textContent = `${randomPrize} Koumi`;
+        function toggleInfo() {
+            const infoPopup = document.getElementById('info-popup');
+            infoPopup.style.display = infoPopup.style.display === 'none' || !infoPopup.style.display ? 'block' : 'none';
+        }
 
-                            // Ajouter les pièces gagnées
-                            totalCoins += parseInt(randomPrize);
-                            updateCoinCounter();
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
+            totalCoins = storedCoins;
+            updateCoinCounter();
 
-                            // Incrémenter le compteur de roulettes
-                            rouletteCount++;
-                            localStorage.setItem('rouletteCount', rouletteCount);
+            rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
 
-                            // Sauvegarder le temps du dernier spin
-                            updateLastSpinTime();
-                            checkSpinAvailability(); // Mettre à jour la disponibilité du spin
-                        }, 100);
-                    } else {
-                        currentIndex = (currentIndex + 1) % segments.length;
-                    }
-                }, 100);
-            }
-
-            // Fonction pour afficher/masquer les informations
-            function toggleInfo() {
-                const infoPopup = document.getElementById('info-popup');
-                infoPopup.style.display = infoPopup.style.display === 'none' || !infoPopup.style.display ? 'block' : 'none';
-            }
-
-            // Initialisation au chargement de la page
-            document.addEventListener('DOMContentLoaded', () => {
-                // Récupérer les pièces sauvegardées
-                const storedCoins = parseInt(localStorage.getItem('totalCoins')) || 0;
-                totalCoins = storedCoins;
-                updateCoinCounter();
-
-                // Récupérer le nombre de roulettes effectuées
-                rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
-
-                // Vérifier la disponibilité du spin toutes les secondes
-                setInterval(checkSpinAvailability, 1000);
-
-                // Vérification initiale du temps restant pour spin
-                checkSpinAvailability();
-            });
-        </script>
-    </body>
-    </html>
+            setInterval(checkSpinAvailability, 1000);
+            checkSpinAvailability();
+        });
+    </script>
+</body>
+</html>
