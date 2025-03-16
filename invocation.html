@@ -386,6 +386,20 @@
                 transform: translateY(-20px);
             }
         }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -504,8 +518,17 @@
             }
             availableCoins -= 50;
             localStorage.setItem('totalCoins', availableCoins);
-            localStorage.setItem('currentSummonType', 'single');
-            window.location.href = 'summon-animation.html';
+            updateAvailableCoins();
+            
+            // Supprimer le placeholder s'il existe
+            const placeholder = document.getElementById('placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            // Effectuer une invocation
+            const reward = performSummon();
+            displayReward(reward);
         }
 
         function multiSummon() {
@@ -515,8 +538,52 @@
             }
             availableCoins -= 500;
             localStorage.setItem('totalCoins', availableCoins);
-            localStorage.setItem('currentSummonType', 'multi');
-            window.location.href = 'summon-animation.html';
+            updateAvailableCoins();
+            
+            // Supprimer le placeholder s'il existe
+            const placeholder = document.getElementById('placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            // Effectuer 10 invocations
+            for(let i = 0; i < 10; i++) {
+                const reward = performSummon();
+                displayReward(reward);
+            }
+        }
+
+        function performSummon() {
+            const totalWeight = rewardsPool.reduce((sum, reward) => sum + reward.weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (const reward of rewardsPool) {
+                random -= reward.weight;
+                if (random <= 0) {
+                    return reward;
+                }
+            }
+            return rewardsPool[0]; // Fallback au cas où
+        }
+
+        function displayReward(reward) {
+            const rewardElement = document.createElement('div');
+            rewardElement.className = `reward ${reward.rarity.toLowerCase()}`;
+            rewardElement.innerHTML = `
+                <div style="text-align: center;">
+                    <img src="${reward.image}" alt="${reward.name}" style="width: 100px; height: 100px; object-fit: contain;">
+                    <div style="margin-top: 10px;">${reward.name}</div>
+                    <div style="color: var(--${reward.rarity.toLowerCase() === 'arc-en-ciel' ? 'neon-pink' : reward.rarity.toLowerCase() === 'spécial' ? 'primary' : 'light'}); 
+                          font-size: 0.8em;">${reward.rarity}</div>
+                </div>
+            `;
+            
+            rewardElement.onclick = () => showModal(reward.image);
+            
+            // Animation d'apparition
+            rewardElement.style.animation = 'popIn 0.5s ease-out forwards';
+            
+            document.querySelector('.rewards-container').appendChild(rewardElement);
         }
 
         function showModal(imageSrc) {
