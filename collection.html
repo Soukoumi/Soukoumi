@@ -265,13 +265,40 @@
         .collection-stats {
             text-align: center;
             margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            background: rgba(15, 25, 35, 0.95);
+            border: 2px solid var(--neon-violet);
             border-radius: 15px;
-            display: inline-block;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
             position: relative;
             left: 50%;
             transform: translateX(-50%);
+            box-shadow: 0 0 20px rgba(184, 146, 255, 0.2);
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .stat-item {
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--neon-violet);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--light);
+            text-shadow: 0 0 10px var(--neon-violet);
         }
     </style>
 </head>
@@ -280,8 +307,18 @@
     <h1>Ma Collection</h1>
 
     <div class="collection-stats">
-        <div id="total-cards">Total des cartes : 0</div>
-        <div id="unique-cards">Cartes uniques : 0</div>
+        <div class="stat-item">
+            <div class="stat-label">Total des cartes</div>
+            <div class="stat-value" id="total-cards">0</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Cartes uniques</div>
+            <div class="stat-value" id="unique-cards">0</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Cartes disponibles</div>
+            <div class="stat-value" id="available-cards">${allCards.length}</div>
+        </div>
     </div>
 
     <div class="sort-controls">
@@ -351,8 +388,9 @@
             // Mettre à jour les statistiques
             const totalCards = collection.reduce((sum, card) => sum + card.count, 0);
             const uniqueCards = collection.length;
-            document.getElementById('total-cards').textContent = `Total des cartes : ${totalCards}`;
-            document.getElementById('unique-cards').textContent = `Cartes uniques : ${uniqueCards}`;
+            document.getElementById('total-cards').textContent = totalCards;
+            document.getElementById('unique-cards').textContent = uniqueCards;
+            document.getElementById('available-cards').textContent = allCards.length;
 
             // Afficher toutes les cartes
             allCards.forEach(card => {
