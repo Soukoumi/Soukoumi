@@ -328,8 +328,8 @@
                 const key = `${reward.name} (${reward.rarity})`;
                 if (rewardCounts[key]) {
                     rewardCounts[key]++;
-                    // Garder la date la plus récente
-                    if (reward.obtainedAt > rewardDates[key]) {
+                    // Garder la première date d'obtention
+                    if (!rewardDates[key]) {
                         rewardDates[key] = reward.obtainedAt;
                     }
                 } else {
