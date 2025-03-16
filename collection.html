@@ -426,17 +426,11 @@
             const container = document.getElementById('collection');
             container.innerHTML = '';
 
-            // Calcul des statistiques
-            const totalCards = collection.reduce((sum, card) => {
-                // Vérifie si count existe, sinon utilise 1 comme valeur par défaut
-                const cardCount = card.count || 1;
-                return sum + cardCount;
-            }, 0);
-            
+            // Mettre à jour les statistiques
+            const totalCards = collection.reduce((sum, card) => sum + card.count, 0);
             const uniqueCards = collection.length;
             const totalAvailable = allCards.length;
 
-            // Mise à jour de l'affichage des statistiques
             document.getElementById('total-cards').textContent = totalCards;
             document.getElementById('unique-cards').textContent = uniqueCards;
             document.getElementById('total-available').textContent = totalAvailable;
