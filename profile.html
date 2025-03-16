@@ -210,7 +210,62 @@
             background: var(--violet-clair);
             color: black;
         }
+
+        /* Styles pour la modal de recadrage */
+        .crop-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .crop-container {
+            background: var(--dark-gray);
+            padding: 2rem;
+            border: 2px solid var(--violet-clair);
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .crop-area {
+            max-width: 500px;
+            max-height: 500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .crop-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .crop-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--dark-gray);
+            color: var(--light);
+            border: 1px solid var(--violet-clair);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        .crop-button:hover {
+            background: var(--violet-clair);
+            color: var(--dark);
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
 </head>
 <body>
     <div class="container">
@@ -270,7 +325,28 @@
         </div>
     </div>
 
+    <!-- Modal pour le recadrage -->
+    <div class="crop-modal">
+        <div class="crop-container">
+            <div class="crop-area">
+                <img id="crop-image" src="" alt="Image à recadrer">
+            </div>
+            <div class="crop-controls">
+                <button class="crop-button" id="rotate-left">Rotation Gauche</button>
+                <button class="crop-button" id="rotate-right">Rotation Droite</button>
+                <button class="crop-button" id="zoom-in">Zoom +</button>
+                <button class="crop-button" id="zoom-out">Zoom -</button>
+                <button class="crop-button" id="validate-crop">Valider</button>
+                <button class="crop-button" id="cancel-crop">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
+        let cropper = null;
+        const modal = document.querySelector('.crop-modal');
+
         // Fonction pour charger les données du profil
         function loadProfileData() {
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
@@ -293,19 +369,36 @@
             localStorage.setItem('profileData', JSON.stringify(data));
         }
 
+        // Fonction pour initialiser le recadrage
+        function initCropper(imageUrl) {
+            const image = document.getElementById('crop-image');
+            image.src = imageUrl;
+            
+            modal.style.display = 'flex';
+            
+            // Initialiser Cropper.js
+            cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 1,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
+                toggleDragModeOnDblclick: false,
+            });
+        }
+
         // Gestionnaire de changement de photo de profil
         document.getElementById('profile-pic-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const profilePic = e.target.result;
-                    document.getElementById('profile-pic').src = profilePic;
-                    
-                    // Sauvegarder dans le localStorage
-                    const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
-                    profileData.profilePic = profilePic;
-                    saveProfileData(profileData);
+                    initCropper(e.target.result);
                 };
                 reader.readAsDataURL(file);
             }
@@ -322,6 +415,36 @@
         // Permettre de cliquer sur le conteneur de la photo pour déclencher l'input file
         document.querySelector('.profile-pic-container').addEventListener('click', function() {
             document.getElementById('profile-pic-input').click();
+        });
+
+        // Contrôles de recadrage
+        document.getElementById('rotate-left').addEventListener('click', () => cropper.rotate(-90));
+        document.getElementById('rotate-right').addEventListener('click', () => cropper.rotate(90));
+        document.getElementById('zoom-in').addEventListener('click', () => cropper.zoom(0.1));
+        document.getElementById('zoom-out').addEventListener('click', () => cropper.zoom(-0.1));
+
+        // Validation du recadrage
+        document.getElementById('validate-crop').addEventListener('click', () => {
+            const canvas = cropper.getCroppedCanvas();
+            const croppedImage = canvas.toDataURL();
+            document.getElementById('profile-pic').src = croppedImage;
+            
+            // Sauvegarder dans le localStorage
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+            profileData.profilePic = croppedImage;
+            saveProfileData(profileData);
+            
+            // Fermer la modal et détruire le cropper
+            modal.style.display = 'none';
+            cropper.destroy();
+            cropper = null;
+        });
+
+        // Annulation du recadrage
+        document.getElementById('cancel-crop').addEventListener('click', () => {
+            modal.style.display = 'none';
+            cropper.destroy();
+            cropper = null;
         });
 
         // Charger les données au chargement de la page
