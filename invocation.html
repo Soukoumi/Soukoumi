@@ -632,6 +632,11 @@
             // Générer et afficher une récompense
             const reward = generateReward();
             displayReward(reward);
+
+            // Déclencher l'événement d'invocation
+            localStorage.setItem('invocationPerformed', Date.now());
+            // Supprimer immédiatement pour permettre de nouveaux déclenchements
+            localStorage.removeItem('invocationPerformed');
         }
 
         function multiSummon() {
@@ -652,6 +657,11 @@
                 const reward = generateReward();
                 displayReward(reward);
             }
+
+            // Déclencher l'événement d'invocation
+            localStorage.setItem('invocationPerformed', Date.now());
+            // Supprimer immédiatement pour permettre de nouveaux déclenchements
+            localStorage.removeItem('invocationPerformed');
         }
 
         function generateReward() {
@@ -731,6 +741,11 @@
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', loadCoins);
+
+        // Ajouter l'événement aux boutons d'invocation
+        document.querySelectorAll('.button-container button').forEach(button => {
+            button.addEventListener('click', performInvocation);
+        });
     </script>
 </body>
 </html>
