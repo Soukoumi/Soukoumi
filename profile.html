@@ -267,7 +267,6 @@
                     <input type="text" class="profile-name-input" value="Joueur_123" placeholder="Nom du joueur">
                     <div class="profile-level">
                         <span class="level-badge">Niveau 0</span>
-                        <span>Débutant</span>
                     </div>
                 </div>
             </div>
@@ -326,8 +325,7 @@
         function loadProfileData() {
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
                 name: 'Joueur_123',
-                level: 42,
-                rank: 'Débutant',
+                level: 0,
                 profilePic: 'https://placehold.co/150x150',
                 invocationsCount: 0,
                 gameStartTime: null,
