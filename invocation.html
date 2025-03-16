@@ -16,7 +16,7 @@
             --neon-violet: #b892ff;
             --neon-pink: #ff69b4;
             --apex-red: #DA292E;
-            --apex-gold: #b892ff;
+            --apex-gold: #F0A500;
         }
 
         * {
@@ -214,7 +214,7 @@
 
         .légendaire {
             border-color: var(--apex-gold);
-            box-shadow: 0 0 15px rgb(255, 234, 2);
+            box-shadow: 0 0 15px rgba(240, 165, 0, 0.3);
         }
 
         .spécial {
@@ -386,6 +386,20 @@
                 transform: translateY(-20px);
             }
         }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -415,23 +429,23 @@
                 <span>60%</span>
             </li>
             <li>
-                <span style="color: #05667c;">Rare</span>
+                <span style="color: var(--secondary);">Rare</span>
                 <span>35%</span>
             </li>
             <li>
-                <span style="color: #9801b0;">Epique</span>
+                <span style="color: var(--violet);">Epique</span>
                 <span>12%</span>
             </li>
             <li>
-                <span style="color: #ced203;">Légendaire</span>
+                <span style="color: var(--apex-gold);">Légendaire</span>
                 <span>2%</span>
             </li>
             <li>
-                <span style="color: #ac0202;">Spécial</span>
+                <span style="color: var(--primary);">Spécial</span>
                 <span>0.2%</span>
             </li>
             <li>
-                <span style="color: #f95ad4;">Arc-en-ciel</span>
+                <span style="color: var(--neon-pink);">Arc-en-ciel</span>
                 <span>0.05%</span>
             </li>
         </ul>
@@ -504,8 +518,17 @@
             }
             availableCoins -= 50;
             localStorage.setItem('totalCoins', availableCoins);
-            localStorage.setItem('currentSummonType', 'single');
-            window.location.href = 'summon-animation.html';
+            updateAvailableCoins();
+            
+            // Supprimer le placeholder s'il existe
+            const placeholder = document.getElementById('placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            // Effectuer une invocation
+            const reward = performSummon();
+            displayReward(reward);
         }
 
         function multiSummon() {
@@ -515,8 +538,52 @@
             }
             availableCoins -= 500;
             localStorage.setItem('totalCoins', availableCoins);
-            localStorage.setItem('currentSummonType', 'multi');
-            window.location.href = 'summon-animation.html';
+            updateAvailableCoins();
+            
+            // Supprimer le placeholder s'il existe
+            const placeholder = document.getElementById('placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            // Effectuer 10 invocations
+            for(let i = 0; i < 10; i++) {
+                const reward = performSummon();
+                displayReward(reward);
+            }
+        }
+
+        function performSummon() {
+            const totalWeight = rewardsPool.reduce((sum, reward) => sum + reward.weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (const reward of rewardsPool) {
+                random -= reward.weight;
+                if (random <= 0) {
+                    return reward;
+                }
+            }
+            return rewardsPool[0]; // Fallback au cas où
+        }
+
+        function displayReward(reward) {
+            const rewardElement = document.createElement('div');
+            rewardElement.className = `reward ${reward.rarity.toLowerCase()}`;
+            rewardElement.innerHTML = `
+                <div style="text-align: center;">
+                    <img src="${reward.image}" alt="${reward.name}" style="width: 100px; height: 100px; object-fit: contain;">
+                    <div style="margin-top: 10px;">${reward.name}</div>
+                    <div style="color: var(--${reward.rarity.toLowerCase() === 'arc-en-ciel' ? 'neon-pink' : reward.rarity.toLowerCase() === 'spécial' ? 'primary' : 'light'}); 
+                          font-size: 0.8em;">${reward.rarity}</div>
+                </div>
+            `;
+            
+            rewardElement.onclick = () => showModal(reward.image);
+            
+            // Animation d'apparition
+            rewardElement.style.animation = 'popIn 0.5s ease-out forwards';
+            
+            document.querySelector('.rewards-container').appendChild(rewardElement);
         }
 
         function showModal(imageSrc) {
