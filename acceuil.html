@@ -56,7 +56,7 @@
             text-align: center;
             margin: 2rem 0;
             position: relative;
-            font-size: 4.5rem;
+            font-size: 7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.2em;
@@ -226,16 +226,24 @@
 
         .nav-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 2rem;
-            margin: 4rem auto;
-            max-width: 900px;
-            padding: 0 1rem;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+            pointer-events: none;
+            width: auto;
+        }
+
+        .nav-grid.active {
+            pointer-events: all;
         }
 
         .nav-button {
             position: relative;
-            padding: 1.5rem;
+            padding: 1.5rem 3rem;
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(184, 146, 255, 0.3);
             color: var(--light);
@@ -246,9 +254,15 @@
             letter-spacing: 0.1em;
             cursor: pointer;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
             backdrop-filter: blur(5px);
+            opacity: 0;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transform-origin: center;
+            min-width: 200px;
         }
 
         .nav-button::before {
@@ -258,30 +272,59 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 70, 85, 0.2),
-                transparent
-            );
             transition: 0.5s;
-        }
-
-        .nav-button:hover {
-            background: rgba(184, 146, 255, 0.1);
-            border-color: var(--violet);
-            transform: translateY(-3px);
-            box-shadow: 
-                0 5px 15px rgba(184, 146, 255, 0.2),
-                0 0 30px rgba(184, 146, 255, 0.1);
+            z-index: -1;
         }
 
         .nav-button:hover::before {
-            left: 100%;
+            left: 0;
         }
 
-        .nav-button:active {
-            transform: translateY(0);
+        /* Styles spécifiques pour chaque bouton */
+        .nav-button:nth-child(1) { /* Koumi */
+            border-color: var(--neon-violet);
+        }
+        .nav-button:nth-child(1):hover {
+            background: rgba(184, 146, 255, 0.2);
+            border-color: var(--neon-violet);
+            box-shadow: 0 0 20px var(--neon-violet);
+            color: var(--neon-violet);
+        }
+
+        .nav-button:nth-child(2) { /* Invocation */
+            border-color: var(--apex-gold);
+        }
+        .nav-button:nth-child(2):hover {
+            background: rgba(240, 165, 0, 0.2);
+            border-color: var(--apex-gold);
+            box-shadow: 0 0 20px var(--apex-gold);
+            color: var(--apex-gold);
+        }
+
+        .nav-button:nth-child(3) { /* Collection */
+            border-color: var(--neon-pink);
+        }
+        .nav-button:nth-child(3):hover {
+            background: rgba(255, 105, 180, 0.2);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        .nav-grid.active .nav-button {
+            opacity: 1;
+        }
+
+        .nav-grid.active .nav-button:nth-child(1) {
+            transform: translate(-50%, -140%) scale(1);
+        }
+
+        .nav-grid.active .nav-button:nth-child(2) {
+            transform: translate(-50%, 0%) scale(1);
+        }
+
+        .nav-grid.active .nav-button:nth-child(3) {
+            transform: translate(-50%, 140%) scale(1);
         }
 
         #discordButton {
@@ -348,7 +391,7 @@
             }
 
             .title {
-                font-size: 2.5rem;
+                font-size: 4rem;
             }
 
             .nav-button {
@@ -362,9 +405,193 @@
             50% { opacity: 1; }
             100% { opacity: 0.8; }
         }
+
+        .diamond-button {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .diamond-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, var(--neon-violet) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .diamond-button.active::after {
+            opacity: 0.5;
+        }
+
+        .diamond-button.active {
+            transform: translateX(-50%) scale(0.8);
+            box-shadow: 0 0 30px var(--neon-violet);
+        }
+
+        .diamond-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: var(--dark);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .diamond-button.active::before {
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        /* Ajout des styles pour les étoiles */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Styles pour le contrôle audio */
+        .audio-control {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            background: rgba(15, 25, 35, 0.6);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(184, 146, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(15, 25, 35, 0.8);
+            border-color: var(--neon-violet);
+            box-shadow: 0 0 20px rgba(184, 146, 255, 0.2);
+        }
+
+        .volume-button {
+            width: 40px;
+            height: 40px;
+            background: rgba(184, 146, 255, 0.2);
+            border: 2px solid var(--neon-violet);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--light);
+            font-size: 1.2rem;
+        }
+
+        .volume-button:hover {
+            background: rgba(184, 146, 255, 0.3);
+            box-shadow: 0 0 15px var(--neon-violet);
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(184, 146, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover .volume-slider {
+            opacity: 1;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--neon-violet);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            box-shadow: 0 0 10px var(--neon-violet);
+            transform: scale(1.2);
+        }
+
+        .volume-percentage {
+            min-width: 45px;
+            color: var(--light);
+            font-size: 0.9rem;
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover .volume-percentage {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+    <div class="stars"></div>
     <div class="background-lines">
         <div class="line line-1"></div>
         <div class="line line-2"></div>
@@ -396,13 +623,61 @@
             <button class="nav-button" onclick="window.location.href='Koumi.html'">Koumi</button>
             <button class="nav-button" onclick="window.location.href='invocation.html'">Invocation</button>
             <button class="nav-button" onclick="window.location.href='collection.html'">Collection</button>
-            <button class="nav-button" onclick="window.location.href='combats.html'">Combats</button>
         </div>
     </div>
 
+    <div class="diamond-button"></div>
+
+    <div class="audio-control">
+        <input type="range" class="volume-slider" min="0" max="100" value="50">
+        <span class="volume-percentage">50%</span>
+        <button class="volume-button">🔊</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="C418 - Sweden (Caution & Crisis Remix).mp3" type="audio/mp3">
+    </audio>
+
     <script>
+        // Animation des étoiles
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numberOfStars = 50;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Position aléatoire
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Taille aléatoire
+                const size = Math.random() * 3 + 1;
+                
+                // Durée d'animation aléatoire
+                const duration = Math.random() * 3 + 2;
+                
+                star.style.cssText = `
+                    left: ${x}%;
+                    top: ${y}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    --duration: ${duration}s;
+                    animation-delay: ${Math.random() * 2}s;
+                `;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Créer les étoiles au chargement
+        createStars();
+
         // Animation des boutons
-        document.querySelectorAll('.nav-button').forEach(button => {
+        document.querySelectorAll('.nav-button').forEach((button, index) => {
+            button.style.transitionDelay = `${index * 0.1}s`;
+            
             button.addEventListener('mousemove', (e) => {
                 const rect = button.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -412,6 +687,82 @@
                 button.style.setProperty('--y', `${y}px`);
             });
         });
+
+        // Animation du bouton losange et des boutons de navigation
+        const diamondButton = document.querySelector('.diamond-button');
+        const navGrid = document.querySelector('.nav-grid');
+        let isOpen = false;
+
+        diamondButton.addEventListener('click', () => {
+            isOpen = !isOpen;
+            if (isOpen) {
+                diamondButton.classList.add('active');
+                navGrid.classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-button').forEach((button, index) => {
+                    button.style.transitionDelay = `${(2 - index) * 0.1}s`; // Modifié de 3 à 2 car il n'y a plus que 3 boutons
+                });
+                diamondButton.classList.remove('active');
+                navGrid.classList.remove('active');
+                
+                // Réinitialiser les délais pour la prochaine ouverture
+                setTimeout(() => {
+                    document.querySelectorAll('.nav-button').forEach((button, index) => {
+                        button.style.transitionDelay = `${index * 0.1}s`;
+                    });
+                }, 1000);
+            }
+        });
+
+        // Contrôle audio
+        const audio = document.getElementById('bgMusic');
+        const volumeButton = document.querySelector('.volume-button');
+        const volumeSlider = document.querySelector('.volume-slider');
+        let isMuted = false;
+        let previousVolume = 50; // Stocke la valeur précédente du volume
+
+        // Initialiser le volume
+        audio.volume = 0.5;
+
+        // Gérer le clic sur le bouton de volume
+        volumeButton.addEventListener('click', () => {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            
+            if (isMuted) {
+                previousVolume = volumeSlider.value; // Sauvegarder le volume actuel
+                volumeSlider.value = 0;
+                audio.volume = 0;
+                document.querySelector('.volume-percentage').textContent = '0%';
+            } else {
+                volumeSlider.value = previousVolume; // Restaurer le volume précédent
+                audio.volume = previousVolume / 100;
+                document.querySelector('.volume-percentage').textContent = `${previousVolume}%`;
+            }
+            
+            volumeButton.textContent = isMuted ? '🔇' : '🔊';
+        });
+
+        // Gérer le changement de volume
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            const percentage = Math.round(volume * 100);
+            audio.volume = volume;
+            previousVolume = e.target.value; // Mettre à jour le volume précédent
+            isMuted = volume === 0;
+            volumeButton.textContent = isMuted ? '🔇' : '🔊';
+            document.querySelector('.volume-percentage').textContent = `${percentage}%`;
+        });
+
+        // Initialiser l'affichage du pourcentage
+        document.querySelector('.volume-percentage').textContent = '50%';
+
+        // Démarrer la musique lors de la première interaction utilisateur
+        document.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().catch(console.error);
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
