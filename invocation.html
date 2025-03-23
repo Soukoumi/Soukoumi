@@ -815,11 +815,48 @@
             cursor: pointer;
             z-index: 1001;
         }
+
+        .exp-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4.5s;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="stars"></div>
     <div class="animated-background"></div>
+    <div class="exp-notification" id="exp-notification"></div>
     <a href="index.html" class="back-button">Retour</a>
     <a href="collection.html" class="collection-link">Collection</a>
     <button class="all-cards-button" onclick="showAllCards()">Toutes les cartes</button>
@@ -914,7 +951,7 @@
             { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
             { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "2.png" },      
             { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "3.png" },
-            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
+            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "4.png" },
             { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "5.png" }, 
             { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "6.png" },
             { name: "Niky", rarity: "Epique", "type": "Gun", weight: 12, image: "7.png" },
@@ -994,6 +1031,38 @@
             saveToCollection(reward);
         }
 
+        function addExperience(amount) {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                level: 1,
+                experience: 0
+            };
+
+            // Calculer l'expérience nécessaire pour le prochain niveau
+            const expNeeded = profileData.level * 250;
+
+            // Ajouter l'expérience
+            profileData.experience += amount;
+
+            // Vérifier si le niveau augmente
+            while (profileData.experience >= expNeeded) {
+                profileData.experience -= expNeeded;
+                profileData.level += 1;
+            }
+
+            // Sauvegarder les données mises à jour
+            localStorage.setItem('profileData', JSON.stringify(profileData));
+
+            // Afficher la notification
+            const notification = document.getElementById('exp-notification');
+            notification.textContent = `+${amount} EXP`;
+            notification.style.display = 'block';
+
+            // Cacher la notification après 5 secondes
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
         function singleSummon() {
             if(!canSummon(50)) {
                 alert("Vous n'avez pas assez de koumi pour une invocation !");
@@ -1006,6 +1075,9 @@
 
             const reward = generateReward();
             displayReward(reward);
+
+            // Ajouter l'expérience
+            addExperience(25);
 
             localStorage.setItem('invocationPerformed', Date.now());
             localStorage.removeItem('invocationPerformed');
@@ -1024,6 +1096,8 @@
             for(let i = 0; i < 10; i++) {
                 const reward = generateReward();
                 displayReward(reward);
+                // Ajouter l'expérience pour chaque invocation
+                addExperience(25);
             }
 
             localStorage.setItem('invocationPerformed', Date.now());
