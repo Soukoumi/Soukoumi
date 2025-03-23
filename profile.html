@@ -162,6 +162,45 @@
             max-width: 300px;
         }
 
+        .profile-level {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-badge {
+            background: var(--apex-gold);
+            color: var(--dark);
+            padding: 0.1rem 0.4rem;
+            border-radius: 2px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .exp-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .exp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-violet), var(--neon-pink));
+            transition: width 0.3s ease;
+        }
+
+        .exp-text {
+            font-size: 0.8rem;
+            color: var(--light);
+            opacity: 0.9;
+            text-align: right;
+            margin-top: 0.2rem;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -268,6 +307,10 @@
                     <div class="profile-level">
                         <span class="level-badge">Niveau 0</span>
                     </div>
+                    <div class="exp-bar-container">
+                        <div class="exp-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="exp-text">0/250 EXP</div>
                 </div>
             </div>
         </div>
@@ -325,7 +368,8 @@
         function loadProfileData() {
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
                 name: 'Joueur_123',
-                level: 0,
+                level: 1,
+                experience: 0,
                 profilePic: 'https://placehold.co/150x150',
                 invocationsCount: 0,
                 gameStartTime: null,
@@ -344,7 +388,14 @@
             // Mettre à jour les éléments de la page
             document.querySelector('.profile-name-input').value = profileData.name;
             document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
-            document.querySelector('.profile-level span:last-child').textContent = profileData.rank;
+            
+            // Calculer l'expérience nécessaire pour le prochain niveau
+            const expNeeded = profileData.level * 250;
+            
+            // Mettre à jour la barre d'expérience
+            const expPercentage = (profileData.experience / expNeeded) * 100;
+            document.querySelector('.exp-bar').style.width = `${expPercentage}%`;
+            document.querySelector('.exp-text').textContent = `${profileData.experience}/${expNeeded} EXP`;
             
             // Mettre à jour les statistiques
             document.querySelector('.stats-grid').children[3].querySelector('.stat-value').textContent = profileData.invocationsCount || 0;
