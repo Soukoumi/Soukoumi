@@ -951,7 +951,7 @@
             { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
             { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "2.png" },      
             { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "3.png" },
-            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
+            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "4.png" },
             { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "5.png" }, 
             { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "6.png" },
             { name: "Niky", rarity: "Epique", "type": "Gun", weight: 12, image: "7.png" },
@@ -1093,12 +1093,45 @@
             localStorage.setItem('totalCoins', availableCoins);
             updateAvailableCoins();
 
+            // Calculer l'expérience totale pour les 10 invocations
+            const totalExp = 25 * 10;
+
+            // Afficher d'abord les récompenses
             for(let i = 0; i < 10; i++) {
                 const reward = generateReward();
                 displayReward(reward);
-                // Ajouter l'expérience pour chaque invocation
-                addExperience(25);
             }
+
+            // Ajouter l'expérience totale une seule fois
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                level: 1,
+                experience: 0
+            };
+
+            // Calculer l'expérience nécessaire pour le prochain niveau
+            const expNeeded = profileData.level * 250;
+
+            // Ajouter l'expérience
+            profileData.experience += totalExp;
+
+            // Vérifier si le niveau augmente
+            while (profileData.experience >= expNeeded) {
+                profileData.experience -= expNeeded;
+                profileData.level += 1;
+            }
+
+            // Sauvegarder les données mises à jour
+            localStorage.setItem('profileData', JSON.stringify(profileData));
+
+            // Afficher la notification
+            const notification = document.getElementById('exp-notification');
+            notification.textContent = `+${totalExp} EXP`;
+            notification.style.display = 'block';
+
+            // Cacher la notification après 5 secondes
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
 
             localStorage.setItem('invocationPerformed', Date.now());
             localStorage.removeItem('invocationPerformed');
