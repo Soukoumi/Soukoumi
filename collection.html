@@ -274,6 +274,23 @@
              max-width: 90%;
              max-height: 90%;
              position: relative;
+             perspective: 1000px;
+         }
+ 
+         #modal-image {
+             max-width: 400px;
+             max-height: 70vh;
+             transition: transform 0.3s ease;
+             transform-style: preserve-3d;
+             cursor: move;
+         }
+ 
+         .modal-info {
+             margin-top: 15px;
+             text-align: center;
+             background: rgba(0, 0, 0, 0.3);
+             padding: 15px;
+             border-radius: 10px;
          }
  
          .modal-close {
@@ -393,7 +410,7 @@
              { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
              { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "2.png" },      
              { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "3.png" },
-             { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "4.png" },
+             { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
              { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
              { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "5.png" }, 
              { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "6.png" },
@@ -528,6 +545,52 @@
              `;
  
              modal.style.display = 'flex';
+ 
+             // Ajouter l'effet 3D
+             let isDragging = false;
+             let startX, startY;
+             let currentX = 0;
+             let currentY = 0;
+             let currentRotateX = 0;
+             let currentRotateY = 0;
+ 
+             modalImage.addEventListener('mousedown', (e) => {
+                 isDragging = true;
+                 startX = e.clientX - currentX;
+                 startY = e.clientY - currentY;
+             });
+ 
+             document.addEventListener('mousemove', (e) => {
+                 if (!isDragging) return;
+ 
+                 currentX = e.clientX - startX;
+                 currentY = e.clientY - startY;
+ 
+                 // Calculer la rotation en fonction de la position de la souris
+                 const rect = modalImage.getBoundingClientRect();
+                 const centerX = rect.left + rect.width / 2;
+                 const centerY = rect.top + rect.height / 2;
+                 
+                 currentRotateY = ((e.clientX - centerX) / centerX) * 20;
+                 currentRotateX = ((centerY - e.clientY) / centerY) * 20;
+ 
+                 modalImage.style.transform = `
+                     translate(${currentX}px, ${currentY}px)
+                     rotateX(${currentRotateX}deg)
+                     rotateY(${currentRotateY}deg)
+                 `;
+             });
+ 
+             document.addEventListener('mouseup', () => {
+                 isDragging = false;
+             });
+ 
+             // Réinitialiser la position et la rotation lors de la fermeture
+             modalImage.style.transform = 'none';
+             currentX = 0;
+             currentY = 0;
+             currentRotateX = 0;
+             currentRotateY = 0;
          }
  
          function closeModal() {
