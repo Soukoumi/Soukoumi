@@ -138,11 +138,37 @@
             max-width: 800px;
             height: 300px;
             margin-bottom: 15px;
-            overflow: hidden;
+            overflow: visible;
             border-radius: 20px;
             box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
             background: rgba(15, 25, 35, 0.95);
             perspective: 1000px;
+        }
+
+        .banner-container::before,
+        .banner-container::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .banner-container::before {
+            top: -50px;
+            left: -50px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 Q75 25 100 50 Q75 75 50 100 Q25 75 0 50 Q25 25 50 0" fill="none" stroke="rgba(184, 146, 255, 0.1)" stroke-width="2"/></svg>');
+            transform: rotate(-15deg);
+        }
+
+        .banner-container::after {
+            bottom: -50px;
+            right: -50px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 C75 25 100 50 75 75 C50 100 25 75 0 50 C25 25 50 0" fill="none" stroke="rgba(184, 146, 255, 0.1)" stroke-width="2"/></svg>');
+            transform: rotate(15deg);
         }
 
         .banner {
@@ -155,6 +181,7 @@
             justify-content: center;
             align-items: center;
             transform-style: preserve-3d;
+            z-index: 1;
         }
 
         .banner::before {
@@ -163,7 +190,6 @@
             width: 150%;
             height: 150%;
             background: radial-gradient(circle at center, rgba(184, 146, 255, 0.1) 0%, transparent 70%);
-            animation: rotateGradient 20s linear infinite;
             pointer-events: none;
         }
 
@@ -173,7 +199,6 @@
             width: 100%;
             height: 100%;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(184, 146, 255, 0.1)" stroke-width="2"/></svg>') center/contain no-repeat;
-            animation: rotateSymbol 15s linear infinite;
             pointer-events: none;
         }
 
@@ -188,7 +213,7 @@
             align-items: center;
             transform-style: preserve-3d;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .banner-image::before {
@@ -197,7 +222,6 @@
             width: 150%;
             height: 150%;
             background: radial-gradient(circle at center, rgba(184, 146, 255, 0.2) 0%, transparent 70%);
-            animation: pulseLight 3s ease-in-out infinite;
             pointer-events: none;
         }
 
@@ -207,7 +231,6 @@
             width: 100%;
             height: 100%;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="rgba(184, 146, 255, 0.1)" stroke-width="2"/></svg>') center/contain no-repeat;
-            animation: rotateDiamond 10s linear infinite;
             pointer-events: none;
         }
 
@@ -216,9 +239,8 @@
             object-fit: contain;
             filter: drop-shadow(0 0 30px rgba(184, 146, 255, 0.4));
             transform-style: preserve-3d;
-            animation: floatCard 8s ease-in-out infinite;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
 
         .banner-nav {
@@ -228,7 +250,7 @@
             transform: translateX(-50%);
             display: flex;
             gap: 8px;
-            z-index: 3;
+            z-index: 4;
         }
 
         .banner-dot {
@@ -249,7 +271,6 @@
             height: 100%;
             border-radius: 50%;
             background: radial-gradient(circle at center, rgba(184, 146, 255, 0.5), transparent);
-            animation: pulseDot 2s ease-in-out infinite;
         }
 
         .banner-dot.active {
@@ -258,54 +279,45 @@
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
 
-        @keyframes rotateGradient {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .decorative-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        @keyframes rotateSymbol {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
+        .decorative-element {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.1;
         }
 
-        @keyframes rotateDiamond {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .decorative-element:nth-child(1) {
+            top: -30px;
+            left: -30px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="rgba(184, 146, 255, 0.3)" stroke-width="2"/></svg>');
         }
 
-        @keyframes pulseDot {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.5); opacity: 0.2; }
-            100% { transform: scale(1); opacity: 0.5; }
+        .decorative-element:nth-child(2) {
+            top: -30px;
+            right: -30px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(184, 146, 255, 0.3)" stroke-width="2"/></svg>');
         }
 
-        @keyframes floatCard {
-            0% { 
-                transform: translate3d(-20px, -10px, 30px) rotateY(-5deg) rotateX(3deg); 
-                filter: drop-shadow(10px 10px 20px rgba(184, 146, 255, 0.6));
-            }
-            25% {
-                transform: translate3d(0px, 0px, 50px) rotateY(0deg) rotateX(0deg);
-                filter: drop-shadow(0px 15px 25px rgba(184, 146, 255, 0.5));
-            }
-            50% { 
-                transform: translate3d(20px, -5px, 30px) rotateY(5deg) rotateX(-2deg);
-                filter: drop-shadow(-10px 10px 20px rgba(184, 146, 255, 0.6));
-            }
-            75% {
-                transform: translate3d(0px, -15px, 40px) rotateY(0deg) rotateX(4deg);
-                filter: drop-shadow(0px 5px 25px rgba(184, 146, 255, 0.5));
-            }
-            100% { 
-                transform: translate3d(-20px, -10px, 30px) rotateY(-5deg) rotateX(3deg);
-                filter: drop-shadow(10px 10px 20px rgba(184, 146, 255, 0.6));
-            }
+        .decorative-element:nth-child(3) {
+            bottom: -30px;
+            left: -30px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 Q75 25 100 50 Q75 75 50 100 Q25 75 0 50 Q25 25 50 0" fill="none" stroke="rgba(184, 146, 255, 0.3)" stroke-width="2"/></svg>');
         }
 
-        @keyframes pulseLight {
-            0% { opacity: 0.3; transform: scale(0.8) translateZ(20px); }
-            50% { opacity: 0.6; transform: scale(1.1) translateZ(40px); }
-            100% { opacity: 0.3; transform: scale(0.8) translateZ(20px); }
+        .decorative-element:nth-child(4) {
+            bottom: -30px;
+            right: -30px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 C75 25 100 50 75 75 C50 100 25 75 0 50 C25 25 50 0" fill="none" stroke="rgba(184, 146, 255, 0.3)" stroke-width="2"/></svg>');
         }
 
         .button-container {
