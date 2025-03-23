@@ -450,6 +450,107 @@
             transform: translateX(-5px);
             box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
         }
+
+        .all-cards-button {
+            position: fixed;
+            top: 20px;
+            right: 200px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            z-index: 100;
+        }
+
+        .all-cards-button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
+        }
+
+        .all-cards-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .all-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .all-cards-card {
+            background: rgba(15, 25, 35, 0.95);
+            border: 2px solid var(--neon-violet);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .all-cards-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(184, 146, 255, 0.3);
+        }
+
+        .all-cards-card img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .all-cards-card .card-name {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+
+        .all-cards-card .card-rarity {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .all-cards-card .card-type {
+            font-size: 0.8em;
+            color: var(--secondary);
+        }
+
+        .close-all-cards {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
     </style>
 </head>
 <body>
@@ -457,6 +558,7 @@
     <div class="animated-background"></div>
     <a href="index.html" class="back-button">Retour</a>
     <a href="collection.html" class="collection-link">Collection</a>
+    <button class="all-cards-button" onclick="showAllCards()">Toutes les cartes</button>
     <h1>Invocation</h1>
     <div id="coins-display">Koumi disponibles : 0</div>
 
@@ -507,6 +609,11 @@
             <img id="modal-image" src="" alt="Reward Image" style="width: auto; height: auto; max-width: 100%; max-height: 100%; border: 5px solid white; border-radius: 15px; object-fit: contain;">
             <button onclick="closeModal()" style="position: absolute; top: -20px; right: -20px; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;">X</button>
         </div>
+    </div>
+
+    <div id="all-cards-modal" class="all-cards-modal">
+        <button class="close-all-cards" onclick="closeAllCards()">X</button>
+        <div class="all-cards-container" id="all-cards-container"></div>
     </div>
 
     <script>
@@ -732,6 +839,32 @@
         document.querySelectorAll('.button-container button').forEach(button => {
             button.addEventListener('click', performInvocation);
         });
+
+        function showAllCards() {
+            const modal = document.getElementById('all-cards-modal');
+            const container = document.getElementById('all-cards-container');
+            container.innerHTML = '';
+
+            rewardsPool.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `all-cards-card ${card.rarity.toLowerCase()}`;
+                cardElement.innerHTML = `
+                    <img src="${card.image}" alt="${card.name}">
+                    <div class="card-name">${card.name}</div>
+                    <div class="card-rarity" style="color: var(--${card.rarity.toLowerCase()})">${card.rarity}</div>
+                    <div class="card-type">${card.type}</div>
+                `;
+                cardElement.onclick = () => showModal(card.image);
+                container.appendChild(cardElement);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function closeAllCards() {
+            const modal = document.getElementById('all-cards-modal');
+            modal.style.display = 'none';
+        }
     </script>
 </body>
 </html>
