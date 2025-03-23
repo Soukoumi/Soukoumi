@@ -389,9 +389,17 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .summon-result-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
+            gap: 30px;
+            width: 100%;
         }
 
         .summon-result-card {
@@ -400,41 +408,68 @@
             border-radius: 15px;
             text-align: center;
             animation: popIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
         }
 
         .summon-result-card img {
-            width: 120px;
-            height: 120px;
+            width: 180px;
+            height: 180px;
             object-fit: contain;
             margin-bottom: 10px;
         }
 
         .summon-result-card .card-name {
-            font-size: 1.2em;
+            font-size: 1.4em;
             margin: 10px 0;
             color: var(--light);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .summon-result-card .card-rarity {
-            font-size: 1em;
+            font-size: 1.2em;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .close-result {
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
+        .confirm-summon-button {
+            padding: 15px 40px;
+            font-size: 1.4em;
+            background: linear-gradient(45deg, var(--neon-violet), var(--primary));
+            color: var(--light);
             border: none;
-            font-size: 20px;
+            border-radius: 50px;
             cursor: pointer;
-            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .confirm-summon-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(184, 146, 255, 0.5);
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: particleFloat 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
         }
 
         .back-button {
@@ -1000,7 +1035,8 @@
 
     <div class="summon-result-modal" id="summon-result-modal">
         <div class="summon-result-content" id="summon-result-content">
-            <button class="close-result" onclick="closeSummonResult()">X</button>
+            <div class="summon-result-grid" id="summon-result-grid"></div>
+            <button class="confirm-summon-button" onclick="closeSummonResult()">Confirmer</button>
         </div>
     </div>
 
@@ -1074,6 +1110,61 @@
             localStorage.setItem('collection', JSON.stringify(collection));
         }
 
+        function createParticles(x, y, color) {
+            const container = document.body;
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Taille aléatoire
+                const size = Math.random() * 8 + 4;
+                
+                // Direction aléatoire
+                const angle = (Math.random() * 360) * Math.PI / 180;
+                const distance = Math.random() * 100 + 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.cssText = `
+                    left: ${x}px;
+                    top: ${y}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${color};
+                    --tx: ${tx}px;
+                    --ty: ${ty}px;
+                `;
+                
+                container.appendChild(particle);
+                
+                // Supprimer la particule après l'animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+
+        function getRarityColor(rarity) {
+            switch(rarity.toLowerCase()) {
+                case 'commune':
+                    return '#28a745';
+                case 'rare':
+                    return 'var(--secondary)';
+                case 'epique':
+                    return 'var(--violet)';
+                case 'légendaire':
+                    return 'var(--apex-gold)';
+                case 'spécial':
+                    return 'var(--primary)';
+                case 'arc-en-ciel':
+                    return 'var(--neon-pink)';
+                default:
+                    return 'var(--light)';
+            }
+        }
+
         function displayReward(reward) {
             const bannerContainer = document.querySelector('.banner-container');
             const activeBanner = document.querySelector('.banner.active');
@@ -1106,6 +1197,12 @@
             
             // Ajouter à la liste des récompenses actuelles
             currentRewards.push(reward);
+
+            // Créer des particules
+            const bannerRect = bannerContainer.getBoundingClientRect();
+            const centerX = bannerRect.left + bannerRect.width / 2;
+            const centerY = bannerRect.top + bannerRect.height / 2;
+            createParticles(centerX, centerY, getRarityColor(reward.rarity));
         }
 
         function resetBanner() {
@@ -1168,10 +1265,10 @@
 
         function showSummonResult() {
             const modal = document.getElementById('summon-result-modal');
-            const content = document.getElementById('summon-result-content');
+            const grid = document.getElementById('summon-result-grid');
             
             // Créer les cartes de récompense
-            content.innerHTML = '<button class="close-result" onclick="closeSummonResult()">X</button>';
+            grid.innerHTML = '';
             currentRewards.forEach(reward => {
                 const card = document.createElement('div');
                 card.className = `summon-result-card ${reward.rarity.toLowerCase()}`;
@@ -1180,7 +1277,7 @@
                     <div class="card-name">${reward.name}</div>
                     <div class="card-rarity" style="color: var(--${reward.rarity.toLowerCase()})">${reward.rarity}</div>
                 `;
-                content.appendChild(card);
+                grid.appendChild(card);
             });
             
             modal.style.display = 'flex';
