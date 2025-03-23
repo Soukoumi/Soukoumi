@@ -844,6 +844,20 @@
             }
         });
 
+        // Écouter les mises à jour du profil
+        window.addEventListener('profileDataUpdated', function(e) {
+            const profileData = e.detail;
+            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
+            
+            // Calculer l'expérience nécessaire pour le prochain niveau
+            const expNeeded = profileData.level * 250;
+            
+            // Mettre à jour la barre d'expérience
+            const expPercentage = (profileData.experience / expNeeded) * 100;
+            document.querySelector('.exp-bar').style.width = `${expPercentage}%`;
+            document.querySelector('.exp-text').textContent = `${profileData.experience}/${expNeeded} EXP`;
+        });
+
         // Animation des étoiles
         function createStars() {
             const starsContainer = document.querySelector('.stars');
