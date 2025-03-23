@@ -1061,6 +1061,12 @@
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 5000);
+
+            // Déclencher un événement personnalisé pour notifier les autres pages
+            const event = new CustomEvent('profileDataUpdated', {
+                detail: profileData
+            });
+            window.dispatchEvent(event);
         }
 
         function singleSummon() {
