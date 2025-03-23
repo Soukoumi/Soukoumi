@@ -376,10 +376,6 @@
                 totalPlayTime: 0
             };
 
-            // Réinitialiser l'expérience à 0
-            profileData.experience = 0;
-            saveProfileData(profileData);
-
             // Si c'est la première connexion, initialiser le temps de jeu
             if (!profileData.gameStartTime) {
                 profileData.gameStartTime = Date.now();
@@ -391,10 +387,10 @@
 
             // Mettre à jour les éléments de la page
             document.querySelector('.profile-name-input').value = profileData.name;
-            document.querySelector('.level-badge').textContent = `Niveau 0`;
+            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
             
             // Calculer l'expérience nécessaire pour le prochain niveau
-            const expNeeded = 250;
+            const expNeeded = profileData.level * 250;
             
             // Mettre à jour la barre d'expérience
             const expPercentage = (profileData.experience / expNeeded) * 100;
@@ -540,6 +536,20 @@
             modal.style.display = 'none';
             cropper.destroy();
             cropper = null;
+        });
+
+        // Écouter les mises à jour du profil
+        window.addEventListener('profileDataUpdated', function(e) {
+            const profileData = e.detail;
+            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
+            
+            // Calculer l'expérience nécessaire pour le prochain niveau
+            const expNeeded = profileData.level * 250;
+            
+            // Mettre à jour la barre d'expérience
+            const expPercentage = (profileData.experience / expNeeded) * 100;
+            document.querySelector('.exp-bar').style.width = `${expPercentage}%`;
+            document.querySelector('.exp-text').textContent = `${profileData.experience}/${expNeeded} EXP`;
         });
 
         // Charger les données au chargement de la page
