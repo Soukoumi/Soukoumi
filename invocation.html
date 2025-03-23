@@ -157,6 +157,26 @@
             transform-style: preserve-3d;
         }
 
+        .banner::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at center, rgba(184, 146, 255, 0.1) 0%, transparent 70%);
+            animation: rotateGradient 20s linear infinite;
+            pointer-events: none;
+        }
+
+        .banner::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(184, 146, 255, 0.1)" stroke-width="2"/></svg>') center/contain no-repeat;
+            animation: rotateSymbol 15s linear infinite;
+            pointer-events: none;
+        }
+
         .banner.active {
             opacity: 1;
         }
@@ -168,6 +188,7 @@
             align-items: center;
             transform-style: preserve-3d;
             position: relative;
+            z-index: 1;
         }
 
         .banner-image::before {
@@ -180,12 +201,82 @@
             pointer-events: none;
         }
 
+        .banner-image::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="rgba(184, 146, 255, 0.1)" stroke-width="2"/></svg>') center/contain no-repeat;
+            animation: rotateDiamond 10s linear infinite;
+            pointer-events: none;
+        }
+
         .banner-image img {
             height: 280px;
             object-fit: contain;
             filter: drop-shadow(0 0 30px rgba(184, 146, 255, 0.4));
             transform-style: preserve-3d;
             animation: floatCard 8s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner-nav {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 3;
+        }
+
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .banner-dot::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(184, 146, 255, 0.5), transparent);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        .banner-dot.active {
+            background: var(--light);
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotateSymbol {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        @keyframes rotateDiamond {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseDot {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 0.2; }
+            100% { transform: scale(1); opacity: 0.5; }
         }
 
         @keyframes floatCard {
@@ -215,32 +306,6 @@
             0% { opacity: 0.3; transform: scale(0.8) translateZ(20px); }
             50% { opacity: 0.6; transform: scale(1.1) translateZ(40px); }
             100% { opacity: 0.3; transform: scale(0.8) translateZ(20px); }
-        }
-
-        .banner-nav {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 3;
-        }
-
-        .banner-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .banner-dot.active {
-            background: var(--light);
-            transform: scale(1.2);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
 
         .button-container {
