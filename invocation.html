@@ -1102,48 +1102,56 @@
             // Calculer l'expérience totale pour les 10 invocations
             const totalExp = 250; // 25 EXP par invocation * 10 invocations
 
-            // Afficher d'abord les récompenses
-            for(let i = 0; i < 10; i++) {
-                const reward = generateReward();
-                displayReward(reward);
+            // Fonction pour afficher une récompense avec un délai
+            function displayRewardWithDelay(index) {
+                if (index < 10) {
+                    const reward = generateReward();
+                    displayReward(reward);
+                    setTimeout(() => {
+                        displayRewardWithDelay(index + 1);
+                    }, 500); // Délai de 500ms entre chaque récompense
+                } else {
+                    // Une fois toutes les récompenses affichées, ajouter l'expérience
+                    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                        level: 0.1,
+                        experience: 0
+                    };
+
+                    // Calculer l'expérience nécessaire pour le prochain niveau
+                    const expNeeded = Math.floor(profileData.level) * 250;
+
+                    // Ajouter l'expérience
+                    profileData.experience += totalExp;
+
+                    // Vérifier si le niveau augmente
+                    while (profileData.experience >= expNeeded) {
+                        profileData.experience -= expNeeded;
+                        profileData.level += 0.1;
+                    }
+
+                    // Arrondir le niveau à 1 décimale
+                    profileData.level = Math.round(profileData.level * 10) / 10;
+
+                    // Sauvegarder les données mises à jour
+                    localStorage.setItem('profileData', JSON.stringify(profileData));
+
+                    // Afficher la notification
+                    const notification = document.getElementById('exp-notification');
+                    notification.textContent = `+${totalExp} EXP`;
+                    notification.style.display = 'block';
+
+                    // Cacher la notification après 5 secondes
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 5000);
+
+                    localStorage.setItem('invocationPerformed', Date.now());
+                    localStorage.removeItem('invocationPerformed');
+                }
             }
 
-            // Ajouter l'expérience totale une seule fois
-            const profileData = JSON.parse(localStorage.getItem('profileData')) || {
-                level: 0.1,
-                experience: 0
-            };
-
-            // Calculer l'expérience nécessaire pour le prochain niveau
-            const expNeeded = Math.floor(profileData.level) * 250;
-
-            // Ajouter l'expérience
-            profileData.experience += totalExp;
-
-            // Vérifier si le niveau augmente
-            while (profileData.experience >= expNeeded) {
-                profileData.experience -= expNeeded;
-                profileData.level += 0.1;
-            }
-
-            // Arrondir le niveau à 1 décimale
-            profileData.level = Math.round(profileData.level * 10) / 10;
-
-            // Sauvegarder les données mises à jour
-            localStorage.setItem('profileData', JSON.stringify(profileData));
-
-            // Afficher la notification
-            const notification = document.getElementById('exp-notification');
-            notification.textContent = `+${totalExp} EXP`;
-            notification.style.display = 'block';
-
-            // Cacher la notification après 5 secondes
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 5000);
-
-            localStorage.setItem('invocationPerformed', Date.now());
-            localStorage.removeItem('invocationPerformed');
+            // Démarrer l'affichage des récompenses avec un délai
+            displayRewardWithDelay(0);
         }
 
         function generateReward() {
