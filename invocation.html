@@ -409,6 +409,19 @@
             margin-bottom: 10px;
         }
 
+        .summon-result-card .card-name {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: var(--light);
+        }
+
+        .summon-result-card .card-rarity {
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         .close-result {
             position: absolute;
             top: -20px;
@@ -985,10 +998,17 @@
         <div class="all-cards-container" id="all-cards-container"></div>
     </div>
 
+    <div class="summon-result-modal" id="summon-result-modal">
+        <div class="summon-result-content" id="summon-result-content">
+            <button class="close-result" onclick="closeSummonResult()">X</button>
+        </div>
+    </div>
+
     <script>
         let availableCoins = 0;
         let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
         let invocationCount = parseInt(localStorage.getItem('invocationCount')) || 0;
+        let currentRewards = [];
 
         const rewardsPool = [
             { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
@@ -1083,9 +1103,9 @@
             
             // Sauvegarder dans la collection
             saveToCollection(reward);
-
-            // Afficher le bouton confirmer
-            document.querySelector('.confirm-button').style.display = 'block';
+            
+            // Ajouter à la liste des récompenses actuelles
+            currentRewards.push(reward);
         }
 
         function resetBanner() {
@@ -1146,6 +1166,33 @@
             window.dispatchEvent(event);
         }
 
+        function showSummonResult() {
+            const modal = document.getElementById('summon-result-modal');
+            const content = document.getElementById('summon-result-content');
+            
+            // Créer les cartes de récompense
+            content.innerHTML = '<button class="close-result" onclick="closeSummonResult()">X</button>';
+            currentRewards.forEach(reward => {
+                const card = document.createElement('div');
+                card.className = `summon-result-card ${reward.rarity.toLowerCase()}`;
+                card.innerHTML = `
+                    <img src="${reward.image}" alt="${reward.name}">
+                    <div class="card-name">${reward.name}</div>
+                    <div class="card-rarity" style="color: var(--${reward.rarity.toLowerCase()})">${reward.rarity}</div>
+                `;
+                content.appendChild(card);
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeSummonResult() {
+            const modal = document.getElementById('summon-result-modal');
+            modal.style.display = 'none';
+            // Afficher le bouton confirmer après la fermeture du pop-up
+            document.querySelector('.confirm-button').style.display = 'block';
+        }
+
         function singleSummon() {
             if(!canSummon(50)) {
                 alert("Vous n'avez pas assez de koumi pour une invocation !");
@@ -1156,11 +1203,19 @@
             localStorage.setItem('totalCoins', availableCoins);
             updateAvailableCoins();
 
+            // Réinitialiser les récompenses actuelles
+            currentRewards = [];
+
             const reward = generateReward();
             displayReward(reward);
 
             // Ajouter l'expérience
             addExperience(25);
+
+            // Afficher le pop-up de résultat après un délai
+            setTimeout(() => {
+                showSummonResult();
+            }, 2000);
 
             localStorage.setItem('invocationPerformed', Date.now());
             localStorage.removeItem('invocationPerformed');
@@ -1176,6 +1231,9 @@
             localStorage.setItem('totalCoins', availableCoins);
             updateAvailableCoins();
 
+            // Réinitialiser les récompenses actuelles
+            currentRewards = [];
+
             // Calculer l'expérience totale pour les 10 invocations
             const totalExp = 250; // 25 EXP par invocation * 10 invocations
 
@@ -1186,7 +1244,7 @@
                     displayReward(reward);
                     setTimeout(() => {
                         displayRewardWithDelay(index + 1);
-                    }, 500); // Délai de 500ms entre chaque récompense
+                    }, 1500); // Délai de 1.5 secondes entre chaque récompense
                 } else {
                     // Une fois toutes les récompenses affichées, ajouter l'expérience
                     const profileData = JSON.parse(localStorage.getItem('profileData')) || {
@@ -1221,6 +1279,11 @@
                     setTimeout(() => {
                         notification.style.display = 'none';
                     }, 5000);
+
+                    // Afficher le pop-up de résultat après un délai
+                    setTimeout(() => {
+                        showSummonResult();
+                    }, 2000);
 
                     localStorage.setItem('invocationPerformed', Date.now());
                     localStorage.removeItem('invocationPerformed');
