@@ -368,7 +368,7 @@
         function loadProfileData() {
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
                 name: 'Joueur_123',
-                level: 1,
+                level: 0,
                 experience: 0,
                 profilePic: 'https://placehold.co/150x150',
                 invocationsCount: 0,
@@ -387,18 +387,21 @@
 
             // Mettre à jour les éléments de la page
             document.querySelector('.profile-name-input').value = profileData.name;
-            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
+            document.querySelector('.level-badge').textContent = `Niveau 0`;
             
             // Calculer l'expérience nécessaire pour le prochain niveau
-            const expNeeded = profileData.level * 250;
+            const expNeeded = 250;
             
             // Mettre à jour la barre d'expérience
             const expPercentage = (profileData.experience / expNeeded) * 100;
             document.querySelector('.exp-bar').style.width = `${expPercentage}%`;
             document.querySelector('.exp-text').textContent = `${profileData.experience}/${expNeeded} EXP`;
             
-            // Mettre à jour les statistiques
-            document.querySelector('.stats-grid').children[3].querySelector('.stat-value').textContent = profileData.invocationsCount || 0;
+            // Réinitialiser toutes les statistiques à 0
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                stat.textContent = '0';
+            });
             
             // Charger l'image de profil depuis le localStorage
             const savedProfilePic = localStorage.getItem('profilePicture');
