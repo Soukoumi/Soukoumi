@@ -347,6 +347,26 @@
             box-shadow: 0 8px 20px rgba(184, 146, 255, 0.5);
         }
 
+        .confirm-button {
+            display: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: linear-gradient(45deg, var(--neon-violet), var(--primary));
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            width: 250px;
+            margin-top: 20px;
+        }
+
+        .confirm-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(184, 146, 255, 0.5);
+        }
+
         .summon-result-modal {
             display: none;
             position: fixed;
@@ -919,6 +939,7 @@
             <button class="summon-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
             <button class="summon-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
         </div>
+        <button class="confirm-button" onclick="resetBanner()">Confirmer</button>
     </div>
 
     <button class="info-button" onclick="toggleInfo()">i</button>
@@ -1062,6 +1083,29 @@
             
             // Sauvegarder dans la collection
             saveToCollection(reward);
+
+            // Afficher le bouton confirmer
+            document.querySelector('.confirm-button').style.display = 'block';
+        }
+
+        function resetBanner() {
+            const bannerContainer = document.querySelector('.banner-container');
+            const activeBanner = document.querySelector('.banner.active');
+            const bannerImage = activeBanner.querySelector('.banner-image');
+            
+            // Restaurer l'image de base
+            bannerImage.innerHTML = `
+                <img src="Kaka Prout.png" alt="Carte mise en avant">
+            `;
+            
+            // Supprimer l'info de la récompense
+            const rewardInfo = document.querySelector('.reward-info');
+            if (rewardInfo) {
+                rewardInfo.remove();
+            }
+
+            // Cacher le bouton confirmer
+            document.querySelector('.confirm-button').style.display = 'none';
         }
 
         function addExperience(amount) {
