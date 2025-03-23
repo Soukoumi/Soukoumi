@@ -133,41 +133,6 @@
             position: relative;
         }
 
-        .card.locked {
-            opacity: 0.7;
-            position: relative;
-        }
-
-        .card.locked::after {
-            content: '🔒';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .card.locked img {
-            filter: grayscale(100%) brightness(50%);
-        }
-
-        .sort-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .collection-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 30px;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
         .card {
             background: rgba(15, 25, 35, 0.9);
             border: 3px solid var(--neon-violet);
@@ -181,11 +146,32 @@
             position: relative;
             aspect-ratio: 2.5/3.5;
             min-height: 350px;
+            overflow: hidden;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .card:not(.locked):hover {
+            transform: translateY(-5px) rotate(2deg);
             box-shadow: 0 10px 20px rgba(184, 146, 255, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card.locked {
+            opacity: 0.7;
+            position: relative;
+            transform: scale(1.05);
+        }
+
+        .card.locked img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) brightness(50%);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
         .card img {
@@ -264,6 +250,12 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #modal.show {
+            opacity: 1;
         }
 
         .modal-content {
@@ -274,12 +266,36 @@
             max-width: 90%;
             max-height: 90%;
             position: relative;
+            transform: translateX(100%);
+            animation: slideIn 0.5s ease forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        #modal-image {
+            max-width: 80%;
+            max-height: 70vh;
+            cursor: move;
+            transition: transform 0.1s ease;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        #modal-image.dragging {
+            cursor: grabbing;
+            transform: scale(1.05);
         }
 
         .modal-close {
             position: absolute;
-            top: -20px;
-            right: -20px;
+            top: 10px;
+            right: 10px;
             width: 40px;
             height: 40px;
             background: var(--primary);
@@ -288,6 +304,7 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 20px;
+            z-index: 1001;
         }
 
         .collection-stats {
@@ -390,21 +407,35 @@
 
     <script>
         const allCards = [
-            { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
-            { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "2.png" },      
-            { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "3.png" },
-            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
-            { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "5.png" }, 
-            { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "6.png" },
-            { name: "Niky", rarity: "Epique", "type": "Gun", weight: 12, image: "7.png" },
-            { name: "Hîun", rarity: "Commune", "type": "Gun", weight: 60, image: "8.png" },
-            { name: "Orikku", rarity: "Rare", "type": "Gun", weight: 35, image: "9.png" }, 
-            { name: "Brang", rarity: "Commune", "type": "Robot", weight: 60, image: "10.png" }, 
-            { name: "Somara", rarity: "Epique", "type": "Robot", weight: 12, image: "11.png" },
-            { name: "Inazu", rarity: "Rare", "type": "Robot", weight: 35, image: "12.png" },
-            { name: "Zomeji", rarity: "Rare", "type": "Objets", weight: 12, image: "13.png" },
-            { name: "Seikea ", rarity: "Rare", "type": "Objets", weight: 35, image: "14.png" },      
-            { name: "Neru", rarity: "Epique", "type": "Objets", weight: 12, image: "15.png" },
+            { name: "Radolf le magicien", rarity: "Epique", type: "Prestige", image: "1.png" },
+            { name: "El verme musician", rarity: "Rare", type: "animal", image: "2.png" },      
+            { name: "Eau mouillée", rarity: "Epique", type: "objet", image: "3.png" },
+            { name: "Le dos fin", rarity: "Légendaire", type: "animal", image: "Erika.png" },
+            { name: "Chococaca", rarity: "Rare", type: "objet", image: "5.png" }, 
+            { name: "Père pète", rarity: "Epique", type: "Prestige", image: "6.png" },
+            { name: "Cervoloant", rarity: "Commune", type: "Objet", image: "7.png" },
+            { name: "Gilberto le camionneur", rarity: "Epique", type: "Humain", image: "8.png" },
+            { name: "Enceinte à musique", rarity: "Rare", type: "Humain", image: "9.png" }, 
+            { name: "Pierre la pierre", rarity: "Rare", type: "Objet", image: "10.png" }, 
+            { name: "TireXhandicapé", rarity: "Epique", type: "Animal", image: "11.png" },
+            { name: "Radolf le magicien", rarity: "Arc-en-ciel", type: "Prestige", image: "12.png" },
+            { name: "Le manouche prend sa douche", rarity: "Commune", type: "Animal", image: "13.png" },
+            { name: "Pedro au quais ", rarity: "Rare", type: "Animal", image: "14.png" },      
+            { name: "Raoul ça roule", rarity: "Epique", type: "Objet", image: "15.png" },
+            { name: "Gaston le ballon", rarity: "Rare", type: "Objet", image: "16.png" },
+            { name: "Stéphane carry", rarity: "Légendaire", type: "Objet", image: "17.png" },
+            { name: "Carotte qui rote", rarity: "Rare", type: "Objet", image: "18.png" },     
+            { name: "Tron pète", rarity: "Commune", type: "Objet", image: "19.png" },
+            { name: "Glaçons maçon", rarity: "Rare", type: "Objet", image: "20.png" },
+            { name: "El verme musician", rarity: "Spécial", type: "Animal", image: "21.png" },
+            { name: "La reine baleine", rarity: "Epique", type: "Animal", image: "22.png" },
+            { name: "La reine baleine", rarity: "Spécial", type: "Animal", image: "23.png" },
+            { name: "Marion le papillon", rarity: "Légendaire", type: "Prestige", image: "24.png" },
+            { name: "Marion le papillon", rarity: "Spécial", type: "Prestige", image: "25.png" },
+            { name: "Tristan volan", rarity: "Rare", type: "Prestige", image: "26.png" },
+            { name: "Tristan volan", rarity: "Spécial", type: "OPrestige", image: "27.png" },
+            { name: "Jimmy le bonhomme de neige", rarity: "Légendaire", type: "Prestige", image: "28.png" },
+            { name: "Jimmy le bonhomme de neige", rarity: "Spécial", type: "Prestige", image: "29.png" }
         ];
 
         function loadCollection() {
@@ -517,21 +548,66 @@
             const modalInfo = document.getElementById('modal-info');
 
             modalImage.src = card.image;
-            modalInfo.innerHTML = `
-                <h2>${card.name}</h2>
-                <p>Rareté : ${card.rarity}</p>
-                <p>Type : ${card.type}</p>
-                <p>Nombre possédé : ${card.count}</p>
-                <p>Obtenu le : ${new Date(card.obtainedDate).toLocaleDateString()}</p>
-                <p>Dernière obtention : ${new Date(card.lastObtainedDate).toLocaleDateString()}</p>
-            `;
+            modalInfo.innerHTML = ''; // On supprime les informations pour ne garder que l'image
 
             modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+
+            // Ajout de la fonctionnalité de drag
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            modalImage.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('mouseleave', dragEnd);
+
+            function dragStart(e) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+
+                if (e.target === modalImage) {
+                    isDragging = true;
+                    modalImage.classList.add('dragging');
+                }
+            }
+
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    setTranslate(currentX, currentY, modalImage);
+                }
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+            }
+
+            function dragEnd() {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+                modalImage.classList.remove('dragging');
+            }
         }
 
         function closeModal() {
             const modal = document.getElementById('modal');
-            modal.style.display = 'none';
+            const modalImage = document.getElementById('modal-image');
+            modalImage.style.transform = 'translate3d(0px, 0px, 0)';
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         // Fermer le modal en cliquant en dehors
