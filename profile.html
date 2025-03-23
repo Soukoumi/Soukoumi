@@ -376,6 +376,10 @@
                 totalPlayTime: 0
             };
 
+            // Réinitialiser l'expérience à 0
+            profileData.experience = 0;
+            saveProfileData(profileData);
+
             // Si c'est la première connexion, initialiser le temps de jeu
             if (!profileData.gameStartTime) {
                 profileData.gameStartTime = Date.now();
