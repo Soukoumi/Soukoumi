@@ -124,46 +124,87 @@
             width: 80%;
             max-width: 800px;
             box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
-            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             gap: 20px;
             position: relative;
+            min-height: 800px;
         }
 
-        .rewards-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
+        .banner-container {
+            position: relative;
             width: 100%;
-            min-height: 400px;
-            padding: 20px;
-            place-items: center;
+            max-width: 1200px;
+            height: 600px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
+            background: rgba(15, 25, 35, 0.95);
         }
 
-        #placeholder {
-            grid-column: 3;
-            grid-row: 1;
-            width: 150px;
-            height: 150px;
+        .banner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 48px;
-            font-weight: bold;
-            color: var(--neon-violet);
-            text-shadow: 0 0 10px var(--neon-violet);
-            animation: pulse 2s infinite ease-in-out;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.5; }
+        .banner.active {
+            opacity: 1;
+        }
+
+        .banner-image {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.8s ease-in-out;
+        }
+
+        .banner.active .banner-image {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .banner-image img {
+            height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 30px rgba(184, 146, 255, 0.4));
+        }
+
+        .banner-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 3;
+        }
+
+        .banner-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .banner-dot.active {
+            background: var(--light);
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
 
         .button-container {
@@ -171,97 +212,82 @@
             justify-content: center;
             gap: 20px;
             width: 100%;
-            margin-top: 20px;
+            margin-top: auto;
         }
 
-        .button-container button {
+        .summon-button {
             padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            border-radius: 50px;
-            background: linear-gradient(135deg, var(--neon-violet), var(--neon-pink));
+            font-size: 1.2em;
+            background: linear-gradient(45deg, var(--neon-violet), var(--primary));
             color: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            flex: 1;
-            max-width: 250px;
+            width: 250px;
         }
 
-        .button-container button:hover {
+        .summon-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(184, 146, 255, 0.5);
+            box-shadow: 0 8px 20px rgba(184, 146, 255, 0.5);
         }
 
-        .reward {
-            background: rgba(15, 25, 35, 0.6);
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(184, 146, 255, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            margin: 10px;
-            min-width: 150px;
-            min-height: 150px;
-            display: flex;
+        .summon-result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            color: var(--light);
         }
 
-        .reward:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 10px 20px rgba(184, 146, 255, 0.3);
-            border-color: var(--neon-violet);
+        .summon-result-content {
+            background: rgba(15, 25, 35, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--neon-violet);
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
         }
 
-        .commune {
-            border-color: #28a745;
-            box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+        .summon-result-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            animation: popIn 0.5s ease-out;
         }
 
-        .rare {
-            border-color: var(--secondary);
-            box-shadow: 0 0 15px rgba(15, 182, 214, 0.3);
+        .summon-result-card img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
 
-        .epique {
-            border-color: var(--violet);
-            box-shadow: 0 0 15px rgba(184, 146, 255, 0.3);
-        }
-
-        .légendaire {
-            border-color: var(--apex-gold);
-            box-shadow: 0 0 15px rgba(240, 165, 0, 0.3);
-        }
-
-        .spécial {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(255, 70, 85, 0.3);
-        }
-
-        .arc-en-ciel {
-            border-image: linear-gradient(
-                45deg,
-                var(--primary),
-                var(--secondary),
-                var(--violet),
-                var(--neon-pink),
-                var(--apex-gold)
-            ) 1;
-            box-shadow: 0 0 20px rgba(255, 0, 212, 0.5);
-            animation: rainbow-border 3s linear infinite;
-        }
-
-        @keyframes rainbow-border {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        .close-result {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
         }
 
         .back-button {
@@ -675,197 +701,6 @@
             cursor: pointer;
             z-index: 1001;
         }
-
-        .banner-container {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            height: 600px;
-            margin-bottom: 30px;
-            overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
-            background: linear-gradient(to right, rgba(15, 25, 35, 0.95) 30%, transparent);
-        }
-
-        .banner {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: all 0.5s ease-in-out;
-            display: flex;
-            align-items: flex-start;
-            background-size: cover;
-            background-position: right center;
-        }
-
-        .banner.active {
-            opacity: 1;
-        }
-
-        .banner-content {
-            width: 40%;
-            height: 100%;
-            padding: 40px;
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background: linear-gradient(to right, rgba(15, 25, 35, 0.95) 70%, transparent);
-        }
-
-        .banner-info {
-            margin-bottom: 40px;
-        }
-
-        .banner-title {
-            font-size: 3em;
-            color: var(--light);
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            font-weight: bold;
-            position: relative;
-        }
-
-        .banner-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100px;
-            height: 3px;
-            background: var(--neon-violet);
-            box-shadow: 0 0 10px var(--neon-violet);
-        }
-
-        .banner-description {
-            font-size: 1.2em;
-            color: var(--light);
-            margin-bottom: 30px;
-            line-height: 1.6;
-            opacity: 0.9;
-        }
-
-        .banner-rates {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .rate-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid rgba(184, 146, 255, 0.3);
-            backdrop-filter: blur(5px);
-        }
-
-        .rate-item::before {
-            content: '★';
-            color: var(--neon-violet);
-            font-size: 1.2em;
-        }
-
-        .banner-image {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 70%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform: translateX(50px);
-            opacity: 0;
-            transition: all 0.8s ease-in-out;
-        }
-
-        .banner.active .banner-image {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .banner-image img {
-            height: 90%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 30px rgba(184, 146, 255, 0.4));
-        }
-
-        .banner-nav {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            z-index: 3;
-        }
-
-        .banner-dots {
-            display: flex;
-            gap: 12px;
-        }
-
-        .banner-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .banner-dot.active {
-            background: var(--light);
-            transform: scale(1.2);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-        }
-
-        .banner-arrow {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            color: var(--light);
-            font-size: 20px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .banner-arrow:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .wish-button {
-            padding: 15px 30px;
-            font-size: 1.2em;
-            background: linear-gradient(45deg, var(--neon-violet), var(--primary));
-            color: var(--light);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
-        }
-
-        .wish-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(184, 146, 255, 0.5);
-        }
     </style>
 </head>
 <body>
@@ -879,53 +714,31 @@
 
     <div class="invocation-container">
         <div class="banner-container">
-            <div class="banner active" style="background-image: url('bg1.jpg')">
-                <div class="banner-content">
-                    <div class="banner-info">
-                        <h2 class="banner-title">Bannière Standard</h2>
-                        <p class="banner-description">Découvrez toutes les cartes disponibles dans la bannière standard.</p>
-                        <div class="banner-rates">
-                            <div class="rate-item">Légendaire: 2%</div>
-                            <div class="rate-item">Epique: 12%</div>
-                            <div class="rate-item">Rare: 35%</div>
-                            <div class="rate-item">Commune: 60%</div>
-                        </div>
-                    </div>
-                    <button class="wish-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
-                    <button class="wish-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
-                </div>
+            <div class="banner active">
                 <div class="banner-image">
                     <img src="1.png" alt="Carte mise en avant">
                 </div>
             </div>
-            <div class="banner" style="background-image: url('bg2.jpg')">
-                <div class="banner-content">
-                    <div class="banner-info">
-                        <h2 class="banner-title">Bannière Spéciale</h2>
-                        <p class="banner-description">Taux augmentés pour les cartes Légendaires et Epiques !</p>
-                        <div class="banner-rates">
-                            <div class="rate-item">Légendaire: 4%</div>
-                            <div class="rate-item">Epique: 20%</div>
-                            <div class="rate-item">Rare: 30%</div>
-                            <div class="rate-item">Commune: 46%</div>
-                        </div>
-                    </div>
-                    <button class="wish-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
-                    <button class="wish-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
-                </div>
+            <div class="banner">
                 <div class="banner-image">
                     <img src="2.png" alt="Carte mise en avant">
                 </div>
             </div>
             <div class="banner-nav">
-                <div class="banner-dots">
-                    <div class="banner-dot active" onclick="goToBanner(0)"></div>
-                    <div class="banner-dot" onclick="goToBanner(1)"></div>
-                </div>
+                <div class="banner-dot active" onclick="goToBanner(0)"></div>
+                <div class="banner-dot" onclick="goToBanner(1)"></div>
             </div>
         </div>
-        <div id="rewards" class="rewards-container">
-            <div class="reward" id="placeholder">?</div>
+
+        <div class="button-container">
+            <button class="summon-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
+            <button class="summon-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
+        </div>
+    </div>
+
+    <div class="summon-result-modal" id="summon-result-modal">
+        <div class="summon-result-content">
+            <button class="close-result" onclick="closeResultModal()">×</button>
         </div>
     </div>
 
@@ -976,8 +789,6 @@
         let availableCoins = 0;
         let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
         let invocationCount = parseInt(localStorage.getItem('invocationCount')) || 0;
-        const rewardsContainer = document.getElementById('rewards');
-        const placeholder = document.getElementById('placeholder');
 
         const rewardsPool = [
             { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
@@ -1044,25 +855,23 @@
         }
 
         function displayReward(reward) {
-            const rewardElement = document.createElement('div');
-            rewardElement.className = `reward ${reward.rarity.toLowerCase()}`;
-            rewardElement.innerHTML = `
-                <img src="${reward.image}" alt="${reward.name}" style="width: 100px; height: 100px; object-fit: contain;">
-                <div style="text-align: center; margin-top: 10px;">
-                    <div>${reward.name}</div>
-                    <div style="font-size: 0.8em; color: var(--${reward.rarity.toLowerCase()});">${reward.rarity}</div>
-                </div>
+            const resultModal = document.getElementById('summon-result-modal');
+            const resultContent = resultModal.querySelector('.summon-result-content');
+            
+            const cardElement = document.createElement('div');
+            cardElement.className = `summon-result-card ${reward.rarity.toLowerCase()}`;
+            cardElement.innerHTML = `
+                <img src="${reward.image}" alt="${reward.name}">
+                <div class="card-name">${reward.name}</div>
+                <div class="card-rarity" style="color: var(--${reward.rarity.toLowerCase()})">${reward.rarity}</div>
             `;
             
-            rewardElement.onclick = () => showModal(reward.image);
+            cardElement.onclick = () => showModal(reward.image);
             
-            // Animation d'apparition
-            rewardElement.style.animation = 'popIn 0.5s ease-out';
+            resultContent.appendChild(cardElement);
+            resultModal.style.display = 'flex';
             
-            // Sauvegarder dans la collection
             saveToCollection(reward);
-            
-            rewardsContainer.appendChild(rewardElement);
         }
 
         function singleSummon() {
@@ -1071,20 +880,14 @@
                 return;
             }
             
-            // Vider le conteneur avant une nouvelle invocation
-            rewardsContainer.innerHTML = '';
-            
             availableCoins -= 50;
             localStorage.setItem('totalCoins', availableCoins);
             updateAvailableCoins();
 
-            // Générer et afficher une récompense
             const reward = generateReward();
             displayReward(reward);
 
-            // Déclencher l'événement d'invocation
             localStorage.setItem('invocationPerformed', Date.now());
-            // Supprimer immédiatement pour permettre de nouveaux déclenchements
             localStorage.removeItem('invocationPerformed');
         }
 
@@ -1094,22 +897,16 @@
                 return;
             }
             
-            // Vider le conteneur avant une nouvelle invocation
-            rewardsContainer.innerHTML = '';
-            
             availableCoins -= 500;
             localStorage.setItem('totalCoins', availableCoins);
             updateAvailableCoins();
 
-            // Générer et afficher 10 récompenses
             for(let i = 0; i < 10; i++) {
                 const reward = generateReward();
                 displayReward(reward);
             }
 
-            // Déclencher l'événement d'invocation
             localStorage.setItem('invocationPerformed', Date.now());
-            // Supprimer immédiatement pour permettre de nouveaux déclenchements
             localStorage.removeItem('invocationPerformed');
         }
 
@@ -1261,6 +1058,13 @@
             loadCoins();
             startBannerRotation();
         });
+
+        function closeResultModal() {
+            const modal = document.getElementById('summon-result-modal');
+            const content = modal.querySelector('.summon-result-content');
+            content.innerHTML = '<button class="close-result" onclick="closeResultModal()">×</button>';
+            modal.style.display = 'none';
+        }
     </script>
 </body>
 </html>
