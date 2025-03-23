@@ -278,6 +278,7 @@
              justify-content: center;
              align-items: center;
              perspective: 1000px;
+             overflow: hidden;
          }
  
          #modal-image {
@@ -288,6 +289,7 @@
              cursor: move;
              will-change: transform;
              backface-visibility: hidden;
+             transform-origin: center center;
          }
  
          .modal-info {
@@ -551,16 +553,12 @@
 
                  // Variables pour l'effet 3D
                  let isDragging = false;
-                 let startX, startY;
-                 let currentX = 0;
-                 let currentY = 0;
                  let currentRotateX = 0;
                  let currentRotateY = 0;
 
                  // Fonction pour mettre à jour la transformation
                  function updateTransform() {
                      modalImage.style.transform = `
-                         translate3d(${currentX}px, ${currentY}px, 0)
                          rotateX(${currentRotateX}deg)
                          rotateY(${currentRotateY}deg)
                      `;
@@ -569,23 +567,18 @@
                  // Gestionnaire d'événements pour le début du glissement
                  modalImage.addEventListener('mousedown', (e) => {
                      isDragging = true;
-                     startX = e.clientX - currentX;
-                     startY = e.clientY - currentY;
                  });
 
                  // Gestionnaire d'événements pour le mouvement
                  document.addEventListener('mousemove', (e) => {
                      if (!isDragging) return;
 
-                     currentX = e.clientX - startX;
-                     currentY = e.clientY - startY;
-
                      const rect = modalImage.getBoundingClientRect();
                      const centerX = rect.left + rect.width / 2;
                      const centerY = rect.top + rect.height / 2;
                      
-                     currentRotateY = ((e.clientX - centerX) / centerX) * 30;
-                     currentRotateX = ((centerY - e.clientY) / centerY) * 30;
+                     currentRotateY = ((e.clientX - centerX) / centerX) * 20;
+                     currentRotateX = ((centerY - e.clientY) / centerY) * 20;
 
                      updateTransform();
                  });
@@ -595,9 +588,7 @@
                      isDragging = false;
                  });
 
-                 // Réinitialiser la position et la rotation
-                 currentX = 0;
-                 currentY = 0;
+                 // Réinitialiser la rotation
                  currentRotateX = 0;
                  currentRotateY = 0;
                  updateTransform();
