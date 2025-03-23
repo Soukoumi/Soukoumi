@@ -538,61 +538,70 @@
              const modal = document.getElementById('modal');
              const modalImage = document.getElementById('modal-image');
 
-             modalImage.src = card.image;
-             modal.style.display = 'flex';
+             // Trouver la carte correspondante dans allCards
+             const cardData = allCards.find(c => 
+                 c.name === card.name && 
+                 c.rarity === card.rarity && 
+                 c.type === card.type
+             );
 
-             // Variables pour l'effet 3D
-             let isDragging = false;
-             let startX, startY;
-             let currentX = 0;
-             let currentY = 0;
-             let currentRotateX = 0;
-             let currentRotateY = 0;
+             if (cardData) {
+                 modalImage.src = `images/${cardData.image}`;
+                 modal.style.display = 'flex';
 
-             // Fonction pour mettre à jour la transformation
-             function updateTransform() {
-                 modalImage.style.transform = `
-                     translate3d(${currentX}px, ${currentY}px, 0)
-                     rotateX(${currentRotateX}deg)
-                     rotateY(${currentRotateY}deg)
-                 `;
-             }
+                 // Variables pour l'effet 3D
+                 let isDragging = false;
+                 let startX, startY;
+                 let currentX = 0;
+                 let currentY = 0;
+                 let currentRotateX = 0;
+                 let currentRotateY = 0;
 
-             // Gestionnaire d'événements pour le début du glissement
-             modalImage.addEventListener('mousedown', (e) => {
-                 isDragging = true;
-                 startX = e.clientX - currentX;
-                 startY = e.clientY - currentY;
-             });
+                 // Fonction pour mettre à jour la transformation
+                 function updateTransform() {
+                     modalImage.style.transform = `
+                         translate3d(${currentX}px, ${currentY}px, 0)
+                         rotateX(${currentRotateX}deg)
+                         rotateY(${currentRotateY}deg)
+                     `;
+                 }
 
-             // Gestionnaire d'événements pour le mouvement
-             document.addEventListener('mousemove', (e) => {
-                 if (!isDragging) return;
+                 // Gestionnaire d'événements pour le début du glissement
+                 modalImage.addEventListener('mousedown', (e) => {
+                     isDragging = true;
+                     startX = e.clientX - currentX;
+                     startY = e.clientY - currentY;
+                 });
 
-                 currentX = e.clientX - startX;
-                 currentY = e.clientY - startY;
+                 // Gestionnaire d'événements pour le mouvement
+                 document.addEventListener('mousemove', (e) => {
+                     if (!isDragging) return;
 
-                 const rect = modalImage.getBoundingClientRect();
-                 const centerX = rect.left + rect.width / 2;
-                 const centerY = rect.top + rect.height / 2;
-                 
-                 currentRotateY = ((e.clientX - centerX) / centerX) * 30;
-                 currentRotateX = ((centerY - e.clientY) / centerY) * 30;
+                     currentX = e.clientX - startX;
+                     currentY = e.clientY - startY;
 
+                     const rect = modalImage.getBoundingClientRect();
+                     const centerX = rect.left + rect.width / 2;
+                     const centerY = rect.top + rect.height / 2;
+                     
+                     currentRotateY = ((e.clientX - centerX) / centerX) * 30;
+                     currentRotateX = ((centerY - e.clientY) / centerY) * 30;
+
+                     updateTransform();
+                 });
+
+                 // Gestionnaire d'événements pour la fin du glissement
+                 document.addEventListener('mouseup', () => {
+                     isDragging = false;
+                 });
+
+                 // Réinitialiser la position et la rotation
+                 currentX = 0;
+                 currentY = 0;
+                 currentRotateX = 0;
+                 currentRotateY = 0;
                  updateTransform();
-             });
-
-             // Gestionnaire d'événements pour la fin du glissement
-             document.addEventListener('mouseup', () => {
-                 isDragging = false;
-             });
-
-             // Réinitialiser la position et la rotation
-             currentX = 0;
-             currentY = 0;
-             currentRotateX = 0;
-             currentRotateY = 0;
-             updateTransform();
+             }
          }
  
          function closeModal() {
