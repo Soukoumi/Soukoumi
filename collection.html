@@ -274,15 +274,20 @@
              max-width: 90%;
              max-height: 90%;
              position: relative;
+             display: flex;
+             justify-content: center;
+             align-items: center;
              perspective: 1000px;
          }
  
          #modal-image {
-             max-width: 400px;
-             max-height: 70vh;
-             transition: transform 0.3s ease;
+             max-width: 600px;
+             max-height: 80vh;
+             transition: transform 0.1s ease;
              transform-style: preserve-3d;
              cursor: move;
+             will-change: transform;
+             backface-visibility: hidden;
          }
  
          .modal-info {
@@ -291,6 +296,7 @@
              background: rgba(0, 0, 0, 0.3);
              padding: 15px;
              border-radius: 10px;
+             width: 100%;
          }
  
          .modal-close {
@@ -410,7 +416,8 @@
              { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
              { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "2.png" },      
              { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "3.png" },
-             { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" }, 
+             { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "4.png" },
+             { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
              { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "5.png" }, 
              { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "6.png" },
              { name: "Niky", rarity: "Epique", "type": "Gun", weight: 12, image: "7.png" },
@@ -531,69 +538,68 @@
          function showModal(card) {
              const modal = document.getElementById('modal');
              const modalImage = document.getElementById('modal-image');
-             const modalInfo = document.getElementById('modal-info');
- 
+
              modalImage.src = card.image;
-             modalInfo.innerHTML = `
-                 <h2>${card.name}</h2>
-                 <p>Rareté : ${card.rarity}</p>
-                 <p>Type : ${card.type}</p>
-                 <p>Nombre possédé : ${card.count}</p>
-                 <p>Obtenu le : ${new Date(card.obtainedDate).toLocaleDateString()}</p>
-                 <p>Dernière obtention : ${new Date(card.lastObtainedDate).toLocaleDateString()}</p>
-             `;
- 
              modal.style.display = 'flex';
- 
-             // Ajouter l'effet 3D
+
+             // Variables pour l'effet 3D
              let isDragging = false;
              let startX, startY;
              let currentX = 0;
              let currentY = 0;
              let currentRotateX = 0;
              let currentRotateY = 0;
- 
+
+             // Fonction pour mettre à jour la transformation
+             function updateTransform() {
+                 modalImage.style.transform = `
+                     translate3d(${currentX}px, ${currentY}px, 0)
+                     rotateX(${currentRotateX}deg)
+                     rotateY(${currentRotateY}deg)
+                 `;
+             }
+
+             // Gestionnaire d'événements pour le début du glissement
              modalImage.addEventListener('mousedown', (e) => {
                  isDragging = true;
                  startX = e.clientX - currentX;
                  startY = e.clientY - currentY;
              });
- 
+
+             // Gestionnaire d'événements pour le mouvement
              document.addEventListener('mousemove', (e) => {
                  if (!isDragging) return;
- 
+
                  currentX = e.clientX - startX;
                  currentY = e.clientY - startY;
- 
-                 // Calculer la rotation en fonction de la position de la souris
+
                  const rect = modalImage.getBoundingClientRect();
                  const centerX = rect.left + rect.width / 2;
                  const centerY = rect.top + rect.height / 2;
                  
-                 currentRotateY = ((e.clientX - centerX) / centerX) * 20;
-                 currentRotateX = ((centerY - e.clientY) / centerY) * 20;
- 
-                 modalImage.style.transform = `
-                     translate(${currentX}px, ${currentY}px)
-                     rotateX(${currentRotateX}deg)
-                     rotateY(${currentRotateY}deg)
-                 `;
+                 currentRotateY = ((e.clientX - centerX) / centerX) * 30;
+                 currentRotateX = ((centerY - e.clientY) / centerY) * 30;
+
+                 updateTransform();
              });
- 
+
+             // Gestionnaire d'événements pour la fin du glissement
              document.addEventListener('mouseup', () => {
                  isDragging = false;
              });
- 
-             // Réinitialiser la position et la rotation lors de la fermeture
-             modalImage.style.transform = 'none';
+
+             // Réinitialiser la position et la rotation
              currentX = 0;
              currentY = 0;
              currentRotateX = 0;
              currentRotateY = 0;
+             updateTransform();
          }
  
          function closeModal() {
              const modal = document.getElementById('modal');
+             const modalImage = document.getElementById('modal-image');
+             modalImage.style.transform = 'none';
              modal.style.display = 'none';
          }
  
