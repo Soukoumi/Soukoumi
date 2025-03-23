@@ -680,13 +680,12 @@
             position: relative;
             width: 100%;
             max-width: 1200px;
-            height: 400px;
+            height: 600px;
             margin-bottom: 30px;
             overflow: hidden;
             border-radius: 20px;
             box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
-            background: rgba(15, 25, 35, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(to right, rgba(15, 25, 35, 0.95) 30%, transparent);
         }
 
         .banner {
@@ -694,10 +693,11 @@
             width: 100%;
             height: 100%;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: all 0.5s ease-in-out;
             display: flex;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            background-size: cover;
+            background-position: right center;
         }
 
         .banner.active {
@@ -705,68 +705,65 @@
         }
 
         .banner-content {
-            display: flex;
-            width: 100%;
+            width: 40%;
             height: 100%;
-            position: relative;
-        }
-
-        .banner-info {
-            flex: 1;
             padding: 40px;
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            z-index: 2;
+            background: linear-gradient(to right, rgba(15, 25, 35, 0.95) 70%, transparent);
         }
 
-        .banner-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .banner-image img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(184, 146, 255, 0.3));
+        .banner-info {
+            margin-bottom: 40px;
         }
 
         .banner-title {
-            font-size: 2.5em;
-            color: var(--neon-violet);
+            font-size: 3em;
+            color: var(--light);
             margin-bottom: 20px;
-            text-shadow: 0 0 10px var(--neon-violet);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             font-weight: bold;
+            position: relative;
+        }
+
+        .banner-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--neon-violet);
+            box-shadow: 0 0 10px var(--neon-violet);
         }
 
         .banner-description {
-            font-size: 1.4em;
+            font-size: 1.2em;
             color: var(--light);
             margin-bottom: 30px;
             line-height: 1.6;
+            opacity: 0.9;
         }
 
         .banner-rates {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .rate-item {
             background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1.1em;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1em;
             display: flex;
             align-items: center;
             gap: 10px;
             border: 1px solid rgba(184, 146, 255, 0.3);
+            backdrop-filter: blur(5px);
         }
 
         .rate-item::before {
@@ -775,11 +772,35 @@
             font-size: 1.2em;
         }
 
+        .banner-image {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 70%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateX(50px);
+            opacity: 0;
+            transition: all 0.8s ease-in-out;
+        }
+
+        .banner.active .banner-image {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .banner-image img {
+            height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 30px rgba(184, 146, 255, 0.4));
+        }
+
         .banner-nav {
             position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 40px;
+            left: 40px;
             display: flex;
             gap: 20px;
             align-items: center;
@@ -792,53 +813,58 @@
         }
 
         .banner-dot {
-            width: 15px;
-            height: 15px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid var(--neon-violet);
+            border: 2px solid transparent;
         }
 
         .banner-dot.active {
-            background: var(--neon-violet);
+            background: var(--light);
             transform: scale(1.2);
-            box-shadow: 0 0 15px var(--neon-violet);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
 
         .banner-arrow {
-            width: 50px;
-            height: 50px;
-            background: rgba(15, 25, 35, 0.8);
-            border: 2px solid var(--neon-violet);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            color: var(--neon-violet);
-            font-size: 24px;
+            color: var(--light);
+            font-size: 20px;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
         }
 
         .banner-arrow:hover {
-            background: var(--neon-violet);
-            color: var(--light);
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
-            box-shadow: 0 0 20px var(--neon-violet);
         }
 
-        .banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(15, 25, 35, 0.95), rgba(15, 25, 35, 0.8));
-            z-index: 1;
+        .wish-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: linear-gradient(45deg, var(--neon-violet), var(--primary));
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+        }
+
+        .wish-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(184, 146, 255, 0.5);
         }
     </style>
 </head>
@@ -853,11 +879,11 @@
 
     <div class="invocation-container">
         <div class="banner-container">
-            <div class="banner active">
+            <div class="banner active" style="background-image: url('bg1.jpg')">
                 <div class="banner-content">
                     <div class="banner-info">
                         <h2 class="banner-title">Bannière Standard</h2>
-                        <p class="banner-description">Découvrez toutes les cartes disponibles dans la bannière standard. Une chance unique d'obtenir des cartes de toutes les raretés !</p>
+                        <p class="banner-description">Découvrez toutes les cartes disponibles dans la bannière standard.</p>
                         <div class="banner-rates">
                             <div class="rate-item">Légendaire: 2%</div>
                             <div class="rate-item">Epique: 12%</div>
@@ -865,16 +891,18 @@
                             <div class="rate-item">Commune: 60%</div>
                         </div>
                     </div>
-                    <div class="banner-image">
-                        <img src="banner1.jpg" alt="Bannière Standard">
-                    </div>
+                    <button class="wish-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
+                    <button class="wish-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
+                </div>
+                <div class="banner-image">
+                    <img src="1.png" alt="Carte mise en avant">
                 </div>
             </div>
-            <div class="banner">
+            <div class="banner" style="background-image: url('bg2.jpg')">
                 <div class="banner-content">
                     <div class="banner-info">
                         <h2 class="banner-title">Bannière Spéciale</h2>
-                        <p class="banner-description">Taux augmentés pour les cartes Légendaires et Epiques ! Ne manquez pas cette opportunité unique d'obtenir des cartes rares !</p>
+                        <p class="banner-description">Taux augmentés pour les cartes Légendaires et Epiques !</p>
                         <div class="banner-rates">
                             <div class="rate-item">Légendaire: 4%</div>
                             <div class="rate-item">Epique: 20%</div>
@@ -882,27 +910,22 @@
                             <div class="rate-item">Commune: 46%</div>
                         </div>
                     </div>
-                    <div class="banner-image">
-                        <img src="banner2.jpg" alt="Bannière Spéciale">
-                    </div>
+                    <button class="wish-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
+                    <button class="wish-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
+                </div>
+                <div class="banner-image">
+                    <img src="2.png" alt="Carte mise en avant">
                 </div>
             </div>
             <div class="banner-nav">
-                <div class="banner-arrow" onclick="changeBanner(-1)">❮</div>
                 <div class="banner-dots">
                     <div class="banner-dot active" onclick="goToBanner(0)"></div>
                     <div class="banner-dot" onclick="goToBanner(1)"></div>
                 </div>
-                <div class="banner-arrow" onclick="changeBanner(1)">❯</div>
             </div>
         </div>
         <div id="rewards" class="rewards-container">
             <div class="reward" id="placeholder">?</div>
-        </div>
-
-        <div class="button-container">
-            <button onclick="singleSummon()">50 koumi x1</button>
-            <button onclick="multiSummon()">500 koumi x10</button>
         </div>
     </div>
 
