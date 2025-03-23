@@ -679,27 +679,24 @@
         .banner-container {
             position: relative;
             width: 100%;
-            max-width: 800px;
-            height: 300px;
+            max-width: 1200px;
+            height: 400px;
             margin-bottom: 30px;
             overflow: hidden;
             border-radius: 20px;
             box-shadow: 0 0 30px rgba(184, 146, 255, 0.2);
+            background: rgba(15, 25, 35, 0.95);
+            backdrop-filter: blur(10px);
         }
 
         .banner {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-size: cover;
-            background-position: center;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
             padding: 20px;
         }
 
@@ -708,38 +705,74 @@
         }
 
         .banner-content {
-            background: rgba(15, 25, 35, 0.8);
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid var(--neon-violet);
-            max-width: 80%;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .banner-info {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .banner-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(184, 146, 255, 0.3));
         }
 
         .banner-title {
-            font-size: 2em;
+            font-size: 2.5em;
             color: var(--neon-violet);
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             text-shadow: 0 0 10px var(--neon-violet);
+            font-weight: bold;
         }
 
         .banner-description {
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: var(--light);
-            margin-bottom: 15px;
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         .banner-rates {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
         }
 
         .rate-item {
             background: rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.9em;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(184, 146, 255, 0.3);
+        }
+
+        .rate-item::before {
+            content: '★';
+            color: var(--neon-violet);
+            font-size: 1.2em;
         }
 
         .banner-nav {
@@ -748,32 +781,35 @@
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 20px;
             align-items: center;
+            z-index: 3;
         }
 
         .banner-dots {
             display: flex;
-            gap: 8px;
+            gap: 12px;
         }
 
         .banner-dot {
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 2px solid var(--neon-violet);
         }
 
         .banner-dot.active {
             background: var(--neon-violet);
             transform: scale(1.2);
+            box-shadow: 0 0 15px var(--neon-violet);
         }
 
         .banner-arrow {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             background: rgba(15, 25, 35, 0.8);
             border: 2px solid var(--neon-violet);
             border-radius: 50%;
@@ -782,14 +818,27 @@
             align-items: center;
             cursor: pointer;
             color: var(--neon-violet);
-            font-size: 20px;
+            font-size: 24px;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         .banner-arrow:hover {
             background: var(--neon-violet);
             color: var(--light);
             transform: scale(1.1);
+            box-shadow: 0 0 20px var(--neon-violet);
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(15, 25, 35, 0.95), rgba(15, 25, 35, 0.8));
+            z-index: 1;
         }
     </style>
 </head>
@@ -804,27 +853,37 @@
 
     <div class="invocation-container">
         <div class="banner-container">
-            <div class="banner active" style="background-image: url('banner1.jpg')">
+            <div class="banner active">
                 <div class="banner-content">
-                    <h2 class="banner-title">Bannière Standard</h2>
-                    <p class="banner-description">Invocation standard avec toutes les cartes disponibles</p>
-                    <div class="banner-rates">
-                        <div class="rate-item">Légendaire: 2%</div>
-                        <div class="rate-item">Epique: 12%</div>
-                        <div class="rate-item">Rare: 35%</div>
-                        <div class="rate-item">Commune: 60%</div>
+                    <div class="banner-info">
+                        <h2 class="banner-title">Bannière Standard</h2>
+                        <p class="banner-description">Découvrez toutes les cartes disponibles dans la bannière standard. Une chance unique d'obtenir des cartes de toutes les raretés !</p>
+                        <div class="banner-rates">
+                            <div class="rate-item">Légendaire: 2%</div>
+                            <div class="rate-item">Epique: 12%</div>
+                            <div class="rate-item">Rare: 35%</div>
+                            <div class="rate-item">Commune: 60%</div>
+                        </div>
+                    </div>
+                    <div class="banner-image">
+                        <img src="banner1.jpg" alt="Bannière Standard">
                     </div>
                 </div>
             </div>
-            <div class="banner" style="background-image: url('banner2.jpg')">
+            <div class="banner">
                 <div class="banner-content">
-                    <h2 class="banner-title">Bannière Spéciale</h2>
-                    <p class="banner-description">Taux augmentés pour les cartes Légendaires et Epiques</p>
-                    <div class="banner-rates">
-                        <div class="rate-item">Légendaire: 4%</div>
-                        <div class="rate-item">Epique: 20%</div>
-                        <div class="rate-item">Rare: 30%</div>
-                        <div class="rate-item">Commune: 46%</div>
+                    <div class="banner-info">
+                        <h2 class="banner-title">Bannière Spéciale</h2>
+                        <p class="banner-description">Taux augmentés pour les cartes Légendaires et Epiques ! Ne manquez pas cette opportunité unique d'obtenir des cartes rares !</p>
+                        <div class="banner-rates">
+                            <div class="rate-item">Légendaire: 4%</div>
+                            <div class="rate-item">Epique: 20%</div>
+                            <div class="rate-item">Rare: 30%</div>
+                            <div class="rate-item">Commune: 46%</div>
+                        </div>
+                    </div>
+                    <div class="banner-image">
+                        <img src="banner2.jpg" alt="Bannière Spéciale">
                     </div>
                 </div>
             </div>
