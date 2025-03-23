@@ -808,6 +808,11 @@
                 profilePic: 'https://placehold.co/45x45'
             };
 
+            // Forcer le niveau à 0 si l'expérience est à 0
+            if (profileData.experience === 0) {
+                profileData.level = 0;
+            }
+
             // Mettre à jour les éléments de la page
             document.getElementById('profile-name').textContent = profileData.name;
             document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
