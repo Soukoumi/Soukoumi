@@ -305,7 +305,7 @@
                 <div class="profile-info-large">
                     <input type="text" class="profile-name-input" value="Joueur_123" placeholder="Nom du joueur">
                     <div class="profile-level">
-                        <span class="level-badge">Niveau 0.1</span>
+                        <span class="level-badge">Niveau 0</span>
                     </div>
                     <div class="exp-bar-container">
                         <div class="exp-bar" style="width: 0%"></div>
@@ -368,7 +368,7 @@
         function loadProfileData() {
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
                 name: 'Joueur_123',
-                level: 0.1,
+                level: 0,
                 experience: 0,
                 profilePic: 'https://placehold.co/150x150',
                 invocationsCount: 0,
@@ -387,10 +387,10 @@
 
             // Mettre à jour les éléments de la page
             document.querySelector('.profile-name-input').value = profileData.name;
-            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level.toFixed(1)}`;
+            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
             
             // Calculer l'expérience nécessaire pour le prochain niveau
-            const expNeeded = Math.floor(profileData.level) * 250;
+            const expNeeded = profileData.level * 250;
             
             // Mettre à jour la barre d'expérience
             const expPercentage = (profileData.experience / expNeeded) * 100;
@@ -541,10 +541,10 @@
         // Écouter les mises à jour du profil
         window.addEventListener('profileDataUpdated', function(e) {
             const profileData = e.detail;
-            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level.toFixed(1)}`;
+            document.querySelector('.level-badge').textContent = `Niveau ${profileData.level}`;
             
             // Calculer l'expérience nécessaire pour le prochain niveau
-            const expNeeded = Math.floor(profileData.level) * 250;
+            const expNeeded = profileData.level * 250;
             
             // Mettre à jour la barre d'expérience
             const expPercentage = (profileData.experience / expNeeded) * 100;
