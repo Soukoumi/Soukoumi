@@ -851,6 +851,34 @@
                 opacity: 0;
             }
         }
+
+        .reward-info {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            background: rgba(15, 25, 35, 0.95);
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 2px solid var(--neon-violet);
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+            z-index: 10;
+        }
+        
+        .reward-info .card-name {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+            color: var(--light);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .reward-info .card-rarity {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
@@ -890,12 +918,6 @@
         <div class="button-container">
             <button class="summon-button" onclick="singleSummon()">Invoquer (50 koumi)</button>
             <button class="summon-button" onclick="multiSummon()">Invoquer x10 (500 koumi)</button>
-        </div>
-    </div>
-
-    <div class="summon-result-modal" id="summon-result-modal">
-        <div class="summon-result-content">
-            <button class="close-result" onclick="closeResultModal()">×</button>
         </div>
     </div>
 
@@ -1012,22 +1034,33 @@
         }
 
         function displayReward(reward) {
-            const resultModal = document.getElementById('summon-result-modal');
-            const resultContent = resultModal.querySelector('.summon-result-content');
+            const bannerContainer = document.querySelector('.banner-container');
+            const activeBanner = document.querySelector('.banner.active');
+            const bannerImage = activeBanner.querySelector('.banner-image');
             
-            const cardElement = document.createElement('div');
-            cardElement.className = `summon-result-card ${reward.rarity.toLowerCase()}`;
-            cardElement.innerHTML = `
+            // Mettre à jour l'image de la bannière
+            bannerImage.innerHTML = `
                 <img src="${reward.image}" alt="${reward.name}">
+            `;
+            
+            // Ajouter le nom et la rareté en dessous de la bannière
+            const rewardInfo = document.createElement('div');
+            rewardInfo.className = 'reward-info';
+            rewardInfo.innerHTML = `
                 <div class="card-name">${reward.name}</div>
                 <div class="card-rarity" style="color: var(--${reward.rarity.toLowerCase()})">${reward.rarity}</div>
             `;
             
-            cardElement.onclick = () => showModal(reward.image);
+            // Supprimer l'ancienne info si elle existe
+            const oldInfo = document.querySelector('.reward-info');
+            if (oldInfo) {
+                oldInfo.remove();
+            }
             
-            resultContent.appendChild(cardElement);
-            resultModal.style.display = 'flex';
+            // Ajouter la nouvelle info
+            bannerContainer.appendChild(rewardInfo);
             
+            // Sauvegarder dans la collection
             saveToCollection(reward);
         }
 
@@ -1302,13 +1335,6 @@
             loadCoins();
             startBannerRotation();
         });
-
-        function closeResultModal() {
-            const modal = document.getElementById('summon-result-modal');
-            const content = modal.querySelector('.summon-result-content');
-            content.innerHTML = '<button class="close-result" onclick="closeResultModal()">×</button>';
-            modal.style.display = 'none';
-        }
     </script>
 </body>
 </html>
