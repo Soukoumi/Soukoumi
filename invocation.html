@@ -492,49 +492,173 @@
 
         .all-cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px;
         }
 
         .all-cards-card {
             background: rgba(15, 25, 35, 0.95);
             border: 2px solid var(--neon-violet);
             border-radius: 15px;
-            padding: 15px;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
+            width: 250px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .all-cards-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .all-cards-card:hover::before {
+            transform: translateX(100%);
         }
 
         .all-cards-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(184, 146, 255, 0.3);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
         .all-cards-card img {
-            width: 120px;
-            height: 120px;
+            width: 180px;
+            height: 180px;
             object-fit: contain;
-            margin-bottom: 10px;
+            margin: 10px auto;
+            transition: transform 0.3s ease;
+        }
+
+        .all-cards-card:hover img {
+            transform: scale(1.1);
         }
 
         .all-cards-card .card-name {
-            font-size: 1.2em;
-            margin-bottom: 5px;
+            font-size: 1.4em;
+            margin: 10px 0;
             color: var(--light);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
         }
 
         .all-cards-card .card-rarity {
-            font-size: 0.9em;
-            margin-bottom: 5px;
+            font-size: 1.1em;
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .all-cards-card .card-type {
-            font-size: 0.8em;
+            font-size: 1em;
             color: var(--secondary);
+            margin: 5px 0;
+            padding: 5px 15px;
+            background: rgba(15, 182, 214, 0.2);
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .all-cards-card.commune {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(15, 25, 35, 0.95));
+        }
+
+        .all-cards-card.commune .card-rarity {
+            color: #28a745;
+            text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+
+        .all-cards-card.rare {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, rgba(15, 182, 214, 0.1), rgba(15, 25, 35, 0.95));
+        }
+
+        .all-cards-card.rare .card-rarity {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(15, 182, 214, 0.5);
+        }
+
+        .all-cards-card.epique {
+            border-color: var(--violet);
+            background: linear-gradient(135deg, rgba(184, 146, 255, 0.1), rgba(15, 25, 35, 0.95));
+        }
+
+        .all-cards-card.epique .card-rarity {
+            color: var(--violet);
+            text-shadow: 0 0 10px rgba(184, 146, 255, 0.5);
+        }
+
+        .all-cards-card.légendaire {
+            border-color: var(--apex-gold);
+            background: linear-gradient(135deg, rgba(240, 165, 0, 0.1), rgba(15, 25, 35, 0.95));
+        }
+
+        .all-cards-card.légendaire .card-rarity {
+            color: var(--apex-gold);
+            text-shadow: 0 0 10px rgba(240, 165, 0, 0.5);
+        }
+
+        .all-cards-card.spécial {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255, 70, 85, 0.1), rgba(15, 25, 35, 0.95));
+        }
+
+        .all-cards-card.spécial .card-rarity {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255, 70, 85, 0.5);
+        }
+
+        .all-cards-card.arc-en-ciel {
+            border-image: linear-gradient(
+                45deg,
+                var(--primary),
+                var(--secondary),
+                var(--violet),
+                var(--neon-pink),
+                var(--apex-gold)
+            ) 1;
+            animation: rainbow-border 3s linear infinite;
+        }
+
+        .all-cards-card.arc-en-ciel .card-rarity {
+            background: linear-gradient(
+                45deg,
+                var(--primary),
+                var(--secondary),
+                var(--violet),
+                var(--neon-pink),
+                var(--apex-gold)
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow-text 3s linear infinite;
+        }
+
+        @keyframes rainbow-text {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
         .close-all-cards {
