@@ -1033,7 +1033,7 @@
 
         function addExperience(amount) {
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
-                level: 1,
+                level: 0,
                 experience: 0
             };
 
@@ -1110,12 +1110,12 @@
 
             // Ajouter l'expérience totale une seule fois
             const profileData = JSON.parse(localStorage.getItem('profileData')) || {
-                level: 1,
+                level: 0.1,
                 experience: 0
             };
 
             // Calculer l'expérience nécessaire pour le prochain niveau
-            const expNeeded = profileData.level * 250;
+            const expNeeded = Math.floor(profileData.level) * 250;
 
             // Ajouter l'expérience
             profileData.experience += totalExp;
@@ -1123,8 +1123,11 @@
             // Vérifier si le niveau augmente
             while (profileData.experience >= expNeeded) {
                 profileData.experience -= expNeeded;
-                profileData.level += 1;
+                profileData.level += 0.1;
             }
+
+            // Arrondir le niveau à 1 décimale
+            profileData.level = Math.round(profileData.level * 10) / 10;
 
             // Sauvegarder les données mises à jour
             localStorage.setItem('profileData', JSON.stringify(profileData));
