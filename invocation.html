@@ -1033,13 +1033,6 @@
         <div class="all-cards-container" id="all-cards-container"></div>
     </div>
 
-    <div class="summon-result-modal" id="summon-result-modal">
-        <div class="summon-result-content" id="summon-result-content">
-            <div class="summon-result-grid" id="summon-result-grid"></div>
-            <button class="confirm-summon-button" onclick="closeSummonResult()">Confirmer</button>
-        </div>
-    </div>
-
     <script>
         let availableCoins = 0;
         let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
@@ -1047,21 +1040,21 @@
         let currentRewards = [];
 
         const rewardsPool = [
-            { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "1.png" },
-            { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "2.png" },      
-            { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "hoshi.png" },
-            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "Erika.png" },
-            { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "5.png" }, 
-            { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "6.png" },
+            { name: "Radolf le magicien", rarity: "Légendaire", "type": "Mage", weight: 2, image: "c.png" },
+            { name: "Pryzma", rarity: "Légendaire", "type": "Mage", weight: 2, image: "c.png" },      
+            { name: "Hoshi", rarity: "Rare", "type": "Mage", weight: 35, image: "4.png" },
+            { name: "Erika", rarity: "Epique", "type": "Épée", weight: 12, image: "2.png" },
+            { name: "Kax-un", rarity: "Rare", "type": "Épée", weight: 35, image: "c.png" }, 
+            { name: "Azelys", rarity: "Epique", "type": "Épée", weight: 12, image: "c.png" },
             { name: "Niky", rarity: "Epique", "type": "Gun", weight: 12, image: "niky.png" },
-            { name: "Hîun", rarity: "Commune", "type": "Gun", weight: 60, image: "8.png" },
-            { name: "Orikku", rarity: "Rare", "type": "Gun", weight: 35, image: "9.png" }, 
-            { name: "Brang", rarity: "Commune", "type": "Robot", weight: 60, image: "10.png" }, 
-            { name: "Somara", rarity: "Epique", "type": "Robot", weight: 12, image: "11.png" },
-            { name: "Inazu", rarity: "Rare", "type": "Robot", weight: 35, image: "12.png" },
-            { name: "Zomeji", rarity: "Epique", "type": "Objets", weight: 12, image: "zomeji.png" },
-            { name: "Seikea ", rarity: "Rare", "type": "Objets", weight: 35, image: "14.png" },      
-            { name: "Neru", rarity: "Epique", "type": "Objets", weight: 12, image: "neru.png" },
+            { name: "Hîun", rarity: "Commune", "type": "Gun", weight: 60, image: "c.png" },
+            { name: "Orikku", rarity: "Rare", "type": "Gun", weight: 35, image: "c.png" }, 
+            { name: "Brang", rarity: "Commune", "type": "Robot", weight: 60, image: "c.png" }, 
+            { name: "Somara", rarity: "Epique", "type": "Robot", weight: 12, image: "c.png" },
+            { name: "Inazu", rarity: "Rare", "type": "Robot", weight: 35, image: "c.png" },
+            { name: "Zomeji", rarity: "Epique", "type": "Objets", weight: 12, image: "5.png" },
+            { name: "Seikea ", rarity: "Rare", "type": "Objets", weight: 35, image: "c.png" },      
+            { name: "Neru", rarity: "Epique", "type": "Objets", weight: 12, image: "3.png" },
         ];
 
         function loadCoins() {
@@ -1263,33 +1256,6 @@
             window.dispatchEvent(event);
         }
 
-        function showSummonResult() {
-            const modal = document.getElementById('summon-result-modal');
-            const grid = document.getElementById('summon-result-grid');
-            
-            // Créer les cartes de récompense
-            grid.innerHTML = '';
-            currentRewards.forEach(reward => {
-                const card = document.createElement('div');
-                card.className = `summon-result-card ${reward.rarity.toLowerCase()}`;
-                card.innerHTML = `
-                    <img src="${reward.image}" alt="${reward.name}">
-                    <div class="card-name">${reward.name}</div>
-                    <div class="card-rarity" style="color: var(--${reward.rarity.toLowerCase()})">${reward.rarity}</div>
-                `;
-                grid.appendChild(card);
-            });
-            
-            modal.style.display = 'flex';
-        }
-
-        function closeSummonResult() {
-            const modal = document.getElementById('summon-result-modal');
-            modal.style.display = 'none';
-            // Afficher le bouton confirmer après la fermeture du pop-up
-            document.querySelector('.confirm-button').style.display = 'block';
-        }
-
         function singleSummon() {
             if(!canSummon(50)) {
                 alert("Vous n'avez pas assez de koumi pour une invocation !");
@@ -1309,15 +1275,10 @@
             // Ajouter l'expérience
             addExperience(25);
 
-            // Afficher le pop-up de résultat
-            showSummonResult();
-
-            // Cacher le pop-up après 3 secondes et afficher le bouton confirmer
+            // Afficher le bouton confirmer après 2 secondes
             setTimeout(() => {
-                const modal = document.getElementById('summon-result-modal');
-                modal.style.display = 'none';
                 document.querySelector('.confirm-button').style.display = 'block';
-            }, 3000);
+            }, 2000);
 
             localStorage.setItem('invocationPerformed', Date.now());
             localStorage.removeItem('invocationPerformed');
@@ -1382,15 +1343,10 @@
                         notification.style.display = 'none';
                     }, 5000);
 
-                    // Afficher le pop-up de résultat
-                    showSummonResult();
-
-                    // Cacher le pop-up après 3 secondes et afficher le bouton confirmer
+                    // Afficher le bouton confirmer après 2 secondes
                     setTimeout(() => {
-                        const modal = document.getElementById('summon-result-modal');
-                        modal.style.display = 'none';
                         document.querySelector('.confirm-button').style.display = 'block';
-                    }, 3000);
+                    }, 2000);
 
                     localStorage.setItem('invocationPerformed', Date.now());
                     localStorage.removeItem('invocationPerformed');
