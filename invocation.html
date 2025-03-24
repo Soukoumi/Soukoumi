@@ -1343,6 +1343,9 @@
                         notification.style.display = 'none';
                     }, 5000);
 
+                    // Afficher toutes les cartes obtenues
+                    displayAllRewards();
+
                     // Afficher le bouton confirmer après 2 secondes
                     setTimeout(() => {
                         document.querySelector('.confirm-button').style.display = 'block';
@@ -1355,6 +1358,27 @@
 
             // Démarrer l'affichage des récompenses avec un délai
             displayRewardWithDelay(0);
+        }
+
+        function displayAllRewards() {
+            const modal = document.getElementById('all-cards-modal');
+            const container = document.getElementById('all-cards-container');
+            container.innerHTML = '<h2 style="color: var(--light); text-align: center; margin-bottom: 30px; font-size: 2em;">Cartes obtenues</h2>';
+
+            currentRewards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `all-cards-card ${card.rarity.toLowerCase()}`;
+                cardElement.innerHTML = `
+                    <img src="${card.image}" alt="${card.name}">
+                    <div class="card-name">${card.name}</div>
+                    <div class="card-rarity" style="color: var(--${card.rarity.toLowerCase()})">${card.rarity}</div>
+                    <div class="card-type">${card.type}</div>
+                `;
+                cardElement.onclick = () => showModal(card.image);
+                container.appendChild(cardElement);
+            });
+
+            modal.style.display = 'block';
         }
 
         function generateReward() {
