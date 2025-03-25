@@ -1110,18 +1110,18 @@
 
         function createParticles(x, y, color) {
             const container = document.body;
-            const particleCount = 10; // Réduit le nombre de particules
+            const particleCount = 20;
 
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
-                // Taille aléatoire plus petite
-                const size = Math.random() * 4 + 2;
+                // Taille aléatoire
+                const size = Math.random() * 8 + 4;
                 
-                // Direction aléatoire avec distance réduite
+                // Direction aléatoire
                 const angle = (Math.random() * 360) * Math.PI / 180;
-                const distance = Math.random() * 50 + 25;
+                const distance = Math.random() * 100 + 50;
                 const tx = Math.cos(angle) * distance;
                 const ty = Math.sin(angle) * distance;
                 
@@ -1139,9 +1139,7 @@
                 
                 // Supprimer la particule après l'animation
                 setTimeout(() => {
-                    if (particle && particle.parentNode) {
-                        particle.remove();
-                    }
+                    particle.remove();
                 }, 1000);
             }
         }
@@ -1170,19 +1168,10 @@
             const activeBanner = document.querySelector('.banner.active');
             const bannerImage = activeBanner.querySelector('.banner-image');
             
-            // Vérifier si l'image existe avant de l'afficher
-            const img = new Image();
-            img.onload = () => {
-                bannerImage.innerHTML = `
-                    <img src="${reward.image}" alt="${reward.name}" style="max-width: 100%; height: auto;">
-                `;
-            };
-            img.onerror = () => {
-                bannerImage.innerHTML = `
-                    <img src="Kaka Prout.png" alt="Image par défaut" style="max-width: 100%; height: auto;">
-                `;
-            };
-            img.src = reward.image;
+            // Mettre à jour l'image de la bannière
+            bannerImage.innerHTML = `
+                <img src="${reward.image}" alt="${reward.name}">
+            `;
             
             // Ajouter le nom et la rareté en dessous de la bannière
             const rewardInfo = document.createElement('div');
@@ -1207,7 +1196,7 @@
             // Ajouter à la liste des récompenses actuelles
             currentRewards.push(reward);
 
-            // Créer des particules avec un nombre limité
+            // Créer des particules
             const bannerRect = bannerContainer.getBoundingClientRect();
             const centerX = bannerRect.left + bannerRect.width / 2;
             const centerY = bannerRect.top + bannerRect.height / 2;
@@ -1317,7 +1306,7 @@
             currentRewards = [];
 
             // Calculer l'expérience totale pour les 10 invocations
-            const totalExp = 250;
+            const totalExp = 250; // 25 EXP par invocation * 10 invocations
 
             // Fonction pour afficher une récompense avec un délai
             function displayRewardWithDelay(index) {
@@ -1326,12 +1315,46 @@
                     displayReward(reward);
                     setTimeout(() => {
                         displayRewardWithDelay(index + 1);
-                    }, 2000); // Augmenté le délai à 2 secondes
+                    }, 1500); // Délai de 1.5 secondes entre chaque récompense
                 } else {
-                    // Une fois toutes les récompenses affichées
-                    addExperience(totalExp);
+                    // Une fois toutes les récompenses affichées, ajouter l'expérience
+                    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                        level: 0.1,
+                        experience: 0
+                    };
+
+                    // Calculer l'expérience nécessaire pour le prochain niveau
+                    const expNeeded = Math.floor(profileData.level) * 250;
+
+                    // Ajouter l'expérience
+                    profileData.experience += totalExp;
+
+                    // Vérifier si le niveau augmente
+                    while (profileData.experience >= expNeeded) {
+                        profileData.experience -= expNeeded;
+                        profileData.level += 0.1;
+                    }
+
+                    // Arrondir le niveau à 1 décimale
+                    profileData.level = Math.round(profileData.level * 10) / 10;
+
+                    // Sauvegarder les données mises à jour
+                    localStorage.setItem('profileData', JSON.stringify(profileData));
+
+                    // Afficher la notification
+                    const notification = document.getElementById('exp-notification');
+                    notification.textContent = `+${totalExp} EXP`;
+                    notification.style.display = 'block';
+
+                    // Cacher la notification après 5 secondes
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 5000);
+
+                    // Afficher toutes les cartes dans la bannière
                     displayAllRewardsInBanner();
-                    
+
+                    // Afficher le bouton confirmer après 2 secondes
                     setTimeout(() => {
                         document.querySelector('.confirm-button').style.display = 'block';
                     }, 2000);
@@ -1350,8 +1373,10 @@
             const activeBanner = document.querySelector('.banner.active');
             const bannerImage = activeBanner.querySelector('.banner-image');
             
+            // Ajouter la classe pour agrandir la bannière
             bannerContainer.classList.add('expanded');
             
+            // Créer une grille de cartes
             const gridContainer = document.createElement('div');
             gridContainer.style.cssText = `
                 display: grid;
@@ -1380,29 +1405,16 @@
                     cursor: pointer;
                     transition: transform 0.3s ease;
                 `;
-
-                const img = new Image();
-                img.onload = () => {
-                    cardElement.innerHTML = `
-                        <img src="${card.image}" alt="${card.name}" style="width: 150px; height: 150px; object-fit: contain;">
-                        <div class="card-name" style="color: var(--light); margin-top: 10px; font-size: 1.2em;">${card.name}</div>
-                        <div class="card-rarity" style="color: var(--${card.rarity.toLowerCase()})">${card.rarity}</div>
-                    `;
-                    cardElement.onclick = () => showModal(card.image);
-                    gridContainer.appendChild(cardElement);
-                };
-                img.onerror = () => {
-                    cardElement.innerHTML = `
-                        <img src="Kaka Prout.png" alt="Image par défaut" style="width: 150px; height: 150px; object-fit: contain;">
-                        <div class="card-name" style="color: var(--light); margin-top: 10px; font-size: 1.2em;">${card.name}</div>
-                        <div class="card-rarity" style="color: var(--${card.rarity.toLowerCase()})">${card.rarity}</div>
-                    `;
-                    cardElement.onclick = () => showModal(card.image);
-                    gridContainer.appendChild(cardElement);
-                };
-                img.src = card.image;
+                cardElement.innerHTML = `
+                    <img src="${card.image}" alt="${card.name}" style="width: 150px; height: 150px; object-fit: contain;">
+                    <div class="card-name" style="color: var(--light); margin-top: 10px; font-size: 1.2em;">${card.name}</div>
+                    <div class="card-rarity" style="color: var(--${card.rarity.toLowerCase()})">${card.rarity}</div>
+                `;
+                cardElement.onclick = () => showModal(card.image);
+                gridContainer.appendChild(cardElement);
             });
 
+            // Remplacer le contenu de la bannière
             bannerImage.innerHTML = '';
             bannerImage.appendChild(gridContainer);
         }
