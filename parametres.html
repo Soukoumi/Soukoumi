@@ -180,59 +180,34 @@
         </div>
     </div>
 
-    <audio id="bgMusic" loop>
-        <source src="C418 - Sweden (Caution & Crisis Remix).mp3" type="audio/mp3">
-    </audio>
-
+    <script src="audioManager.js"></script>
     <script>
-        // Contrôle audio
-        const audio = document.getElementById('bgMusic');
         const volumeButton = document.querySelector('.volume-button');
         const volumeSlider = document.querySelector('.volume-slider');
-        let isMuted = false;
-        let previousVolume = 50;
+        const volumePercentage = document.querySelector('.volume-percentage');
 
-        // Initialiser le volume
-        audio.volume = 0.5;
+        // Initialiser les contrôles avec les valeurs sauvegardées
+        volumeSlider.value = audioManager.volume * 100;
+        volumePercentage.textContent = `${Math.round(audioManager.volume * 100)}%`;
+        volumeButton.textContent = audioManager.isMuted ? '🔇' : '🔊';
 
         // Gérer le clic sur le bouton de volume
         volumeButton.addEventListener('click', () => {
-            isMuted = !isMuted;
-            audio.muted = isMuted;
-            
-            if (isMuted) {
-                previousVolume = volumeSlider.value;
-                volumeSlider.value = 0;
-                audio.volume = 0;
-                document.querySelector('.volume-percentage').textContent = '0%';
-            } else {
-                volumeSlider.value = previousVolume;
-                audio.volume = previousVolume / 100;
-                document.querySelector('.volume-percentage').textContent = `${previousVolume}%`;
-            }
-            
-            volumeButton.textContent = isMuted ? '🔇' : '🔊';
+            audioManager.toggleMute();
+            volumeButton.textContent = audioManager.isMuted ? '🔇' : '🔊';
         });
 
         // Gérer le changement de volume
         volumeSlider.addEventListener('input', (e) => {
             const volume = e.target.value / 100;
-            const percentage = Math.round(volume * 100);
-            audio.volume = volume;
-            previousVolume = e.target.value;
-            isMuted = volume === 0;
-            volumeButton.textContent = isMuted ? '🔇' : '🔊';
-            document.querySelector('.volume-percentage').textContent = `${percentage}%`;
+            audioManager.setVolume(volume);
+            volumePercentage.textContent = `${Math.round(volume * 100)}%`;
+            volumeButton.textContent = volume === 0 ? '🔇' : '🔊';
         });
-
-        // Initialiser l'affichage du pourcentage
-        document.querySelector('.volume-percentage').textContent = '50%';
 
         // Démarrer la musique lors de la première interaction utilisateur
         document.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play().catch(console.error);
-            }
+            audioManager.play();
         }, { once: true });
     </script>
 </body>
