@@ -508,6 +508,7 @@
         <div id="timer" class="timer"></div>
     </div>
 
+    <script src="audioManager.js"></script>
     <script>
         let spinning = false;
         let totalCoins = 0;
@@ -681,6 +682,11 @@
             setInterval(checkSpinAvailability, 1000);
             checkSpinAvailability();
         });
+
+        // Démarrer la musique lors de la première interaction utilisateur
+        document.addEventListener('click', () => {
+            audioManager.play();
+        }, { once: true });
     </script>
 </body>
 </html>
