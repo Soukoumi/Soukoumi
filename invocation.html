@@ -957,7 +957,7 @@
 <body>
     <div class="stars"></div>
     <div class="animated-background"></div>
-    <div class="exp-notification" id="exp-notification"></div>
+    <div id="exp-notification" class="exp-notification"></div>
     <a href="index.html" class="back-button">Retour</a>
     <a href="collection.html" class="collection-link">Collection</a>
     <button class="all-cards-button" onclick="showAllCards()">Toutes les cartes</button>
@@ -1038,6 +1038,7 @@
         <div class="all-cards-container" id="all-cards-container"></div>
     </div>
 
+    <script src="audioManager.js"></script>
     <script>
         let availableCoins = 0;
         let rouletteCount = parseInt(localStorage.getItem('rouletteCount')) || 0;
@@ -1487,6 +1488,11 @@
             loadCoins();
             startBannerRotation();
         });
+
+        // Démarrer la musique lors de la première interaction utilisateur
+        document.addEventListener('click', () => {
+            audioManager.play();
+        }, { once: true });
     </script>
 </body>
 </html>
