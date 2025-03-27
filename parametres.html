@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - Soukoumi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4655;
+            --secondary: #0fb6d6;
+            --accent: #bd3944;
+            --dark: #0f1923;
+            --light: #ffffff;
+            --violet: #b892ff;
+            --neon-violet: #b892ff;
+            --neon-pink: #ff69b4;
+            --apex-red: #DA292E;
+            --apex-gold: #F0A500;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f1923 0%, #1a1a2e 50%, #2d1b36 100%);
+            min-height: 100vh;
+            color: var(--light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(15, 25, 35, 0.8);
+            border: 2px solid var(--neon-violet);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--neon-violet);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(15, 25, 35, 0.5);
+            border: 1px solid rgba(184, 146, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .settings-title {
+            color: var(--neon-violet);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .audio-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(15, 25, 35, 0.6);
+            padding: 1rem;
+            border-radius: 25px;
+            border: 1px solid rgba(184, 146, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(15, 25, 35, 0.8);
+            border-color: var(--neon-violet);
+            box-shadow: 0 0 20px rgba(184, 146, 255, 0.2);
+        }
+
+        .volume-button {
+            width: 50px;
+            height: 50px;
+            background: rgba(184, 146, 255, 0.2);
+            border: 2px solid var(--neon-violet);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--light);
+            font-size: 1.5rem;
+        }
+
+        .volume-button:hover {
+            background: rgba(184, 146, 255, 0.3);
+            box-shadow: 0 0 15px var(--neon-violet);
+        }
+
+        .volume-slider {
+            flex-grow: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(184, 146, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--neon-violet);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            box-shadow: 0 0 10px var(--neon-violet);
+            transform: scale(1.2);
+        }
+
+        .volume-percentage {
+            min-width: 45px;
+            color: var(--light);
+            font-size: 1rem;
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 0.8rem 1.5rem;
+            background: rgba(184, 146, 255, 0.2);
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button:hover {
+            background: rgba(184, 146, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(184, 146, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <a href="acceuil.html" class="back-button">Retour</a>
+
+    <div class="container">
+        <h1 class="title">Paramètres</h1>
+
+        <div class="settings-section">
+            <h2 class="settings-title">Audio</h2>
+            <div class="audio-control">
+                <input type="range" class="volume-slider" min="0" max="100" value="50">
+                <span class="volume-percentage">50%</span>
+                <button class="volume-button">🔊</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="C418 - Sweden (Caution & Crisis Remix).mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        // Contrôle audio
+        const audio = document.getElementById('bgMusic');
+        const volumeButton = document.querySelector('.volume-button');
+        const volumeSlider = document.querySelector('.volume-slider');
+        let isMuted = false;
+        let previousVolume = 50;
+
+        // Initialiser le volume
+        audio.volume = 0.5;
+
+        // Gérer le clic sur le bouton de volume
+        volumeButton.addEventListener('click', () => {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            
+            if (isMuted) {
+                previousVolume = volumeSlider.value;
+                volumeSlider.value = 0;
+                audio.volume = 0;
+                document.querySelector('.volume-percentage').textContent = '0%';
+            } else {
+                volumeSlider.value = previousVolume;
+                audio.volume = previousVolume / 100;
+                document.querySelector('.volume-percentage').textContent = `${previousVolume}%`;
+            }
+            
+            volumeButton.textContent = isMuted ? '🔇' : '🔊';
+        });
+
+        // Gérer le changement de volume
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            const percentage = Math.round(volume * 100);
+            audio.volume = volume;
+            previousVolume = e.target.value;
+            isMuted = volume === 0;
+            volumeButton.textContent = isMuted ? '🔇' : '🔊';
+            document.querySelector('.volume-percentage').textContent = `${percentage}%`;
+        });
+
+        // Initialiser l'affichage du pourcentage
+        document.querySelector('.volume-percentage').textContent = '50%';
+
+        // Démarrer la musique lors de la première interaction utilisateur
+        document.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().catch(console.error);
+            }
+        }, { once: true });
+    </script>
+</body>
+</html> 
